@@ -26,14 +26,13 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-	  <!-- Do not change NSAllowsArbitraryLoads to true, or you will risk app rejection! -->
 		<key>NSAllowsArbitraryLoads</key>
 		<false/>
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -48,5 +47,169 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>AntDesign.ttf</string>
+		<string>Entypo.ttf</string>
+		<string>EvilIcons.ttf</string>
+		<string>Feather.ttf</string>
+		<string>FontAwesome.ttf</string>
+		<string>FontAwesome5_Brands.ttf</string>
+		<string>FontAwesome5_Regular.ttf</string>
+		<string>FontAwesome5_Solid.ttf</string>
+		<string>FontAwesome6_Brands.ttf</string>
+		<string>FontAwesome6_Regular.ttf</string>
+		<string>FontAwesome6_Solid.ttf</string>
+		<string>Foundation.ttf</string>
+		<string>Ionicons.ttf</string>
+		<string>MaterialIcons.ttf</string>
+		<string>MaterialCommunityIcons.ttf</string>
+		<string>SimpleLineIcons.ttf</string>
+		<string>Octicons.ttf</string>
+		<string>Zocial.ttf</string>
+		<string>Fontisto.ttf</string>
+		<string>NostromoRegular-Black.otf</string>
+		<string>NostromoRegular-Bold.otf</string>
+		<string>NostromoRegular-Heavy.otf</string>
+		<string>NostromoRegular-Light.otf</string>
+		<string>NostromoRegular-Medium.otf</string>
+		<string>Barlow-Black.ttf</string>
+		<string>Barlow-BlackItalic.ttf</string>
+		<string>Barlow-Bold.ttf</string>
+		<string>Barlow-BoldItalic.ttf</string>
+		<string>Barlow-ExtraBold.ttf</string>
+		<string>Barlow-ExtraBoldItalic.ttf</string>
+		<string>Barlow-ExtraLight.ttf</string>
+		<string>Barlow-ExtraLightItalic.ttf</string>
+		<string>Barlow-Italic.ttf</string>
+		<string>Barlow-Light.ttf</string>
+		<string>Barlow-LightItalic.ttf</string>
+		<string>Barlow-Medium.ttf</string>
+		<string>Barlow-MediumItalic.ttf</string>
+		<string>Barlow-Regular.ttf</string>
+		<string>Barlow-SemiBold.ttf</string>
+		<string>Barlow-SemiBoldItalic.ttf</string>
+		<string>Barlow-Thin.ttf</string>
+		<string>Barlow-ThinItalic.ttf</string>
+		<string>BarlowCondensed-Black.ttf</string>
+		<string>BarlowCondensed-BlackItalic.ttf</string>
+		<string>BarlowCondensed-Bold.ttf</string>
+		<string>BarlowCondensed-BoldItalic.ttf</string>
+		<string>BarlowCondensed-ExtraBold.ttf</string>
+		<string>BarlowCondensed-ExtraBoldItalic.ttf</string>
+		<string>BarlowCondensed-ExtraLight.ttf</string>
+		<string>BarlowCondensed-ExtraLightItalic.ttf</string>
+		<string>BarlowCondensed-Italic.ttf</string>
+		<string>BarlowCondensed-Light.ttf</string>
+		<string>BarlowCondensed-LightItalic.ttf</string>
+		<string>BarlowCondensed-Medium.ttf</string>
+		<string>BarlowCondensed-MediumItalic.ttf</string>
+		<string>BarlowCondensed-Regular.ttf</string>
+		<string>BarlowCondensed-SemiBold.ttf</string>
+		<string>BarlowCondensed-SemiBoldItalic.ttf</string>
+		<string>BarlowCondensed-Thin.ttf</string>
+		<string>BarlowCondensed-ThinItalic.ttf</string>
+		<string>IBMPlexSerif-Bold.ttf</string>
+		<string>IBMPlexSerif-BoldItalic.ttf</string>
+		<string>IBMPlexSerif-ExtraLight.ttf</string>
+		<string>IBMPlexSerif-ExtraLightItalic.ttf</string>
+		<string>IBMPlexSerif-Italic.ttf</string>
+		<string>IBMPlexSerif-Light.ttf</string>
+		<string>IBMPlexSerif-LightItalic.ttf</string>
+		<string>IBMPlexSerif-Medium.ttf</string>
+		<string>IBMPlexSerif-MediumItalic.ttf</string>
+		<string>IBMPlexSerif-Regular.ttf</string>
+		<string>IBMPlexSerif-SemiBold.ttf</string>
+		<string>IBMPlexSerif-SemiBoldItalic.ttf</string>
+		<string>IBMPlexSerif-Thin.ttf</string>
+		<string>IBMPlexSerif-ThinItalic.ttf</string>
+		<string>Inter-VariableFont_slnt,wght.ttf</string>
+		<string>Inter-Black.ttf</string>
+		<string>Inter-Bold.ttf</string>
+		<string>Inter-ExtraBold.ttf</string>
+		<string>Inter-ExtraLight.ttf</string>
+		<string>Inter-Light.ttf</string>
+		<string>Inter-Medium.ttf</string>
+		<string>Inter-Regular.ttf</string>
+		<string>Inter-SemiBold.ttf</string>
+		<string>Inter-Thin.ttf</string>
+		<string>Lexend-VariableFont_wght.ttf</string>
+		<string>Lexend-Black.ttf</string>
+		<string>Lexend-Bold.ttf</string>
+		<string>Lexend-ExtraBold.ttf</string>
+		<string>Lexend-ExtraLight.ttf</string>
+		<string>Lexend-Light.ttf</string>
+		<string>Lexend-Medium.ttf</string>
+		<string>Lexend-Regular.ttf</string>
+		<string>Lexend-SemiBold.ttf</string>
+		<string>Lexend-Thin.ttf</string>
+		<string>Sarina-Regular.ttf</string>
+		<string>SourceCodePro-Italic-VariableFont_wght.ttf</string>
+		<string>SourceCodePro-VariableFont_wght.ttf</string>
+		<string>SourceCodePro-Black.ttf</string>
+		<string>SourceCodePro-BlackItalic.ttf</string>
+		<string>SourceCodePro-Bold.ttf</string>
+		<string>SourceCodePro-BoldItalic.ttf</string>
+		<string>SourceCodePro-ExtraBold.ttf</string>
+		<string>SourceCodePro-ExtraBoldItalic.ttf</string>
+		<string>SourceCodePro-ExtraLight.ttf</string>
+		<string>SourceCodePro-ExtraLightItalic.ttf</string>
+		<string>SourceCodePro-Italic.ttf</string>
+		<string>SourceCodePro-Light.ttf</string>
+		<string>SourceCodePro-LightItalic.ttf</string>
+		<string>SourceCodePro-Medium.ttf</string>
+		<string>SourceCodePro-MediumItalic.ttf</string>
+		<string>SourceCodePro-Regular.ttf</string>
+		<string>SourceCodePro-SemiBold.ttf</string>
+		<string>SourceCodePro-SemiBoldItalic.ttf</string>
+		<string>WorkSans-Italic-VariableFont_wght.ttf</string>
+		<string>WorkSans-VariableFont_wght.ttf</string>
+		<string>WorkSans-Black.ttf</string>
+		<string>WorkSans-BlackItalic.ttf</string>
+		<string>WorkSans-Bold.ttf</string>
+		<string>WorkSans-BoldItalic.ttf</string>
+		<string>WorkSans-ExtraBold.ttf</string>
+		<string>WorkSans-ExtraBoldItalic.ttf</string>
+		<string>WorkSans-ExtraLight.ttf</string>
+		<string>WorkSans-ExtraLightItalic.ttf</string>
+		<string>WorkSans-Italic.ttf</string>
+		<string>WorkSans-Light.ttf</string>
+		<string>WorkSans-LightItalic.ttf</string>
+		<string>WorkSans-Medium.ttf</string>
+		<string>WorkSans-MediumItalic.ttf</string>
+		<string>WorkSans-Regular.ttf</string>
+		<string>WorkSans-SemiBold.ttf</string>
+		<string>WorkSans-SemiBoldItalic.ttf</string>
+		<string>WorkSans-Thin.ttf</string>
+		<string>WorkSans-ThinItalic.ttf</string>
+		<string>IBMPlexMono-Bold.ttf</string>
+		<string>IBMPlexMono-BoldItalic.ttf</string>
+		<string>IBMPlexMono-ExtraLight.ttf</string>
+		<string>IBMPlexMono-ExtraLightItalic.ttf</string>
+		<string>IBMPlexMono-Italic.ttf</string>
+		<string>IBMPlexMono-Light.ttf</string>
+		<string>IBMPlexMono-LightItalic.ttf</string>
+		<string>IBMPlexMono-Medium.ttf</string>
+		<string>IBMPlexMono-MediumItalic.ttf</string>
+		<string>IBMPlexMono-Regular.ttf</string>
+		<string>IBMPlexMono-SemiBold.ttf</string>
+		<string>IBMPlexMono-SemiBoldItalic.ttf</string>
+		<string>IBMPlexMono-Thin.ttf</string>
+		<string>IBMPlexMono-ThinItalic.ttf</string>
+		<string>IBMPlexSans-Bold.ttf</string>
+		<string>IBMPlexSans-BoldItalic.ttf</string>
+		<string>IBMPlexSans-ExtraLight.ttf</string>
+		<string>IBMPlexSans-ExtraLightItalic.ttf</string>
+		<string>IBMPlexSans-Italic.ttf</string>
+		<string>IBMPlexSans-Light.ttf</string>
+		<string>IBMPlexSans-LightItalic.ttf</string>
+		<string>IBMPlexSans-Medium.ttf</string>
+		<string>IBMPlexSans-MediumItalic.ttf</string>
+		<string>IBMPlexSans-Regular.ttf</string>
+		<string>IBMPlexSans-SemiBold.ttf</string>
+		<string>IBMPlexSans-SemiBoldItalic.ttf</string>
+		<string>IBMPlexSans-Thin.ttf</string>
+		<string>IBMPlexSans-ThinItalic.ttf</string>
+	</array>
 </dict>
 </plist>

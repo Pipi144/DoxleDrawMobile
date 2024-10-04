@@ -1,5 +1,5 @@
 package com.doxle
-
+import com.rnfs.RNFSPackage
 import android.app.Application
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
@@ -19,6 +19,7 @@ class MainApplication : Application(), ReactApplication {
             PackageList(this).packages.apply {
               // Packages that cannot be autolinked yet can be added manually here, for example:
               // add(MyReactNativePackage())
+              add(RNFSPackage())
             }
 
         override fun getJSMainModuleName(): String = "index"

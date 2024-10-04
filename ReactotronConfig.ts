@@ -1,6 +1,13 @@
 import Reactotron from 'reactotron-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {QueryClientManager, reactotronReactQuery} from 'reactotron-react-query';
+import {QueryClient} from '@tanstack/react-query';
+const queryClient = new QueryClient();
 
+const queryClientManager = new QueryClientManager({
+  // @ts-ignore
+  queryClient,
+});
 Reactotron.setAsyncStorageHandler(AsyncStorage)
   .configure({
     name: 'React Native Demo',
@@ -12,7 +19,15 @@ Reactotron.setAsyncStorageHandler(AsyncStorage)
       ignoreUrls: /symbolicate/,
     },
     editor: false, // there are more options to editor
-    errors: {veto: stackFrame => false}, // or turn it off with false
+    errors: {veto: () => false}, // or turn it off with false
     overlay: false, // just turning off overlay
   })
+  .connect();
+Reactotron.use(reactotronReactQuery(queryClientManager))
+  .configure({
+    onDisconnect: () => {
+      queryClientManager.unsubscribe();
+    },
+  })
+  .useReactNative()
   .connect();
