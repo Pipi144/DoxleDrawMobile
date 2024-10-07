@@ -1,0 +1,152 @@
+import {Alert, StyleSheet} from 'react-native';
+import {useCallback, useMemo} from 'react';
+
+import {shallow} from 'zustand/shallow';
+import {StackNavigationProp} from '@react-navigation/stack';
+
+import {useNavigation} from '@react-navigation/native';
+
+import {useProjectFileStore} from '../Store/useProjectFileStore';
+import {useShallow} from 'zustand/react/shallow';
+import {useAuth} from '../../../Providers/AuthProvider';
+import {useCompany} from '../../../Providers/CompanyProvider';
+import {useNotification} from '../../../Providers/NotificationProvider';
+import FilesAPI from '../../../API/fileQueryAPI';
+
+type Props = {};
+
+type FileEditScreenNavProps = {
+  ProjectFileHistoryScreen?: {};
+
+  ProjectFileRenameScreen?: {};
+};
+
+const useProjectFileModalContent = (props: Props) => {
+  const {accessToken} = useAuth();
+  const {company} = useCompany();
+  const {showNotification} = useNotification();
+
+  const {
+    currentFile,
+    edittedFolder,
+    setCurrentFile,
+    setEdittedFolder,
+    setShowModal,
+    filterProjectFolderQuery,
+    currentFolder,
+    filterProjectFileQuery,
+  } = useProjectFileStore(
+    useShallow(state => ({
+      currentFile: state.currentFile,
+      edittedFolder: state.edittedFolder,
+      currentFolder: state.currentFolder,
+      setCurrentFile: state.setCurrentFile,
+      setEdittedFolder: state.setEdittedFolder,
+      setShowModal: state.setShowModal,
+      filterProjectFolderQuery: state.filterProjectFolderQuery,
+      filterProjectFileQuery: state.filterProjectFileQuery,
+    })),
+  );
+  const navigator =
+    useNavigation<StackNavigationProp<FileEditScreenNavProps>>();
+  const onDeleteFolderSuccessCallback = () => {
+    setEdittedFolder(undefined);
+  };
+
+  //! USE DELETE FOLDER QUERY
+  const deleteFolderQuery = FilesAPI.useDeleteFolder({
+    accessToken,
+    company,
+    showNotification,
+    onDeleteFolderCallback: onDeleteFolderSuccessCallback,
+  });
+
+  const onDeleteFileSuccessCallback = () => {
+    setCurrentFile(undefined);
+  };
+  //! USE DELETE FILE QUERY
+  const deleteFileQuery = FilesAPI.useDeleteFileQuery({
+    accessToken,
+    company,
+    showNotification,
+    onDeleteFileCallback: onDeleteFileSuccessCallback,
+  });
+
+  const onShare = () => {
+    console.log('FILE SHARE ...');
+    setShowModal(false);
+  };
+  const onFileComment = () => {
+    console.log('FILE COMMENT ...');
+    setShowModal(false);
+  };
+
+  //THIS IS TO RENAME THE FILE OR FOLDER BASED ON WHAT IS SELECTED
+  const onRename = () => {
+    setShowModal(false);
+
+    setTimeout(() => {
+      navigator.navigate('ProjectFileRenameScreen', {});
+    }, 300);
+  };
+
+  const onDelete = () => {
+    if (currentFile) {
+      Alert.alert(
+        'Confirm delete file!',
+        `File item ***${currentFile.fileName}*** will be deleted permanently, are you sure to proceed?`,
+        [
+          {
+            text: 'Cancel',
+            style: 'destructive',
+          },
+          {
+            text: 'Delete',
+            onPress: () =>
+              deleteFileQuery.mutate({
+                files: [currentFile],
+              }),
+          },
+        ],
+      );
+    } else if (edittedFolder) {
+      Alert.alert(
+        'Confirm delete folder!',
+        `All files belong to folder item ***${edittedFolder.folderName}*** will be deleted permanently, are you sure to proceed?`,
+        [
+          {
+            text: 'Cancel',
+            style: 'destructive',
+          },
+          {
+            text: 'Delete',
+            onPress: () => deleteFolderQuery.mutate([edittedFolder]),
+          },
+        ],
+      );
+    }
+
+    setShowModal(false);
+    setEdittedFolder(undefined);
+    setCurrentFile(undefined);
+  };
+
+  const onFileHistory = () => {
+    setShowModal(false);
+
+    setTimeout(() => {
+      if (currentFile) navigator.navigate('ProjectFileHistoryScreen', {});
+    }, 300);
+  };
+  return {
+    onShare,
+    onFileComment,
+    onRename,
+    onDelete,
+    onFileHistory,
+  };
+};
+
+export default useProjectFileModalContent;
+
+const styles = StyleSheet.create({});

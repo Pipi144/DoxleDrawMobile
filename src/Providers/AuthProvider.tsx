@@ -4,8 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {User} from '../Models/user';
 import {useNotification} from './NotificationProvider';
 import useAppState from '../CustomHooks/useAppState';
-import {AuthQueryAPI} from '../service/DoxleAPI/QueryHookAPI/authQueryAPI';
 import {useQueryClient} from '@tanstack/react-query';
+import {AuthQueryAPI, authQueryKey} from '../API/authQueryAPI';
 
 export interface authContextInterface {
   // loginWithDetails: Function;
@@ -126,12 +126,12 @@ const AuthProvider = (children: any) => {
         !useExchangeRefreshTokenQuery.isFetching &&
         useExchangeRefreshTokenQuery.data
       )
-        useExchangeRefreshTokenQuery.remove();
+        queryClient.removeQueries({queryKey: authQueryKey});
     } else if (
       appState === 'background' &&
       useExchangeRefreshTokenQuery.isStale
     ) {
-      useExchangeRefreshTokenQuery.remove();
+      queryClient.removeQueries({queryKey: authQueryKey});
     }
   }, [appState]);
 

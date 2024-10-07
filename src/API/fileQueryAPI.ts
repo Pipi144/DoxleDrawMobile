@@ -15,6 +15,8 @@ import {baseAddress} from './settings';
 import {BaseAPIProps} from '../Models/basedAPIProps';
 import {DoxleFile, DoxleFolder} from '../Models/files';
 import {AxiosInfiniteReturn} from '../Models/axiosReturn';
+import useSetRootFolderQueryData from '../QueryDataHooks/useSetRootFolderQueryData';
+import useSetFileQueryData from '../QueryDataHooks/useSetFileQueryData';
 
 export interface IFilterGetFolderQueryFilter {
   projectId?: string;
@@ -209,17 +211,6 @@ const useGetFilesInsideFolderQuery = ({
 
     //* THE ABOVE WILL NOT POLL WHEN THE BROWSER LOOSES FOCUS, THE BELOW COMMAND WILL POLL IRRELEVANT OF WINDOW / BROWSER FOCUS
     refetchIntervalInBackground: true,
-
-    onSuccess: response => {},
-
-    onError: () => {
-      // if (showNotification)
-      //   showNotification(
-      //     'Somthing Went Wrong',
-      //     'error',
-      //     'Failed to Fetch Files',
-      //   );
-    },
   });
 
   return filesQuery;
@@ -228,7 +219,6 @@ const useGetFilesInsideFolderQuery = ({
 // *********************************************ADD FOLDER ***********************************//
 interface AddFolderQueryProps extends BaseAPIProps {
   onAddFolderSuccessCallback?: Function;
-  filter: IFilterGetFolderQueryFilter;
 }
 
 const useAddFolder = ({
@@ -236,19 +226,21 @@ const useAddFolder = ({
   company,
   showNotification,
   onAddFolderSuccessCallback,
-  filter,
 }: AddFolderQueryProps) => {
-  const {handleAddFolder} = useSetRootFolderQueryData({filter});
+  const {handleAddFolder} = useSetRootFolderQueryData({});
   const addFolderMutation = useMutation({
     mutationKey: getFolderMutationKey('add'),
-    mutationFn: async (data: DoxleFolder) => {
-      return addFolder(accessToken, company, data);
-    },
+    mutationFn: async (newFolder: DoxleFolder) =>
+      axios.post<DoxleFolder>(baseAddress + '/storage/folder/', newFolder, {
+        headers: {
+          Authorization: 'Bearer ' + accessToken,
+          'User-Company': company?.companyId,
+        },
+      }),
     onSuccess(response, request, context) {
       if (response?.data) handleAddFolder(response?.data);
       if (onAddFolderSuccessCallback) {
         onAddFolderSuccessCallback(response?.data);
-        console.log('Success Added Folder');
       }
       // if (showNotification){
       //   showNotification('Its a success', 'success')
@@ -266,34 +258,7 @@ const useAddFolder = ({
   return {...addFolderMutation, mutate: mutate};
 };
 
-//* ADD NEW FOLDER
-const addFolder = async (
-  accessToken: string | undefined,
-  company: Company | undefined,
-  newFolder: DoxleFolder,
-) => {
-  try {
-    return axios.post<DoxleFolder>(
-      baseAddress + '/storage/folder/',
-      newFolder,
-      {
-        headers: {
-          Authorization: 'Bearer ' + accessToken,
-          'User-Company': company?.companyId,
-        },
-      },
-    );
-  } catch (error: any) {
-    console.error('Print Error');
-    console.error(error.message);
-  }
-};
-// *********************************************END ADD FOLDER ***********************************//
-
-// *********************************************ADD FILE ***********************************//
-
 interface AddFileQueryProps extends BaseAPIProps {
-  filter: IFilterGetFileQueryFilter;
   addFileCallback?: Function;
   uploadProgressCallback?: (percentComplete: number) => void;
 }
@@ -317,12 +282,8 @@ const useAddFilesQuery = ({
   showNotification,
   addFileCallback,
   uploadProgressCallback,
-  filter,
 }: AddFileQueryProps) => {
-  const {handleAddMultipleFile} = useSetFileQueryData({
-    filter,
-    isFolderFile: Boolean(filter.folderId),
-  });
+  const {handleAddMultipleFile} = useSetFileQueryData({});
   //* CURRENT FOLDER ID IS PASSED AS A PARAM BUT ALSO IN THE DATA OBJECT
 
   const addFileMutation = useMutation({
@@ -387,32 +348,11 @@ const useAddFilesQuery = ({
 
 interface UpdateFolderQueryProps extends BaseAPIProps {
   onUpdateFolderSuccessCallback?: (folder: DoxleFolder) => void;
-  filter: IFilterGetFolderQueryFilter;
 }
 
 export type TUpdateFolderParams = {
-  folderId?: string;
+  folderId: string;
   folderName: string;
-};
-
-const updateFolder = (
-  accessToken: string | undefined,
-  company: Company | undefined,
-  folderId: string,
-  folderName: string,
-) => {
-  return axios.patch(
-    baseAddress + '/storage/folder/' + folderId + '/',
-    {
-      folderName: folderName,
-    },
-    {
-      headers: {
-        Authorization: 'Bearer ' + accessToken,
-        'User-Company': company?.companyId,
-      },
-    },
-  );
 };
 
 const useUpdateFolder = ({
@@ -420,32 +360,33 @@ const useUpdateFolder = ({
   company,
   showNotification,
   onUpdateFolderSuccessCallback,
-  filter,
 }: UpdateFolderQueryProps) => {
-  const {handleEditFolder} = useSetRootFolderQueryData({filter});
+  const {handleEditFolder} = useSetRootFolderQueryData({});
   const updateFolderMutation = useMutation({
     mutationKey: getFolderMutationKey('update'),
     mutationFn: async (props: TUpdateFolderParams) => {
       const {folderId, folderName} = props;
-      if (folderId && folderName)
-        return updateFolder(accessToken, company, folderId, folderName);
-      else {
-        if (showNotification) {
-          showNotification('Error', 'error');
-        }
-        console.error(`Invalid Folder Name `);
-      }
+      return axios.patch<DoxleFolder>(
+        baseAddress + '/storage/folder/' + folderId + '/',
+        {
+          folderName: folderName,
+        },
+        {
+          headers: {
+            Authorization: 'Bearer ' + accessToken,
+            'User-Company': company?.companyId,
+          },
+        },
+      );
     },
-    //* VARIABLE IS WHAT WEW PASS IN MUTATE FUNCTION
-    //* DATA IS SERVER RESPONSE
-
     onSuccess(response, request, context) {
       // const currentFolderId = request.folderId;
       // const queryKey = ["FOLDERS-QUERY-KEY", company?.companyId];
       if (onUpdateFolderSuccessCallback) {
-        onUpdateFolderSuccessCallback(response?.data as DoxleFolder);
+        onUpdateFolderSuccessCallback(response.data);
       }
-      handleEditFolder(response?.data);
+
+      handleEditFolder(response.data);
     },
     onError(error, variables, context) {
       if (showNotification) {
@@ -463,12 +404,7 @@ const useUpdateFolder = ({
   return {...updateFolderMutation, mutate: mutate};
 };
 
-// *********************************************UPDATE FOLDER ***********************************//
-
-// *********************************************UPDATE FILE ***********************************//
-
 interface UpdateFileQueryProps extends BaseAPIProps {
-  filter: IFilterGetFileQueryFilter;
   onUpdateFileCallback?: Function;
 }
 
@@ -484,12 +420,8 @@ const useUpdateFileQuery = ({
   company,
   showNotification,
   onUpdateFileCallback,
-  filter,
 }: UpdateFileQueryProps) => {
-  const {handleUpdateFile} = useSetFileQueryData({
-    filter,
-    isFolderFile: Boolean(filter.folderId),
-  });
+  const {handleUpdateFile} = useSetFileQueryData({});
 
   const updateFileMutation = useMutation({
     mutationKey: getFileMutationKey('update'),
@@ -539,50 +471,35 @@ const useUpdateFileQuery = ({
   return {...updateFileMutation, mutate: mutate};
 };
 
-// *********************************************UPDATE FILE ***********************************//
-
-// *********************************************DELETE FOLDER ***********************************//
-
 interface DeleteFolderQueryProps extends BaseAPIProps {
   onDeleteFolderCallback?: Function;
-  filter: IFilterGetFolderQueryFilter;
 }
-
-const deleteFolder = (
-  accessToken: string | undefined,
-  company: Company | undefined,
-  folderIds: string[],
-) => {
-  const delete_folders_url = baseAddress + '/storage/folder/delete/';
-  const params = {
-    // docketId: 'cd4cb4da-090f-453b-979c-fc58fb65f229',
-    // docketId:null,
-    projectId: null,
-    companyId: company?.companyId,
-    folders: folderIds,
-  };
-
-  return axios.post(delete_folders_url, params, {
-    headers: {
-      Authorization: 'Bearer ' + accessToken,
-      'User-Company': company?.companyId,
-    },
-  });
-};
 
 const useDeleteFolder = ({
   accessToken,
   company,
   showNotification,
   onDeleteFolderCallback,
-  filter,
 }: DeleteFolderQueryProps) => {
-  const {handleDeleteMultipleFolders} = useSetRootFolderQueryData({filter});
+  const {handleDeleteMultipleFolders} = useSetRootFolderQueryData({});
 
   const deleteFolderMutation = useMutation({
     mutationKey: getFolderMutationKey('delete'),
-    mutationFn: async (data: string[]) => {
-      return deleteFolder(accessToken, company, data);
+    mutationFn: async (data: DoxleFolder[]) => {
+      const delete_folders_url = baseAddress + '/storage/folder/delete/';
+      const params = {
+        // docketId: 'cd4cb4da-090f-453b-979c-fc58fb65f229',
+        // docketId:null,
+        projectId: null,
+        companyId: company?.companyId,
+        folders: data.map(folder => folder.folderId),
+      };
+      return axios.post(delete_folders_url, params, {
+        headers: {
+          Authorization: 'Bearer ' + accessToken,
+          'User-Company': company?.companyId,
+        },
+      });
     },
     onSuccess(response, request, context) {
       if (onDeleteFolderCallback) {
@@ -599,41 +516,30 @@ const useDeleteFolder = ({
   });
 
   // * OVERRIDE MUTATE Function
-  const mutate = (data: string[]) => deleteFolderMutation.mutate(data);
+  const mutate = (data: DoxleFolder[]) => deleteFolderMutation.mutate(data);
 
   // * CUSTOM HOOK ALWAYS NEEDS A RETURN THE HOOK
   return {...deleteFolderMutation, mutate: mutate};
 };
 
-// *********************************************END DELETE FOLDER ***********************************//
-
-// *********************************************DELETE FILE ***********************************//
-
 interface DeleteFileQueryProps extends BaseAPIProps {
   onDeleteFileCallback: Function;
-  filter: IFilterGetFileQueryFilter;
 }
 
 export interface DeleteFileParams {
   files: DoxleFile[];
-  currentFolderId?: string;
-  currentFolderName?: string;
 }
 const useDeleteFileQuery = ({
   company,
   accessToken,
   showNotification,
   onDeleteFileCallback,
-  filter,
 }: DeleteFileQueryProps) => {
-  const {handleRemoveMultipleFile} = useSetFileQueryData({
-    filter,
-    isFolderFile: Boolean(filter.folderId),
-  });
+  const {handleRemoveMultipleFile} = useSetFileQueryData({});
   const deleteFileMutation = useMutation({
     mutationKey: getFileMutationKey('delete'),
     mutationFn: async (props: DeleteFileParams) => {
-      const {files, currentFolderId, currentFolderName} = props;
+      const {files} = props;
 
       // if (currentFolderId)
       //   deleteFile(accessToken, company, files, currentFolderId);
@@ -642,7 +548,6 @@ const useDeleteFileQuery = ({
         baseAddress + '/storage/file/delete_multiple/',
         {
           files: files,
-          currentFolderId: currentFolderId,
         },
         {
           headers: {
@@ -654,7 +559,7 @@ const useDeleteFileQuery = ({
     },
     onSuccess(response, request, context) {
       if (onDeleteFileCallback) onDeleteFileCallback();
-      handleRemoveMultipleFile(request.files.map(file => file.fileId));
+      handleRemoveMultipleFile(request.files);
     },
     onError(error, variables, context) {
       if (showNotification) {
@@ -665,11 +570,7 @@ const useDeleteFileQuery = ({
   });
 
   // * OVERRIDE MUTATE Function
-  const mutate = (props: {
-    files: DoxleFile[];
-    currentFolderId?: string;
-    currentFolderName?: string;
-  }) => deleteFileMutation.mutate(props);
+  const mutate = (props: DeleteFileParams) => deleteFileMutation.mutate(props);
 
   // * CUSTOM HOOK ALWAYS NEEDS A RETURN THE HOOK
   return {...deleteFileMutation, mutate: mutate};
@@ -684,8 +585,9 @@ export const getFolderQKey = (
 ) => {
   let queryKey = ['FOLDERS-QUERY-KEY', company?.companyId];
   const {projectId, docketId} = filter;
-  if (projectId) queryKey.push(projectId);
-  else if (docketId) queryKey.push(docketId);
+  if (docketId) queryKey.push(docketId);
+  else if (projectId) queryKey.push(projectId);
+
   return queryKey;
 };
 

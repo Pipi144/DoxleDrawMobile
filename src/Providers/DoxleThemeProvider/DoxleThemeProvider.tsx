@@ -6,7 +6,6 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import {usePrevSessionStore} from '../../GeneralStore/usePrevSessionStore';
 import {TRgbaFormat} from '../../Utilities/FunctionUtilities';
 import {
   BARLOW_FONT,
@@ -18,8 +17,8 @@ import {
 } from './FontColorConstant';
 import {useShallow} from 'zustand/react/shallow';
 import {useOrientation} from '../OrientationContext';
+import {usePrevSessionStore} from '../../GeneralStore/usePrevSessionStore';
 
-type Props = {};
 export type TDOXLETheme = 'dark' | 'light';
 export type TDoxleFontMode = 'default' | 'serif' | 'mono' | 'Inter';
 export interface IDoxleStaticMenuColor {
@@ -202,7 +201,6 @@ const DOXLEThemeProvider = (children: any) => {
   // };
   useEffect(() => {
     if (prevThemeContext) {
-      console.log('CHANGE THEME:', prevThemeContext);
       if (prevThemeContext?.theme) {
         setDOXLETheme(prevThemeContext.theme);
       }
@@ -242,10 +240,6 @@ const DOXLEThemeProvider = (children: any) => {
       },
     });
   }, []);
-
-  useEffect(() => {
-    console.log('currentFontMode:', currentFontMode);
-  }, [currentFontMode]);
 
   const themeContextValue: IDOXLEThemeProviderContext = useMemo(
     () => ({

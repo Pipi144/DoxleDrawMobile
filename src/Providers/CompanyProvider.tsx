@@ -1,6 +1,7 @@
 import {Alert} from 'react-native';
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -8,17 +9,28 @@ import React, {
 } from 'react';
 import {Company} from '../Models/company';
 import {useNotification} from './NotificationProvider';
-import CompanyQueryAPI from '../service/DoxleAPI/QueryHookAPI/companyQueryAPI';
 import {useAuth} from './AuthProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useAppState from '../CustomHooks/useAppState';
+import CompanyQueryAPI from '../API/companyQueryAPI';
+import {Project} from '../Models/project';
+import useEffectAfterMount from '../CustomHooks/useEffectAfterMount';
+import useGetProjectList from '../GetQueryDataHooks/useGetProjectList';
+import ProjectQueryAPI from '../API/projectQueryAPI';
+import {produce} from 'immer';
 
-type Props = {};
+const prevSessionStorageKey = 'prevCompanySession';
+export type TPrevCompanySession = {
+  lastCompany?: Company;
+  lastProject?: Project;
+};
 
 export interface ICompanyProviderContextValue {
   company: Company | undefined;
   setcompany: React.Dispatch<React.SetStateAction<Company | undefined>>;
   companyList: Company[];
+  selectedProject: Project | undefined;
+  handleSelectProject: (project: Project | undefined) => void;
   isLoadingCompany: boolean;
   handleSetCompany: (company: Company) => void;
   isRefetchingCompanyList: boolean;
@@ -28,61 +40,74 @@ export interface ICompanyProviderContextValue {
 const CompanyContext = createContext({});
 const CompanyProvider = (children: any) => {
   const [company, setcompany] = useState<Company | undefined>(undefined);
+  const [selectedProject, setSelectedProject] = useState<Project | undefined>(
+    undefined,
+  );
+  const [prevSession, setPrevSession] = useState<TPrevCompanySession>({});
 
-  const {showNotification} = useNotification();
-
-  const {accessToken, logOut, loggedIn} = useAuth();
-
-  const handleFailedGetCompany = () => {
-    Alert.alert('Unable to find company!', 'Retry 1 more time', [
-      {
-        text: 'Retry',
-        onPress: () => {
-          retrieveCompanyQuery.refetch();
-        },
-      },
-      {
-        text: 'Log out',
-        onPress: () => {
-          logOut();
-        },
-      },
-    ]);
-  };
-  const onSuccessFetchingCompany = async (companyList: Company[]) => {
-    if (companyList.length > 0) {
-      if (!company) {
-        const lastSelectedCompanyId: string | null = await AsyncStorage.getItem(
-          'lastSelectedCompanyId',
-        );
-
-        if (!lastSelectedCompanyId) {
-          setcompany(companyList[0]);
-          AsyncStorage.setItem(
-            'lastSelectedCompanyId',
-            companyList[0].companyId,
-          );
-        } else {
-          const matchedCompany = companyList.find(
-            company => company.companyId === lastSelectedCompanyId,
-          );
-          if (matchedCompany) setcompany(matchedCompany);
-          else {
-            setcompany(companyList[0]);
-            AsyncStorage.setItem(
-              'lastSelectedCompanyId',
-              companyList[0].companyId,
-            );
-          }
+  const getStoragePrevSession = useCallback(async (): Promise<
+    TPrevCompanySession | undefined
+  > => {
+    try {
+      const prevSession = await AsyncStorage.getItem(prevSessionStorageKey);
+      if (prevSession) {
+        const parsedPrevSession = JSON.parse(
+          prevSession,
+        ) as TPrevCompanySession;
+        setPrevSession(parsedPrevSession);
+        if (parsedPrevSession.lastCompany) {
+          setcompany(parsedPrevSession.lastCompany);
+        }
+        if (parsedPrevSession.lastProject) {
+          setSelectedProject(parsedPrevSession.lastProject);
         }
       }
+      return prevSession
+        ? (JSON.parse(prevSession) as TPrevCompanySession)
+        : undefined;
+    } catch (error) {
+      console.log('Error getting prev session', error);
     }
-  };
+  }, []);
+  const {accessToken, logOut, loggedIn} = useAuth();
+
+  const onSuccessFetchingCompany = useCallback(
+    (companyList: Company[]) => {
+      if (companyList.length > 0) {
+        let prevSessionStorage = {...prevSession};
+        if (!company) {
+          setcompany(companyList[0]);
+          prevSessionStorage.lastCompany = companyList[0];
+        } else {
+          const matchedCompany = companyList.find(
+            company =>
+              company.companyId === prevSessionStorage.lastCompany?.companyId,
+          );
+          if (matchedCompany) {
+            setcompany(matchedCompany);
+
+            prevSession.lastCompany = matchedCompany;
+          } else {
+            setcompany(companyList[0]);
+            prevSessionStorage.lastCompany = companyList[0];
+          }
+        }
+        AsyncStorage.setItem(
+          prevSessionStorageKey,
+          JSON.stringify(prevSessionStorage),
+        );
+        setPrevSession(
+          produce(draft => {
+            draft.lastCompany = prevSessionStorage.lastCompany;
+          }),
+        );
+      }
+    },
+    [prevSession, company],
+  );
 
   const retrieveCompanyQuery = CompanyQueryAPI.useRetrieveCompanyList({
-    showNotification,
     accessToken,
-    // onErrorCb: handleFailedGetCompany,
     onSuccessCb: onSuccessFetchingCompany,
     enable: Boolean(loggedIn && accessToken),
   });
@@ -90,24 +115,64 @@ const CompanyProvider = (children: any) => {
   const companyList = useMemo(
     () =>
       retrieveCompanyQuery.isSuccess
-        ? (retrieveCompanyQuery.data.data.results as Company[])
+        ? retrieveCompanyQuery.data?.data.results ?? []
         : [],
     [retrieveCompanyQuery.data],
   );
 
-  // console.log('COMPANY LIST: ', companyList);
-  // useEffect(() => {
-  //   if (company) console.log('COMPANY:', company.companyId);
-  // }, [company]);
-
-  const handleSetCompany = (companyItem: Company) => {
+  const handleSetCompany = useCallback((companyItem: Company) => {
     setcompany(companyItem);
 
     AsyncStorage.setItem('lastSelectedCompanyId', companyItem.companyId);
-  };
+  }, []);
   const refetchCompanyList = () => {
     retrieveCompanyQuery.refetch();
   };
+  const handleSelectProject = useCallback(
+    (project: Project | undefined) => {
+      setSelectedProject(project);
+      setPrevSession(prev => ({...prev, lastProject: project}));
+      const prevSessionStorage = {...prevSession, lastProject: project};
+      AsyncStorage.setItem(
+        prevSessionStorageKey,
+        JSON.stringify(prevSessionStorage),
+      );
+    },
+    [prevSession],
+  );
+  const projectQuery = ProjectQueryAPI.useRetrieveFullProjectListQuery({
+    company,
+    accessToken,
+    enable: Boolean(company),
+    filter: {
+      view: 'budget',
+    },
+    onSuccessCb(data) {
+      let prevSessionStorage = {...prevSession};
+      if (data.length > 0) {
+        if (!selectedProject) {
+          setSelectedProject(data[0]);
+          setPrevSession(prev => ({...prev, lastProject: data[0]}));
+          prevSessionStorage.lastProject = data[0];
+        } else {
+          const matchProject = data.find(
+            project => project.projectId === selectedProject?.projectId,
+          );
+
+          setSelectedProject(matchProject ?? data[0]);
+          prevSessionStorage.lastProject = matchProject ?? data[0];
+        }
+        setPrevSession(prev => ({
+          ...prev,
+          lastProject: prevSessionStorage.lastProject,
+        }));
+        AsyncStorage.setItem(
+          prevSessionStorageKey,
+          JSON.stringify(prevSessionStorage),
+        );
+      }
+    },
+  });
 
   const {appState} = useAppState();
 
@@ -120,6 +185,10 @@ const CompanyProvider = (children: any) => {
     }
   }, [appState]);
 
+  useEffectAfterMount(() => {
+    getStoragePrevSession();
+  }, []);
+
   const companyContextProvider: ICompanyProviderContextValue = useMemo(
     () => ({
       company,
@@ -131,8 +200,17 @@ const CompanyProvider = (children: any) => {
       handleSetCompany,
       isRefetchingCompanyList: retrieveCompanyQuery.isRefetching,
       refetchCompanyList,
+      selectedProject,
+      handleSelectProject,
     }),
-    [company, companyList, handleSetCompany, retrieveCompanyQuery.isRefetching],
+    [
+      company,
+      companyList,
+      handleSetCompany,
+      retrieveCompanyQuery.isRefetching,
+      selectedProject,
+      handleSelectProject,
+    ],
   );
   return (
     <CompanyContext.Provider {...children} value={companyContextProvider} />

@@ -1,118 +1,61 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {NotificationProvider} from './src/Providers/NotificationProvider';
+import {AuthProvider} from './src/Providers/AuthProvider';
+import {InternetConnectionProvider} from './src/Providers/InternetConnectionProvider';
+import {OrientationProvider} from './src/Providers/OrientationContext';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import React, {useEffect} from 'react';
+import {CompanyProvider} from './src/Providers/CompanyProvider';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {DOXLEThemeProvider} from './src/Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {EventProvider} from 'react-native-outside-press';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {UserProvider} from './src/Providers/UserProvider';
+import {VibrationProvider} from './src/Providers/VibrationProvider';
+import {enableFreeze} from 'react-native-screens';
+import {registerTranslation, en as PaperEn} from 'react-native-paper-dates';
+registerTranslation('en', PaperEn);
+import SplashScreen from 'react-native-splash-screen';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+enableFreeze(true);
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 2 * (60 * 1000), // 2 mins
+      gcTime: 5 * (60 * 1000), // 5 mins
+      retryDelay: 3 * 1000, // 3 seconds,
+    },
   },
 });
+function App(): React.JSX.Element {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <SafeAreaProvider>
+        <OrientationProvider>
+          <DOXLEThemeProvider>
+            <NotificationProvider>
+              <InternetConnectionProvider>
+                <VibrationProvider>
+                  <AuthProvider>
+                    <CompanyProvider>
+                      <UserProvider>
+                        <EventProvider style={{flex: 1}}>
+                          <GestureHandlerRootView
+                            style={{flex: 1}}></GestureHandlerRootView>
+                        </EventProvider>
+                      </UserProvider>
+                    </CompanyProvider>
+                  </AuthProvider>
+                </VibrationProvider>
+              </InternetConnectionProvider>
+            </NotificationProvider>
+          </DOXLEThemeProvider>
+        </OrientationProvider>
+      </SafeAreaProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;

@@ -9,17 +9,13 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import axios, {isAxiosError} from 'axios';
-import {Company} from '../../../Models/company';
-import {baseAddress} from '../../../../settings';
-import {IFullProject, NewProject, Project} from '../../../Models/project';
+import {BaseAPIProps} from '../Models/basedAPIProps';
+import {IFullProject, NewProject, Project} from '../Models/project';
+import {baseAddress} from './settings';
+import {AxiosInfiniteReturn} from '../Models/axiosReturn';
+import useSetProjectQueryData from '../QueryDataHooks/useSetProjectQueryData';
+import {Company} from '../Models/company';
 
-import {Docket} from '../../../Models/docket';
-import useSetProjectQueryData from '../../../CustomHooks/SetQueryDataHooks/useSetProjectQueryData';
-import {BaseAPIProps} from '../../../Models/basedAPIProps';
-import {
-  AxiosBackendErrorReturn,
-  AxiosInfiniteReturn,
-} from '../../../Models/axiosReturn';
 export type TProjectType = 'noticeboard' | 'budget';
 export interface FilterGetProjectQuery {
   searchText?: string | null;
@@ -46,58 +42,38 @@ const useRetrieveFullProjectListQuery = ({
   const getParams: any = {view};
   // if (company) getParams.company = company?.companyId;
   if (searchText) getParams.search = searchText;
-  const projectQuery = useInfiniteQuery(
-    qKey,
-    ({pageParam = projectURL}) =>
-      axios.get<AxiosInfiniteReturn<IFullProject>>(pageParam, {
-        headers: {
-          Authorization: 'Bearer ' + accessToken,
-          'User-Company': company?.companyId ?? '',
-        },
-        params: getParams,
-      }),
-    {
-      enabled: Boolean(company && (enable || true)),
-      // retry: 1,
-      // staleTime: Infinity,
-      staleTime: 15 * 60 * 1000,
-      cacheTime: 20 * 60 * 1000,
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-      refetchInterval: false,
-
-      getNextPageParam: prevData => prevData.data?.next,
-      onSuccess: res => {
-        if (onSuccessCb)
-          onSuccessCb(
-            res.pages.reduce((acc, data) => {
-              return acc.concat(data.data.results);
-            }, [] as IFullProject[]),
-          );
-      },
-      onError: error => {
-        // if (showNotification) {
-        //   if (isAxiosError<AxiosBackendErrorReturn>(error)) {
-        //     showNotification(
-        //       `${error?.response?.status ?? 'ERROR'}: ${
-        //         error.response?.data.detail ?? 'UNKNOWN ERROR'
-        //       }`,
-        //       'error',
-        //       String(
-        //         error?.response?.data?.detail ?? 'Failed to get project list',
-        //       ).substring(0, 300),
-        //     );
-        //   } else {
-        //     showNotification(
-        //       'Something Wrong!',
-        //       'error',
-        //       'Failed to get project list',
-        //     );
-        //   }
-        // }
-      },
+  const projectQuery = useInfiniteQuery({
+    queryKey: qKey,
+    initialPageParam: projectURL,
+    queryFn: async ({pageParam = projectURL}) => {
+      try {
+        const response = await axios.get<AxiosInfiniteReturn<IFullProject>>(
+          pageParam,
+          {
+            headers: {
+              Authorization: 'Bearer ' + accessToken,
+              'User-Company': company?.companyId ?? '',
+            },
+            params: getParams,
+          },
+        );
+        if (onSuccessCb) onSuccessCb(response.data.results);
+        return response;
+      } catch (error) {
+        console.log('ERROR useRetrieveFullProjectListQuery:', error);
+      }
     },
-  );
+    enabled: Boolean(company && (enable || true)),
+    // retry: 1,
+    // staleTime: Infinity,
+    staleTime: 15 * 60 * 1000,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchInterval: false,
+
+    getNextPageParam: prevData => prevData?.data.next,
+  });
   return projectQuery;
 };
 interface RetrieveSimpleProjectQueryProps extends BaseAPIProps {
@@ -113,13 +89,49 @@ const useRetrieveSimpleProjectQuery = ({
 }: RetrieveSimpleProjectQueryProps) => {
   const qKey = formRetrieveSimpleProjectQKey(company, searchText);
 
-  const projectQuery = useQuery(
-    qKey,
-    () => {
+  const projectQuery = useQuery({
+    queryKey: qKey,
+    queryFn: async () => {
       let getParams: any = {};
       if (company) getParams.company = company.companyId;
       if (searchText) getParams.search = searchText;
-      console.log('FETCHING PROJECT');
+      try {
+        const response = await axios.get(baseAddress + '/project/simple/', {
+          headers: {
+            Authorization: 'Bearer ' + accessToken,
+            'User-Company': company?.companyId ?? '',
+          },
+          params: getParams,
+        });
+        if (onSuccessCB) onSuccessCB(response.data.results);
+        return response;
+      } catch (error) {
+        console.log('ERROR useRetrieveSimpleProjectQuery:', error);
+      }
+    },
+    enabled: company !== undefined && accessToken !== undefined,
+    retry: 1,
+    gcTime: 20 * 60 * 1000,
+    refetchOnMount: false,
+    staleTime: 10 * 60 * 1000,
+    refetchInterval: false,
+  });
+  return projectQuery;
+};
+
+const usePrefetchProjectQuery = ({
+  company,
+  accessToken,
+  searchText,
+}: RetrieveSimpleProjectQueryProps) => {
+  const qKey = formRetrieveSimpleProjectQKey(company, searchText);
+  const queryClient = useQueryClient();
+  const projectQuery = queryClient.prefetchQuery({
+    queryKey: qKey,
+    queryFn: async () => {
+      let getParams: any = {};
+      if (company) getParams.company = company.companyId;
+      if (searchText) getParams.search = searchText;
       return axios.get(baseAddress + '/project/simple/', {
         headers: {
           Authorization: 'Bearer ' + accessToken,
@@ -128,50 +140,6 @@ const useRetrieveSimpleProjectQuery = ({
         params: getParams,
       });
     },
-    {
-      enabled: company !== undefined && accessToken !== undefined,
-      retry: 1,
-      cacheTime: 20 * 60 * 1000,
-      refetchOnMount: false,
-      staleTime: 10 * 60 * 1000,
-      refetchInterval: false,
-      onSuccess: res => {
-        if (onSuccessCB) onSuccessCB(res.data.results);
-      },
-
-      onError: () => {
-        // if (showNotification)
-        //   showNotification(
-        //     'SOMETHING WRONG',
-        //     'error',
-        //     'fail to fetch projects',
-        //   );
-      },
-    },
-  );
-  return projectQuery;
-};
-
-const usePrefetchProjectQuery = ({
-  company,
-  accessToken,
-  showNotification,
-  onSuccessCB,
-  searchText,
-}: RetrieveSimpleProjectQueryProps) => {
-  const qKey = formRetrieveSimpleProjectQKey(company, searchText);
-  const queryClient = useQueryClient();
-  const projectQuery = queryClient.prefetchQuery(qKey, () => {
-    let getParams: any = {};
-    if (company) getParams.company = company.companyId;
-    if (searchText) getParams.search = searchText;
-    return axios.get(baseAddress + '/project/simple/', {
-      headers: {
-        Authorization: 'Bearer ' + accessToken,
-        'User-Company': company?.companyId ?? '',
-      },
-      params: getParams,
-    });
   });
   return projectQuery;
 };
@@ -182,17 +150,15 @@ export interface IUpdateProjectQueryProps {
 }
 
 interface UpdateProjectQueryProps extends BaseAPIProps {
-  searchText?: string;
   onSuccessUpdateCb?: (newProject?: IFullProject) => void;
 }
 const useUpdateProjectQuery = ({
   showNotification,
   company,
   accessToken,
-  searchText,
   onSuccessUpdateCb,
 }: UpdateProjectQueryProps) => {
-  const {handleUpdateProjectQueryData} = useSetProjectQueryData({searchText});
+  const {handleUpdateProjectQueryData} = useSetProjectQueryData({});
   const mutation = useMutation({
     mutationKey: getProjectMutationKey('update'),
     mutationFn: async ({updateData, projectId}: IUpdateProjectQueryProps) => {
@@ -203,9 +169,7 @@ const useUpdateProjectQuery = ({
       if (updateData.contractPrice) {
         body.contractPrice = updateData.contractPrice;
       }
-      // if (updateData.budget) {
-      //   body.budget = updateData.budget;
-      // }
+
       if (updateData.startDate) {
         body.startDate = updateData.startDate;
       }
@@ -257,7 +221,6 @@ const useUpdateProjectQuery = ({
 };
 
 interface AddProjectQueryProps extends BaseAPIProps {
-  searchText?: string;
   onSuccessCb?: (newProject?: Project) => void;
 }
 
@@ -265,10 +228,10 @@ const useAddProjectQuery = ({
   showNotification,
   accessToken,
   company,
-  searchText,
+
   onSuccessCb,
 }: AddProjectQueryProps) => {
-  const {handleAddProjectQueryData} = useSetProjectQueryData({searchText});
+  const {handleAddProjectQueryData} = useSetProjectQueryData({});
   const mutation = useMutation({
     mutationKey: getProjectMutationKey('add'),
     mutationFn: async (newProject: NewProject) => {
@@ -294,7 +257,6 @@ const useAddProjectQuery = ({
 };
 
 interface DeleteProjectQueryProps extends BaseAPIProps {
-  searchText?: string;
   onSuccessCb?: (deletedId?: string) => void;
 }
 
@@ -302,10 +264,9 @@ const useDeleteProjectQuery = ({
   showNotification,
   accessToken,
   company,
-  searchText,
   onSuccessCb,
 }: DeleteProjectQueryProps) => {
-  const {handleDeleteProjectQueryData} = useSetProjectQueryData({searchText});
+  const {handleDeleteProjectQueryData} = useSetProjectQueryData({});
   const mutation = useMutation({
     mutationKey: getProjectMutationKey('delete'),
     mutationFn: async (deletedProjectId: string) => {
@@ -338,84 +299,7 @@ export interface FilterRetrieveProjectListWithDockets {
   searchText?: string;
 }
 
-interface RetrieveProjectsListWithDockets extends BaseAPIProps {
-  onSuccessCb?: Function;
-  filter: FilterRetrieveProjectListWithDockets;
-  enable?: boolean;
-}
-export interface ResponseSuccessRetrieveProjectsListWithDockets {
-  projectId: string | null;
-  siteAddress: string;
-  data: Docket[];
-  docketCount: number;
-}
-
-const useRetrieveProjectListWithDockets = ({
-  company,
-  accessToken,
-  showNotification,
-  onSuccessCb,
-  filter,
-  enable,
-}: RetrieveProjectsListWithDockets) => {
-  const {view, searchText, due, archived} = filter;
-  const qKey = formRetrieveProjectListWithDocketsQKey(filter, company);
-  const projectQuery = useQuery(
-    qKey,
-    () => {
-      let getParams: any = {};
-      if (view) getParams.view = view;
-      if (searchText) getParams.search = searchText;
-      if (due) getParams.due = due;
-      if (archived !== undefined) getParams.archived = archived;
-      return axios.get<ResponseSuccessRetrieveProjectsListWithDockets[]>(
-        baseAddress + '/project/project_with_dockets/',
-        {
-          headers: {
-            Authorization: 'Bearer ' + accessToken,
-            'User-Company': company?.companyId ?? '',
-          },
-          params: getParams,
-        },
-      );
-    },
-    {
-      enabled:
-        company !== undefined && accessToken !== undefined && (enable ?? true),
-      retry: 1,
-      refetchInterval: 5 * 60 * 1000,
-      staleTime: 4 * 60 * 1000,
-      cacheTime: 15 * 60 * 1000,
-      refetchOnMount: true,
-      onSuccess: res => {
-        if (onSuccessCb) onSuccessCb();
-      },
-      onError: () => {
-        // if (showNotification)
-        //   showNotification(
-        //     'SOMETHING WRONG',
-        //     'error',
-        //     'fail to fetch projects',
-        //   );
-      },
-    },
-  );
-  return projectQuery;
-};
-
 //******** PROJECT HELPER FuNCTIONS ******** */
-export const formRetrieveProjectListWithDocketsQKey = (
-  filter: FilterRetrieveProjectListWithDockets,
-  company: Company | undefined,
-) => {
-  const baseQKey = ['project-list-with-dockets'];
-  if (company) baseQKey.push(company.companyId);
-  if (filter.view) baseQKey.push(filter.view);
-  if (filter.searchText) baseQKey.push(filter.searchText);
-  if (filter.due) baseQKey.push(filter.due);
-  if (filter.archived) baseQKey.push(`archived:${filter.archived}`);
-  return baseQKey;
-};
 
 export const formRetrieveSimpleProjectQKey = (
   company: Company | undefined,
@@ -445,7 +329,6 @@ export const getProjectMutationKey = (action: 'add' | 'update' | 'delete') => [
 const ProjectQueryAPI = {
   useUpdateProjectQuery,
   useRetrieveSimpleProjectQuery,
-  useRetrieveProjectListWithDockets,
   useAddProjectQuery,
   useDeleteProjectQuery,
   usePrefetchProjectQuery,

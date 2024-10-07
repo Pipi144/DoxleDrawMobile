@@ -34,7 +34,7 @@ const useExchangeRefreshToken = ({
 }: ExchangeRefreshTokenQueryProps) => {
   const docketQuery = useQuery<AxiosResponse<ITokenResponse, any>>({
     queryKey: authQueryKey,
-    queryFn: async () => {
+    queryFn: async ({queryKey, meta}) => {
       const storageRefreshToken = await getStorageExchangeRFToken();
 
       const requestBody: any = {

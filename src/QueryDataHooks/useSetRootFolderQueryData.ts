@@ -1,75 +1,140 @@
 import React from 'react';
 
 import {useQueryClient} from '@tanstack/react-query';
-import {DoxleFolder} from '../../Models/files';
 import {produce} from 'immer';
-import {
-  getFolderQKey,
-  IFilterGetFolderQueryFilter,
-} from '../../service/DoxleAPI/QueryHookAPI/fileQueryAPI';
-import {useCompany} from '../../Providers/CompanyProvider';
+import {useCompany} from '../Providers/CompanyProvider';
+import {DoxleFolder} from '../Models/files';
+import {getFolderQKey} from '../API/fileQueryAPI';
+import {DefiniteAxiosQueryData} from '../Models/axiosReturn';
 
 type Props = {
-  filter: IFilterGetFolderQueryFilter;
   appendPos?: 'start' | 'end';
   overwrite?: boolean;
 };
-interface SetRootFolderQueryData {
-  handleAddFolder: (newItem: DoxleFolder) => void;
-  handleEditFolder: (newItem: DoxleFolder) => void;
-  handleDeleteMultipleFolders: (deletedIds: string[]) => void;
-}
+
 const useSetRootFolderQueryData = ({
-  filter,
   appendPos = 'end',
   overwrite = true,
-}: Props): SetRootFolderQueryData => {
+}: Props) => {
   const {company} = useCompany();
   const queryClient = useQueryClient();
-  const qKey = getFolderQKey(filter, company);
 
   const handleAddFolder = (newItem: DoxleFolder) => {
-    const queryData = queryClient.getQueryData(qKey);
-    if (queryData && overwrite) {
-      queryClient.setQueryData(qKey, (old: any) =>
-        produce(old, (draft: any) => {
-          if (appendPos === 'start')
-            (draft.data as DoxleFolder[]).unshift(newItem);
-          else (draft.data as DoxleFolder[]).push(newItem);
+    const qKey = getFolderQKey(
+      {
+        projectId: newItem.project ?? undefined,
+        docketId: newItem.docket ?? undefined,
+      },
+      company,
+    );
+    const dataActive = queryClient.getQueryCache().findAll({
+      predicate: query =>
+        qKey.every(key => query.queryKey.includes(key)) && query.isActive(),
+    });
+    const dataInactive = queryClient.getQueryCache().findAll({
+      predicate: query =>
+        qKey.every(key => query.queryKey.includes(key)) && !query.isActive(),
+    });
+    dataActive.forEach(query => {
+      if (overwrite) {
+        queryClient.setQueryData<DefiniteAxiosQueryData<DoxleFolder[]>>(
+          query.queryKey,
+          old => {
+            if (old) {
+              return produce(old, draft => {
+                if (appendPos === 'start') draft.data.unshift(newItem);
+                else (draft.data as DoxleFolder[]).push(newItem);
 
-          return draft;
-        }),
-      );
-    } else queryClient.invalidateQueries(qKey);
+                return draft;
+              });
+            } else queryClient.refetchQueries({queryKey: query.queryKey});
+          },
+        );
+      } else queryClient.refetchQueries({queryKey: query.queryKey});
+    });
+    dataInactive.forEach(query => {
+      queryClient.removeQueries({queryKey: query.queryKey});
+    });
   };
 
   const handleEditFolder = (newItem: DoxleFolder) => {
-    const queryData = queryClient.getQueryData(qKey);
-    if (queryData && overwrite) {
-      queryClient.setQueryData(qKey, (old: any) => {
-        return produce(old, (draft: any) => {
-          const item = (draft.data as DoxleFolder[]).find(
-            item => item.folderId === newItem.folderId,
-          );
-          if (item) Object.assign(item, newItem);
-          return draft;
-        });
-      });
-    } else queryClient.invalidateQueries(qKey);
+    const qKey = getFolderQKey(
+      {
+        projectId: newItem.project ?? undefined,
+        docketId: newItem.docket ?? undefined,
+      },
+      company,
+    );
+    const dataActive = queryClient.getQueryCache().findAll({
+      predicate: query =>
+        qKey.every(key => query.queryKey.includes(key)) && query.isActive(),
+    });
+    const dataInactive = queryClient.getQueryCache().findAll({
+      predicate: query =>
+        qKey.every(key => query.queryKey.includes(key)) && !query.isActive(),
+    });
+    dataActive.forEach(query => {
+      if (overwrite) {
+        queryClient.setQueryData<DefiniteAxiosQueryData<DoxleFolder[]>>(
+          query.queryKey,
+          old => {
+            if (old) {
+              return produce(old, draft => {
+                const item = draft.data.find(
+                  item => item.folderId === newItem.folderId,
+                );
+                if (item) Object.assign(item, newItem);
+                return draft;
+              });
+            } else queryClient.refetchQueries({queryKey: query.queryKey});
+          },
+        );
+      } else queryClient.refetchQueries({queryKey: query.queryKey});
+    });
+    dataInactive.forEach(query => {
+      queryClient.removeQueries({queryKey: query.queryKey});
+    });
   };
-  const handleDeleteMultipleFolders = (deletedIds: string[]) => {
-    const queryData = queryClient.getQueryData(qKey);
-    if (queryData && overwrite) {
-      queryClient.setQueryData(qKey, (old: any) => {
-        return produce(old, (draft: any) => {
-          draft.data = (draft.data as DoxleFolder[]).filter(
-            oriItem =>
-              !deletedIds.some(deletedId => deletedId === oriItem.folderId),
-          );
-          return draft;
-        });
-      });
-    } else queryClient.invalidateQueries(qKey);
+  const handleDeleteMultipleFolders = (deletedFolders: DoxleFolder[]) => {
+    const qKey = getFolderQKey(
+      {
+        projectId: deletedFolders[0].project ?? undefined,
+        docketId: deletedFolders[0].docket ?? undefined,
+      },
+      company,
+    );
+    const dataActive = queryClient.getQueryCache().findAll({
+      predicate: query =>
+        qKey.every(key => query.queryKey.includes(key)) && query.isActive(),
+    });
+    const dataInactive = queryClient.getQueryCache().findAll({
+      predicate: query =>
+        qKey.every(key => query.queryKey.includes(key)) && !query.isActive(),
+    });
+    dataActive.forEach(query => {
+      if (overwrite) {
+        queryClient.setQueryData<DefiniteAxiosQueryData<DoxleFolder[]>>(
+          query.queryKey,
+          old => {
+            if (old) {
+              return produce(old, draft => {
+                draft.data = draft.data.filter(
+                  oriItem =>
+                    !deletedFolders.some(
+                      deletedFolder =>
+                        deletedFolder.folderId === oriItem.folderId,
+                    ),
+                );
+                return draft;
+              });
+            } else queryClient.refetchQueries({queryKey: query.queryKey});
+          },
+        );
+      } else queryClient.refetchQueries({queryKey: query.queryKey});
+    });
+    dataInactive.forEach(query => {
+      queryClient.removeQueries({queryKey: query.queryKey});
+    });
   };
   return {handleAddFolder, handleEditFolder, handleDeleteMultipleFolders};
 };
