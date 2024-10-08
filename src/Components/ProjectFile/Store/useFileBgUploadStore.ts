@@ -21,6 +21,7 @@ import {
 } from '../Provider/StorageModels';
 import {TAPIServerFile} from '../../../Models/utilityType';
 import {
+  deleteCacheInfo,
   getCachedFileInfo,
   moveFileToCache,
   saveCachedFileList,
@@ -111,9 +112,22 @@ export const useFileBgUploadStore = create(
     getInitialCachedFiles: async () => {
       try {
         const listFile = await getCachedFileInfo();
+
         set(state => {
-          state.cachedFiles = listFile;
+          state.cachedFiles = listFile.filter(
+            file => file.expired >= Math.floor(Date.now() / 1000),
+          );
         });
+        saveCachedFileList(get().cachedFiles);
+        //perform cleaning storage
+        const expiredFiles = listFile.filter(
+          file => file.expired < Math.floor(Date.now() / 1000),
+        );
+        if (expiredFiles.length > 0) {
+          for await (const file of expiredFiles) {
+            await deleteCacheInfo(file);
+          }
+        }
       } catch (error) {
         console.log('ERROR getInitialCachedFiles:', error);
       }

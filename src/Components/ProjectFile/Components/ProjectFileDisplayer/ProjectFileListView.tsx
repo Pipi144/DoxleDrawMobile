@@ -57,7 +57,7 @@ const ProjectFileListView = (props: Props) => {
         item =>
           item.uploadVariant === 'Project' &&
           item.hostId === selectedProject?.projectId &&
-          (item.status === 'pending' || item.status === 'processing'),
+          item.status !== 'success',
       ),
     [selectedProject, cachedFiles],
   );

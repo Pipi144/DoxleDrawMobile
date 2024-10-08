@@ -22,6 +22,7 @@ import {
 import {
   checkPathExist,
   createLocalFolder,
+  deleteFileSystemWithPath,
 } from '../../../Utilities/FunctionUtilities';
 import {
   ALL_CACHED_FILES,
@@ -118,5 +119,21 @@ export const moveFileToCache = async ({
   } catch (error) {
     console.log('ERROR moveFileToCache:', error);
     return;
+  }
+};
+
+export const deleteCacheInfo = async (
+  item: TFileBgUploadData,
+): Promise<void> => {
+  try {
+    const {file, thumbnailPath} = item;
+    if (await checkPathExist(file.uri)) {
+      await deleteFileSystemWithPath(file.uri);
+    }
+    if (thumbnailPath && (await checkPathExist(thumbnailPath))) {
+      await deleteFileSystemWithPath(thumbnailPath);
+    }
+  } catch (error) {
+    console.log('ERROR deleteCacheInfo:', error);
   }
 };

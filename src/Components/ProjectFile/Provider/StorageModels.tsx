@@ -24,7 +24,7 @@ export type TFileBgUploadData = {
   thumbnailPath?: string;
   hostId: string; //! could be any id to extract a list of video belong to a certain hostID
   status: TFileBgUploadStatus;
-  expired: number | null; //! null it means the video is deleted and no longer cached
+  expired: number;
 
   errorMessage?: string;
   uploadVariant: TFileBgUploadVariants;
