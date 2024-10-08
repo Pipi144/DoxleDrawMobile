@@ -9,16 +9,16 @@ import {
 } from '../Utilities/FunctionUtilities';
 import {DocumentDirectoryPath, readFile, writeFile} from 'react-native-fs';
 
-export const ROOT_DOXLE_CACHE_VIDEO_FOLDER_PATH =
+export const ROOT_DOXLE_CACHE_FOLDER_PATH =
   DocumentDirectoryPath + '/PendingVideo';
-export const ROOT_DOXLE_PENDING_VIDEO_INFO_LIST =
-  ROOT_DOXLE_CACHE_VIDEO_FOLDER_PATH + '/pendingVideoListInfo';
-export const ROOT_DOXLE_ALL_VIDEO_INFO_LIST =
-  ROOT_DOXLE_CACHE_VIDEO_FOLDER_PATH + '/videoListInfo';
-export const ROOT_DOXLE_PENDING_VIDEO_THUMBNAILS =
-  ROOT_DOXLE_CACHE_VIDEO_FOLDER_PATH + '/thumbnails';
+export const ROOT_DOXLE_PENDING_INFO_LIST =
+  ROOT_DOXLE_CACHE_FOLDER_PATH + '/pendingVideoListInfo';
+export const ROOT_DOXLE_ALL_INFO_LIST =
+  ROOT_DOXLE_CACHE_FOLDER_PATH + '/videoListInfo';
+export const ROOT_DOXLE_PENDING_THUMBNAILS =
+  ROOT_DOXLE_CACHE_FOLDER_PATH + '/thumbnails';
 export type TBgUploadStatus = 'success' | 'pending' | 'error';
-export type TBgUploadVariants = 'QA' | 'Comment';
+export type TBgUploadVariants = 'QA' | 'Comment' | 'File';
 
 export type IBgVideoUploadData<T = unknown> = {
   videoFile: TAPIServerFile;
@@ -69,7 +69,7 @@ interface IBgUploadVideoStore {
   setShouldUploadInWeakConnection: (show: boolean) => void;
 }
 
-export const useBgUploadVideoStore = create(
+export const useBgUploadStore = create(
   immer<IBgUploadVideoStore>((set, get) => ({
     localPendingVideoList: [],
 
@@ -306,13 +306,13 @@ export const getPendingVideoListFile = async (
   status?: TBgUploadStatus[],
 ): Promise<IBgVideoUploadBatch[]> => {
   try {
-    if (!(await checkPathExist(ROOT_DOXLE_CACHE_VIDEO_FOLDER_PATH))) {
-      await createLocalFolder(ROOT_DOXLE_CACHE_VIDEO_FOLDER_PATH);
+    if (!(await checkPathExist(ROOT_DOXLE_CACHE_FOLDER_PATH))) {
+      await createLocalFolder(ROOT_DOXLE_CACHE_FOLDER_PATH);
       return [];
     }
-    if (!(await checkPathExist(ROOT_DOXLE_PENDING_VIDEO_INFO_LIST))) return [];
+    if (!(await checkPathExist(ROOT_DOXLE_PENDING_INFO_LIST))) return [];
     const videoListFile = JSON.parse(
-      await readFile(ROOT_DOXLE_PENDING_VIDEO_INFO_LIST),
+      await readFile(ROOT_DOXLE_PENDING_INFO_LIST),
     ) as IBgVideoUploadBatch[];
 
     return videoListFile.filter(item =>
@@ -327,9 +327,9 @@ export const getPendingVideoListFile = async (
 
 export const savePendingVideoList = async (list: IBgVideoUploadBatch[]) => {
   try {
-    if (!(await checkPathExist(ROOT_DOXLE_CACHE_VIDEO_FOLDER_PATH)))
-      await createLocalFolder(ROOT_DOXLE_CACHE_VIDEO_FOLDER_PATH);
-    await writeFile(ROOT_DOXLE_PENDING_VIDEO_INFO_LIST, JSON.stringify(list));
+    if (!(await checkPathExist(ROOT_DOXLE_CACHE_FOLDER_PATH)))
+      await createLocalFolder(ROOT_DOXLE_CACHE_FOLDER_PATH);
+    await writeFile(ROOT_DOXLE_PENDING_INFO_LIST, JSON.stringify(list));
   } catch (error) {
     console.log('FAILED savePendingVideoList:', error);
     return false;
@@ -340,13 +340,13 @@ export const getCacheVideoListFile = async (): Promise<
   IBgVideoUploadBatch[]
 > => {
   try {
-    if (!(await checkPathExist(ROOT_DOXLE_CACHE_VIDEO_FOLDER_PATH))) {
-      await createLocalFolder(ROOT_DOXLE_CACHE_VIDEO_FOLDER_PATH);
+    if (!(await checkPathExist(ROOT_DOXLE_CACHE_FOLDER_PATH))) {
+      await createLocalFolder(ROOT_DOXLE_CACHE_FOLDER_PATH);
       return [];
     }
-    if (!(await checkPathExist(ROOT_DOXLE_ALL_VIDEO_INFO_LIST))) return [];
+    if (!(await checkPathExist(ROOT_DOXLE_ALL_INFO_LIST))) return [];
     const videoListFile = JSON.parse(
-      await readFile(ROOT_DOXLE_ALL_VIDEO_INFO_LIST),
+      await readFile(ROOT_DOXLE_ALL_INFO_LIST),
     ) as IBgVideoUploadBatch[];
     // console.log('EXPIRED PROJECT FILE:', expiredProjectFile);
 
@@ -360,9 +360,9 @@ export const getCacheVideoListFile = async (): Promise<
 
 export const saveCacheVideoListFile = async (list: IBgVideoUploadBatch[]) => {
   try {
-    if (!(await checkPathExist(ROOT_DOXLE_CACHE_VIDEO_FOLDER_PATH)))
-      await createLocalFolder(ROOT_DOXLE_CACHE_VIDEO_FOLDER_PATH);
-    await writeFile(ROOT_DOXLE_ALL_VIDEO_INFO_LIST, JSON.stringify(list));
+    if (!(await checkPathExist(ROOT_DOXLE_CACHE_FOLDER_PATH)))
+      await createLocalFolder(ROOT_DOXLE_CACHE_FOLDER_PATH);
+    await writeFile(ROOT_DOXLE_ALL_INFO_LIST, JSON.stringify(list));
   } catch (error) {
     console.log('FAILED saveCacheVideoListFile:', error);
     return false;

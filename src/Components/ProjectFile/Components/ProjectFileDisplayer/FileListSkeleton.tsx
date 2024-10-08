@@ -87,6 +87,7 @@ const SkeletonRow: React.FC = () => {
         width: '100%',
         flexDirection: 'row',
         alignItems: 'center',
+        marginBottom: 8,
       }}
       isLoading={true}>
       <Text

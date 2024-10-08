@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import {useBgUploadVideoStore} from '../GeneralStore/useBgUploadVideoStore';
+import {useBgUploadStore} from '../GeneralStore/useBgUploadStore';
 import {useAuth} from './AuthProvider';
 import {useCompany} from './CompanyProvider';
 import {useConnection} from './InternetConnectionProvider';
@@ -28,7 +28,7 @@ const DoxleUploadVideoBgProvider = (children: any) => {
     setIsConnectionPromptShow,
     shouldUploadInWeakConnection,
     setShouldUploadInWeakConnection,
-  } = useBgUploadVideoStore(
+  } = useBgUploadStore(
     useShallow(state => ({
       getInitialPendingVideoList: state.getInitialPendingVideoList,
       localPendingVideoList: state.localPendingVideoList,

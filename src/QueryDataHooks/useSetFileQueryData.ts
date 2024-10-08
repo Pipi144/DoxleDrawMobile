@@ -122,7 +122,6 @@ const useSetFileQueryData = ({appendPos = 'end', overwrite = true}: Props) => {
   };
 
   const handleAddMultipleFile = (newFiles: DoxleFile[]) => {
-    console.log('newFiles', newFiles);
     const qKey = getFileQKey(
       {
         projectId: newFiles[0].project ?? undefined,
@@ -131,7 +130,7 @@ const useSetFileQueryData = ({appendPos = 'end', overwrite = true}: Props) => {
       },
       company,
     );
-    console.log('qKey', qKey);
+
     const dataActive = queryClient.getQueryCache().findAll({
       predicate: query =>
         qKey.every(key => query.queryKey.includes(key)) && query.isActive(),

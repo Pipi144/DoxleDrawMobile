@@ -8,7 +8,7 @@ const queryClientManager = new QueryClientManager({
   // @ts-ignore
   queryClient,
 });
-Reactotron.setAsyncStorageHandler(AsyncStorage)
+const tron = Reactotron.setAsyncStorageHandler(AsyncStorage)
   .configure({
     name: 'Doxle',
   })

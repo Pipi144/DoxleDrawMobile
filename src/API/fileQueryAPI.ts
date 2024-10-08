@@ -17,6 +17,9 @@ import {DoxleFile, DoxleFolder} from '../Models/files';
 import {AxiosInfiniteReturn} from '../Models/axiosReturn';
 import useSetRootFolderQueryData from '../QueryDataHooks/useSetRootFolderQueryData';
 import useSetFileQueryData from '../QueryDataHooks/useSetFileQueryData';
+import {useCallback, useRef, useState} from 'react';
+import {TAPIServerFile} from '../Models/utilityType';
+import useUploadFileState from '../CustomHooks/useUploadFileState';
 
 export interface IFilterGetFolderQueryFilter {
   projectId?: string;
@@ -263,19 +266,13 @@ interface AddFileQueryProps extends BaseAPIProps {
   uploadProgressCallback?: (percentComplete: number) => void;
 }
 
-export type TAddDoxleFile = {
-  name: string | null;
-  type: string | null;
-  uri: string;
-};
 export interface AddFileMutateProps {
   docketId?: string;
   projectId?: string;
   folderId?: string;
-  files: TAddDoxleFile[];
+  files: TAPIServerFile[];
 }
 
-//*  M2 THIS IS CUSTOM HOOK THAT IS USED TO DECLARE THE USE MUTATION
 const useAddFilesQuery = ({
   accessToken,
   company,
@@ -301,7 +298,9 @@ const useAddFilesQuery = ({
       if (folderId) formData.append('folderId', folderId);
       //* LOOP THROUGH EACH FILE AND PASS IT TO THE BACK END VIA FORM DATA
       files.forEach(file => {
-        formData.append('files', file);
+        const {fileId, ...rest} = file;
+        formData.append('files', rest);
+        formData.append('fileIds', fileId);
       });
       return axios.post<{
         files: DoxleFile[];
@@ -344,6 +343,124 @@ const useAddFilesQuery = ({
 
   // * CUSTOM HOOK ALWAYS NEEDS A RETURN THE HOOK
   return {...addFileMutation, mutate: mutate};
+};
+interface IAddSingleFileQueryProps extends BaseAPIProps {
+  onCancelUpload?: () => void;
+  onSuccessUpload?: (files: DoxleFile[]) => void;
+  onErrorUpload?: (payload: IAddSingleFileMutateProps, error?: any) => void;
+  onProcessUpload?: (payload: IAddSingleFileMutateProps) => void;
+}
+export interface IAddSingleFileMutateProps {
+  docketId?: string;
+  projectId?: string;
+  folderId?: string;
+  file: TAPIServerFile;
+}
+const useBgUpoadSingleFileQuery = ({
+  company,
+  onCancelUpload,
+  onSuccessUpload,
+  onErrorUpload,
+  onProcessUpload,
+  accessToken,
+}: IAddSingleFileQueryProps) => {
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const lastTimeRef = useRef<number | null>(null);
+  const lastLoadedRef = useRef<number | null>(null);
+
+  const {updateFileUploadState, destroyState} = useUploadFileState({});
+  const addFileMutation = useMutation({
+    mutationKey: getFileMutationKey('bg-upload-single'),
+    mutationFn: async ({
+      file,
+      docketId,
+      projectId,
+      folderId,
+    }: IAddSingleFileMutateProps) => {
+      const formData = new FormData();
+      if (projectId) formData.append('projectId', projectId);
+      if (docketId) formData.append('docketId', docketId);
+      if (folderId) formData.append('folderId', folderId);
+      const {fileId, size, ...rest} = file;
+      formData.append('files', rest);
+      formData.append('fileIds', fileId);
+      lastTimeRef.current = Date.now();
+      lastLoadedRef.current = 0;
+      abortControllerRef.current = new AbortController();
+      return axios.post<{
+        files: DoxleFile[];
+        errors: any;
+      }>(baseAddress + '/storage/file/', formData, {
+        headers: {
+          Authorization: 'Bearer ' + accessToken,
+          'User-Company': company?.companyId,
+          'Content-Type': 'multipart/form-data',
+        },
+
+        onUploadProgress: progressEvent => {
+          const currentTime = Date.now();
+          const currentLoaded = progressEvent.loaded;
+          const total = progressEvent.total || (file.size ?? 1);
+          let estimateTimeLeft = 0;
+          if (lastTimeRef.current && lastLoadedRef.current !== null) {
+            const timeDiff = (currentTime - lastTimeRef.current) / 1000; // in seconds
+            const bytesDiff = currentLoaded - lastLoadedRef.current;
+            const uploadSpeed = bytesDiff / timeDiff; // bytes per second
+
+            estimateTimeLeft = Math.round(
+              (total - currentLoaded) / uploadSpeed,
+            ); // in seconds
+          }
+
+          const percentage = Math.round((currentLoaded / total) * 100);
+
+          updateFileUploadState({
+            fileId,
+            progress: percentage,
+            estimatedTime: estimateTimeLeft,
+          });
+
+          lastTimeRef.current = currentTime;
+          lastLoadedRef.current = currentLoaded;
+        },
+        signal: abortControllerRef.current?.signal,
+      });
+    },
+    onMutate(variables) {
+      if (onProcessUpload) {
+        onProcessUpload(variables);
+      }
+    },
+    onSuccess(response, variables, context) {
+      if (onSuccessUpload) {
+        onSuccessUpload(response.data.files);
+      }
+    },
+
+    onError(error, variables, context) {
+      if (onErrorUpload) onErrorUpload(variables, error);
+    },
+    onSettled(data, error, variable) {
+      if (abortControllerRef.current) {
+        abortControllerRef.current = null;
+      }
+      if (variable.file.fileId) {
+        destroyState(variable.file.fileId);
+      }
+    },
+    retry: false,
+  });
+  const reset = useCallback(() => {
+    if (onCancelUpload) onCancelUpload();
+    abortControllerRef.current?.abort();
+    addFileMutation.reset();
+  }, [addFileMutation.reset, onCancelUpload]);
+  return {
+    ...addFileMutation,
+    mutate: (params: IAddSingleFileMutateProps) =>
+      addFileMutation.mutate(params),
+    reset,
+  };
 };
 
 interface UpdateFolderQueryProps extends BaseAPIProps {
@@ -610,7 +727,9 @@ export const getFileQKey = (
 export const getFolderMutationKey = (action: 'add' | 'update' | 'delete') => {
   return [`${action}-folder-mutation`];
 };
-export const getFileMutationKey = (action: 'add' | 'update' | 'delete') => {
+export const getFileMutationKey = (
+  action: 'add' | 'update' | 'delete' | 'bg-upload-single',
+) => {
   return [`${action}-file-mutation`];
 };
 const FilesAPI = {
@@ -624,6 +743,7 @@ const FilesAPI = {
   useAddFolder,
   useUpdateFolder,
   useDeleteFolder,
+  useBgUpoadSingleFileQuery,
 };
 
 export default FilesAPI;

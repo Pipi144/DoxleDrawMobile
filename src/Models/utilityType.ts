@@ -25,6 +25,8 @@ export type TAPIServerFile = {
   name: string;
   type: string;
   uri: string;
+  size?: number;
+  fileId: string;
 };
 
 export interface ISVGResponsiveCustom extends SvgProps {

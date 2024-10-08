@@ -3208,6 +3208,7 @@ __metadata:
     react: 18.3.1
     react-native: 0.75.4
     react-native-blob-util: ^0.19.11
+    react-native-circular-progress: ^1.4.0
     react-native-clean-project: ^4.0.3
     react-native-compressor: ^1.9.0
     react-native-device-info: ^13.0.0
@@ -3232,6 +3233,7 @@ __metadata:
     react-native-screens: ^3.34.0
     react-native-splash-screen: ^3.3.0
     react-native-svg: ^15.7.1
+    react-native-uuid: ^2.0.2
     react-native-vector-icons: ^10.2.0
     react-native-video: ^6.6.4
     react-test-renderer: 18.3.1
@@ -8554,6 +8556,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-circular-progress@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "react-native-circular-progress@npm:1.4.0"
+  dependencies:
+    prop-types: ^15.8.1
+  peerDependencies:
+    react: ">=16.0.0"
+    react-native: ">=0.50.0"
+    react-native-svg: ">=7.0.0"
+  checksum: e98425c57c82964be1b0bf8378f3fa85513013b9c9c7c3a7d4be9d193ce683cbc9877f454f08f5322d07e620faa1381a9fe8ff64f78fc295278909f329a47861
+  languageName: node
+  linkType: hard
+
 "react-native-clean-project@npm:^4.0.3":
   version: 4.0.3
   resolution: "react-native-clean-project@npm:4.0.3"
@@ -8857,6 +8872,13 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: ad7f711883ee45673486fe6bedadf8490bb06fd36e6de5d2f00898e6ac6c61ed34a5a8f7e6b25684c93e44ab51f9ea76642abfcca6a29462bc525f97204e6f41
+  languageName: node
+  linkType: hard
+
+"react-native-uuid@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "react-native-uuid@npm:2.0.2"
+  checksum: 149f65549132a240ac237f4db34063fd08473e4b3a9b5958e3d0d6722cf10754efb222b1c6085a3dc42e0718ca9575b38cd5535ae83a96534dde0f54d343e915
   languageName: node
   linkType: hard
 

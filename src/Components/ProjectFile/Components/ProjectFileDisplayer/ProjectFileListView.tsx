@@ -15,6 +15,11 @@ import {DoxleFile, DoxleFolder} from '../../../../Models/files';
 import DoxleEmptyPlaceholder from '../../../DesignPattern/DoxleEmptyPlaceholder/DoxleEmptyPlaceholder';
 import {ErrorFetchingBanner} from '../../../DesignPattern/DoxleBanners';
 import ListLoadingMoreBottom from '../../../../Utilities/AnimationScreens/ListLoadingMoreBottom/ListLoadingMoreBottom';
+import {useFileBgUploadStore} from '../../Store/useFileBgUploadStore';
+import {useShallow} from 'zustand/shallow';
+import {useCompany} from '../../../../Providers/CompanyProvider';
+import {TFileBgUploadData} from '../../Provider/StorageModels';
+import FilePendingItem from './FilePendingItem';
 
 type Props = {};
 
@@ -31,35 +36,66 @@ const ProjectFileListView = (props: Props) => {
     handleFetchNextPage,
     isFetchingNextPage,
   } = useGetProjectFileQuery({});
-
-  const combinedFileFolders: Array<DoxleFile | DoxleFolder> = useMemo(
+  const {isLoaderShow, handleRefetchList, isListRefetching} =
+    useProjectFileListView({});
+  const {selectedProject} = useCompany();
+  const {cachedFiles} = useFileBgUploadStore(
+    useShallow(state => ({
+      // cachedProjectFile: state.cachedFiles.filter(
+      //   item =>
+      //     item.uploadVariant === 'Project' &&
+      //     item.hostId === selectedProject?.projectId &&
+      //     (item.status === 'pending' || item.status === 'processing'),
+      // ),
+      cachedFiles: state.cachedFiles,
+    })),
+  );
+  const pendingFiles = useMemo(
+    () =>
+      cachedFiles.filter(
+        item =>
+          item.uploadVariant === 'Project' &&
+          item.hostId === selectedProject?.projectId &&
+          (item.status === 'pending' || item.status === 'processing'),
+      ),
+    [selectedProject, cachedFiles],
+  );
+  const combinedFileFolders: Array<
+    DoxleFile | DoxleFolder | TFileBgUploadData
+  > = useMemo(
     () => [
+      ...pendingFiles,
       ...folderListSuccess.sort((a, b) =>
         a.folderName < b.folderName ? -1 : 1,
       ),
       ...fileListSuccess.sort((a, b) => (a.fileName < b.fileName ? -1 : 1)),
     ],
-    [folderListSuccess, fileListSuccess],
+    [folderListSuccess, fileListSuccess, pendingFiles],
   );
-  const {isLoaderShow, handleRefetchList, isListRefetching} =
-    useProjectFileListView({});
 
   //* render list
   const layout = LinearTransition.springify().damping(16);
   const renderItem = useCallback(
-    (props: {item: DoxleFile | DoxleFolder; index: number}) =>
+    (props: {
+      item: DoxleFile | DoxleFolder | TFileBgUploadData;
+      index: number;
+    }) =>
       (props.item as DoxleFile).fileId !== undefined ? (
         <ProjectFileListItem fileItem={props.item as DoxleFile} />
-      ) : (
+      ) : (props.item as DoxleFolder).folderId !== undefined ? (
         <ProjectFileListItem folderItem={props.item as DoxleFolder} />
+      ) : (
+        <FilePendingItem item={props.item as TFileBgUploadData} />
       ),
     [],
   );
   const keyExtractor = useCallback(
-    (item: DoxleFile | DoxleFolder, index: number) =>
+    (item: DoxleFile | DoxleFolder | TFileBgUploadData, index: number) =>
       (item as DoxleFolder).folderId !== undefined
         ? `listItem#${(item as DoxleFolder).folderId}`
-        : `listItem#${(item as DoxleFile).fileId}`,
+        : (item as DoxleFile).fileId !== undefined
+        ? `listItem#${(item as DoxleFile).fileId}`
+        : (item as TFileBgUploadData).file.fileId,
     [],
   );
 
