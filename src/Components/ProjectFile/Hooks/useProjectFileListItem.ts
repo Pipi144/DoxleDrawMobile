@@ -7,8 +7,6 @@ import {useProjectFileStore} from '../Store/useProjectFileStore';
 import {useIsMutating} from '@tanstack/react-query';
 import {TProjectFileTabStack} from '../Routes/ProjectFileRouteTypes';
 import {useShallow} from 'zustand/react/shallow';
-import AntIcon from 'react-native-vector-icons/AntDesign';
-import Animated from 'react-native-reanimated';
 import {DoxleFile, DoxleFolder} from '../../../Models/files';
 import {
   DeleteFileParams,
@@ -19,8 +17,6 @@ import {
 } from '../../../API/fileQueryAPI';
 
 type Props = {fileItem?: DoxleFile; folderItem?: DoxleFolder};
-
-const AnimatedAntIcon = Animated.createAnimatedComponent(AntIcon);
 
 const useProjectFileListItem = ({fileItem, folderItem}: Props) => {
   const [isLoadingImg, setIsLoadingImg] = useState(true);
@@ -88,7 +84,9 @@ const useProjectFileListItem = ({fileItem, folderItem}: Props) => {
       predicate: query =>
         Boolean(
           folderItem &&
-            (query.state.variables as string[]).includes(folderItem?.folderId),
+            (query.state.variables as DoxleFolder[]).some(
+              d => d.folderId === folderItem?.folderId,
+            ),
         ),
     }) > 0;
 

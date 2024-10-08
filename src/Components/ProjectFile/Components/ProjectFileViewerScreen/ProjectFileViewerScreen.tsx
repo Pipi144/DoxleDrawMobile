@@ -11,6 +11,9 @@ import VideoPlayer from 'react-native-media-console';
 import {useAnimations} from '@react-native-media-console/reanimated';
 import Animated from 'react-native-reanimated';
 import {FasterImageView} from '@candlefinance/faster-image';
+import {ActivityIndicator} from 'react-native-paper';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import MateIcon from 'react-native-vector-icons/MaterialIcons';
 type Props = {navigation: any};
 
 const AnimatedImage = Animated.createAnimatedComponent(FasterImageView);
@@ -26,7 +29,10 @@ const ProjectFileViewerScreen = (props: Props) => {
     imageHeight,
     url,
     ITEM_WIDTH,
+    isLoadingImage,
+    isImageError,
   } = useProjectFileViewerScreen();
+  const {staticMenuColor, doxleFontSize} = useDOXLETheme();
   return (
     <StyledProjectFileViewerScreen $insetTop={8} onLayout={getLayoutEditStage}>
       {type.toLowerCase() === 'application/pdf' ? (
@@ -68,9 +74,30 @@ const ProjectFileViewerScreen = (props: Props) => {
                   );
                   setIsLoadingImage(false);
                 }}
+                onError={() => {
+                  setIsLoadingImage(false);
+                  setisImageError(true);
+                }}
                 source={{url: url, resizeMode: 'contain'}}
               />
             </View>
+
+            {isLoadingImage && (
+              <ActivityIndicator
+                color={staticMenuColor.staticWhiteFontColor}
+                size={doxleFontSize.pageTitleFontSize}
+                style={styles.loaderStyle}
+              />
+            )}
+
+            {isImageError && (
+              <MateIcon
+                name="image-not-supported"
+                style={styles.loaderStyle}
+                size={doxleFontSize.pageTitleFontSize * 2}
+                color={staticMenuColor.staticWhiteFontColor}
+              />
+            )}
           </StyledZoomableStageView>
         )
       ) : type.toLowerCase().includes('mp4') ||
@@ -107,5 +134,10 @@ const styles = StyleSheet.create({
 
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  loaderStyle: {
+    position: 'absolute',
+    zIndex: 100,
+    alignSelf: 'center',
   },
 });

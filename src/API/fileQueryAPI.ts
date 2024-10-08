@@ -163,7 +163,7 @@ const useGetFilesInsideFolderQuery = ({
     company: company?.companyId,
   };
   if (filter.folderId) getParams.folderId = filter.folderId;
-
+  console.log('QKEY', queryKey);
   // console.log('%cGET-FILES-INSIDE-FOLDER-QUERY = FOLDER-ID: ', 'background:red; color:white;', currentFolderName, )
   const url = baseAddress + '/storage/file/';
   const filesQuery = useInfiniteQuery({

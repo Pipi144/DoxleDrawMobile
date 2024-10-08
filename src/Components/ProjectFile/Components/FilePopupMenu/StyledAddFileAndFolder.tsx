@@ -8,7 +8,7 @@ export const StyledAddMenuRootModeContainer = styled(Animated.View)`
   position: relative;
   background-color: ${p => p.theme.staticMenuColor.staticBg};
   border-radius: 12px;
-  width: ${p => (p.theme.deviceType === 'Smartphone' ? 200 : 240)}px;
+  width: ${p => (p.theme.deviceType === 'Smartphone' ? 240 : 280)}px;
 `;
 
 export const StyledAddMenuBtnText = styled.Text<{
@@ -27,5 +27,5 @@ export const StyledAddFileFolderModeContainer = styled(Animated.View)<{}>`
   position: relative;
   background-color: ${p => p.theme.staticMenuColor.staticBg};
   border-radius: 12px;
-  width: ${p => (p.theme.deviceType === 'Smartphone' ? 200 : 240)}px;
+  width: ${p => (p.theme.deviceType === 'Smartphone' ? 240 : 280)}px;
 `;

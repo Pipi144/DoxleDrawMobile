@@ -80,7 +80,9 @@ const useProjectFileGridItem = ({fileItem, folderItem}: Props) => {
       predicate: query =>
         Boolean(
           folderItem &&
-            (query.state.variables as string[]).includes(folderItem?.folderId),
+            (query.state.variables as DoxleFolder[]).some(
+              d => d.folderId === folderItem?.folderId,
+            ),
         ),
     }) > 0;
   return {

@@ -80,6 +80,9 @@ const AppModalHeader = (props: NativeStackHeaderProps) => {
       <Popover
         isVisible={openPopupMenu}
         onRequestClose={() => setOpenPopupMenu(false)}
+        popoverStyle={{
+          backgroundColor: 'transparent',
+        }}
         from={
           <DoxleAnimatedButton
             hitSlop={30}

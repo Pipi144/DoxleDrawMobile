@@ -10,7 +10,7 @@ const queryClientManager = new QueryClientManager({
 });
 Reactotron.setAsyncStorageHandler(AsyncStorage)
   .configure({
-    name: 'React Native Demo',
+    name: 'Doxle',
   })
   .useReactNative({
     asyncStorage: false, // there are more options to the async storage.

@@ -161,6 +161,7 @@ export const StyledFolderFilesGridViewContainer = styled(Animated.View)`
 export const StyledFileImageWrapper = styled(FasterImageView)<{$width: number}>`
   width: ${p => p.$width}px;
   aspect-ratio: 1;
+  overflow: hidden;
 `;
 export const StyledListFileInfoText = styled.Text<{}>`
   font-family: ${p => p.theme.DOXLE_FONT.secondaryTitleFont};

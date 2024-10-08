@@ -25,7 +25,7 @@ export interface DoxleFile {
   created: TISODateTime | string;
   modified: TISODateTime | string;
   folderName: string | null;
-  folderId: string | null;
+  folder: string | null;
   docket: string | null;
   project: string | null;
   company: string | null;

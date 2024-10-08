@@ -22,13 +22,12 @@ import {useCallback, useEffect, useState} from 'react';
 import {useShallow} from 'zustand/react/shallow';
 
 import {TProjectFileTabStack} from '../Routes/ProjectFileRouteTypes';
-import {useDOXLETheme} from '../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
 import {useOrientation} from '../../../Providers/OrientationContext';
 import {useAppModalHeaderStore} from '../../../GeneralStore/useAppModalHeaderStore';
 import {LayoutChangeEvent} from 'react-native';
 
 const useProjectFileViewerScreen = () => {
-  const [isLoadingImage, setIsLoadingImage] = useState(false);
+  const [isLoadingImage, setIsLoadingImage] = useState(true);
   const [isImageError, setisImageError] = useState<boolean>(false);
   const [imageHeight, setImageHeight] = useState<number>(0);
   const [layoutEditStage, setlayoutEditStage] = useState<
@@ -83,6 +82,8 @@ const useProjectFileViewerScreen = () => {
     imageHeight,
     url,
     ITEM_WIDTH,
+    isLoadingImage,
+    isImageError,
   };
 };
 

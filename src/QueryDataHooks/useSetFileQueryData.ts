@@ -19,7 +19,7 @@ const useSetFileQueryData = ({appendPos = 'end', overwrite = true}: Props) => {
       {
         projectId: deletedFile.project ?? undefined,
         docketId: deletedFile.docket ?? undefined,
-        folderId: deletedFile.folderId ?? undefined,
+        folderId: deletedFile.folder ?? undefined,
       },
       company,
     );
@@ -72,7 +72,7 @@ const useSetFileQueryData = ({appendPos = 'end', overwrite = true}: Props) => {
       {
         projectId: updatedDoxleFile.project ?? undefined,
         docketId: updatedDoxleFile.docket ?? undefined,
-        folderId: updatedDoxleFile.folderId ?? undefined,
+        folderId: updatedDoxleFile.folder ?? undefined,
       },
       company,
     );
@@ -122,14 +122,16 @@ const useSetFileQueryData = ({appendPos = 'end', overwrite = true}: Props) => {
   };
 
   const handleAddMultipleFile = (newFiles: DoxleFile[]) => {
+    console.log('newFiles', newFiles);
     const qKey = getFileQKey(
       {
         projectId: newFiles[0].project ?? undefined,
         docketId: newFiles[0].docket ?? undefined,
-        folderId: newFiles[0].folderId ?? undefined,
+        folderId: newFiles[0].folder ?? undefined,
       },
       company,
     );
+    console.log('qKey', qKey);
     const dataActive = queryClient.getQueryCache().findAll({
       predicate: query =>
         qKey.every(key => query.queryKey.includes(key)) && query.isActive(),
@@ -170,7 +172,7 @@ const useSetFileQueryData = ({appendPos = 'end', overwrite = true}: Props) => {
       {
         projectId: deletedFiles[0].project ?? undefined,
         docketId: deletedFiles[0].docket ?? undefined,
-        folderId: deletedFiles[0].folderId ?? undefined,
+        folderId: deletedFiles[0].folder ?? undefined,
       },
       company,
     );
