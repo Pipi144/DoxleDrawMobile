@@ -2,7 +2,7 @@ import {Platform, RefreshControl, StyleSheet, Text, View} from 'react-native';
 import React, {useCallback, useMemo} from 'react';
 import useGetProjectFolderQuery from '../../Hooks/useGetProjectFolderQuery';
 import useGetProjectFileQuery from '../../Hooks/useGetProjectFileQuery';
-import useProjectFileListView from '../../Hooks/useProjectFileListView';
+
 import Animated, {Layout, LinearTransition} from 'react-native-reanimated';
 import ProjectFileListItem from './ProjectFileListItem';
 
@@ -20,6 +20,7 @@ import {useShallow} from 'zustand/shallow';
 import {useCompany} from '../../../../Providers/CompanyProvider';
 import {TFileBgUploadData} from '../../Provider/StorageModels';
 import FilePendingItem from './FilePendingItem';
+import useProjectFileListView from './Hooks/useProjectFileListView';
 
 type Props = {};
 

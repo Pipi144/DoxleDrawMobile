@@ -63,7 +63,7 @@ function MainLoginScreen(props: {navigation: any}): JSX.Element {
         containerStyle={{
           position: 'absolute',
           left: 14,
-          top: 14,
+          top: deviceSize.insetTop + 14,
           width: deviceType === 'Smartphone' ? 44 : 50,
         }}
       />

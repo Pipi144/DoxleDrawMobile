@@ -6,6 +6,7 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnable
 import com.facebook.react.defaults.DefaultReactActivityDelegate
 import android.content.Intent
 import android.content.res.Configuration
+import org.devio.rn.splashscreen.SplashScreen;
 
 
 class MainActivity : ReactActivity() {
@@ -16,6 +17,7 @@ class MainActivity : ReactActivity() {
    */
   override fun getMainComponentName(): String = "Doxle"
   override fun onCreate(savedInstanceState: Bundle?) {
+    SplashScreen.show(this);
     super.onCreate(null)
   }
   /**

@@ -55,7 +55,6 @@ const FileBgUploader = ({children}: Props) => {
     company,
     accessToken,
     onSuccessUpload(files) {
-      console.log('files success', files);
       updateStatusMultipleCachedFile(
         files.map(file => file.fileId),
         'success',
@@ -72,7 +71,7 @@ const FileBgUploader = ({children}: Props) => {
 
   useEffect(() => {
     const pendingFiles = cachedFiles.filter(file => file.status === 'pending');
-    console.log('pendingFiles', pendingFiles);
+
     if (pendingFiles.length > 0) {
       pendingFiles.forEach(pendingFile => {
         const {file, hostId, uploadVariant} = pendingFile;

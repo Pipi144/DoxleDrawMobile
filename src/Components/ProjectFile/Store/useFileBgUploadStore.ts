@@ -57,7 +57,8 @@ export const useFileBgUploadStore = create(
         const newFilePath = await moveFileToCache(file);
         if (newFilePath) {
           allData.push({
-            file: {...file, uri: newFilePath},
+            file: {...file, uri: newFilePath.newUrl},
+            thumbnailPath: newFilePath.thumbUrl,
             hostId,
             status: 'pending',
             expired: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 15,

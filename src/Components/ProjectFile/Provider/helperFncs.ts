@@ -31,6 +31,7 @@ import {
 import {TFileBgUploadData, TFileBgUploadStatus} from './StorageModels';
 import {Platform} from 'react-native';
 import {TAPIServerFile} from '../../../Models/utilityType';
+import {createThumbnail} from 'react-native-create-thumbnail';
 
 //# HELPER FUNCTION
 export const getCachedFileInfo = async (): Promise<TFileBgUploadData[]> => {
@@ -67,27 +68,53 @@ const getFileType = (fileName: string): string | null | undefined => {
   const parts = fileName.split('.');
   return parts.length > 1 ? parts.pop() : null;
 };
+
+interface IMoveFileToCacheRes {
+  newUrl: string;
+  thumbUrl?: string;
+}
 export const moveFileToCache = async ({
   fileId,
   type,
   name,
   uri,
-}: TAPIServerFile): Promise<string | undefined> => {
+}: TAPIServerFile): Promise<IMoveFileToCacheRes | undefined> => {
   try {
     const fileExtension = getFileType(name);
     if (!fileExtension) {
       return;
     }
-    const fileCachedPath = `${ALL_CACHED_FILES}/${fileId}.${fileExtension}`;
+    let res: IMoveFileToCacheRes = {
+      newUrl: uri,
+    };
     const isVideo = type.toLowerCase().includes('video');
+    const fileCachedPath = `${ALL_CACHED_FILES}/${fileId}.${
+      isVideo ? 'mp4' : fileExtension
+    }`;
 
     if (isVideo && Platform.OS === 'android') {
       await copyFile(uri, fileCachedPath);
     } else {
       await moveFile(uri, fileCachedPath);
     }
-
-    return fileCachedPath;
+    res.newUrl = fileCachedPath;
+    //create a thumbnail for video
+    if (isVideo) {
+      const thumbVideoPath = `${ALL_CACHED_FILES}/${fileId}_thumb.jpg`;
+      await createThumbnail({
+        url: fileCachedPath,
+        timeStamp: 14,
+        format: 'jpeg',
+      })
+        .then(async url => {
+          await moveFile(url.path, thumbVideoPath);
+          res.thumbUrl = thumbVideoPath;
+        })
+        .catch(err => {
+          console.log('ERROR createThumbnail:', err);
+        });
+    }
+    return res;
   } catch (error) {
     console.log('ERROR moveFileToCache:', error);
     return;

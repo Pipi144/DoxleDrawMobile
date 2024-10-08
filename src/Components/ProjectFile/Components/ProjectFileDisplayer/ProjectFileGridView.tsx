@@ -2,7 +2,6 @@ import {Platform, RefreshControl, StyleSheet, Text, View} from 'react-native';
 import React, {useCallback, useMemo} from 'react';
 import useGetProjectFolderQuery from '../../Hooks/useGetProjectFolderQuery';
 import useGetProjectFileQuery from '../../Hooks/useGetProjectFileQuery';
-import useProjectFileGridView from '../../Hooks/useProjectFileGridView';
 import Animated, {
   FadeInRight,
   FadeOutRight,
@@ -18,6 +17,7 @@ import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleTheme
 import {DoxleFile, DoxleFolder} from '../../../../Models/files';
 import DoxleEmptyPlaceholder from '../../../DesignPattern/DoxleEmptyPlaceholder/DoxleEmptyPlaceholder';
 import {ErrorFetchingBanner} from '../../../DesignPattern/DoxleBanners';
+import useProjectFileGridView from './Hooks/useProjectFileGridView';
 
 type Props = {};
 

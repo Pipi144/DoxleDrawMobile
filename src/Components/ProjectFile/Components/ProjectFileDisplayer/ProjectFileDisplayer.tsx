@@ -4,11 +4,11 @@ import {StyledProjectFileDisplayerContainer} from './StyledComponentProjectFileD
 import ProjectFileListView from './ProjectFileListView';
 import EditProjectFileModal from '../EditProjectFileModal/EditProjectFileModal';
 import ProjectFileGridView from './ProjectFileGridView';
-import useProjectFileDisplayer from '../../Hooks/useProjectFileDisplayer';
 import {useProjectFileStore} from '../../Store/useProjectFileStore';
 import {useShallow} from 'zustand/react/shallow';
 import UploadIndicator from '../UploadIndicator/UploadIndicator';
 import SearchSection from '../../../DesignPattern/SearchSection/SearchSection';
+import useProjectFileDisplayer from './Hooks/useProjectFileDisplayer';
 
 type Props = {};
 

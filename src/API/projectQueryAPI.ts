@@ -56,9 +56,8 @@ const useRetrieveFullProjectListQuery = ({
             params: getParams,
           },
         );
-        console.log('RUN:', onSuccessCb);
+
         if (onSuccessCb) {
-          console.log('onSuccessCb:', onSuccessCb);
           onSuccessCb(response.data.results);
         }
         return response;

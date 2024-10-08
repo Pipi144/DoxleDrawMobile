@@ -151,7 +151,6 @@ const CompanyProvider = (children: any) => {
   const onSuccessFetchingProjectList = useCallback(
     (data: IFullProject[]) => {
       let prevSessionStorage = {...prevSession};
-      console.log('SET PROJECT:', data.length);
       if (data.length > 0) {
         if (!selectedProject) {
           setSelectedProject(data[0]);

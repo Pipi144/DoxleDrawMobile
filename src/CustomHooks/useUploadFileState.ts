@@ -14,6 +14,8 @@
 
 import {useQueryClient} from '@tanstack/react-query';
 import {produce} from 'immer';
+import {useInterval} from './useInterval';
+import {useState} from 'react';
 
 type Props = {
   fileId?: string;
@@ -25,11 +27,12 @@ interface IFileUploadFileState {
 }
 const fileStateRootKey = ['upload-file-state'];
 const useUploadFileState = ({fileId}: Props) => {
+  const [fileState, setFileState] = useState<IFileUploadFileState>({
+    progress: 0,
+    estimatedTime: 0,
+  });
   const queryClient = useQueryClient();
-  const fileState = queryClient.getQueryData<IFileUploadFileState>([
-    ...fileStateRootKey,
-    fileId ?? '',
-  ]) ?? {progress: 0, estimatedTime: 0};
+
   const updateFileUploadState = (
     payload: Partial<IFileUploadFileState> & {fileId: string},
   ) => {
@@ -59,6 +62,16 @@ const useUploadFileState = ({fileId}: Props) => {
       undefined,
     );
   };
+
+  useInterval(() => {
+    if (fileId) {
+      const fileState = queryClient.getQueryData<IFileUploadFileState>([
+        ...fileStateRootKey,
+        fileId ?? '',
+      ]) ?? {progress: 0, estimatedTime: 0};
+      setFileState(fileState);
+    }
+  }, 500);
   return {
     fileState,
     updateFileUploadState,

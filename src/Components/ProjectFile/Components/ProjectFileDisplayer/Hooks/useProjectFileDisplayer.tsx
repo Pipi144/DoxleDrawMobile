@@ -1,12 +1,11 @@
 import {StyleSheet} from 'react-native';
 import React, {useCallback, useEffect} from 'react';
-import {useProjectFileStore} from '../Store/useProjectFileStore';
-import {useShallow} from 'zustand/react/shallow';
+import {useCompany} from '../../../../../Providers/CompanyProvider';
+import {useProjectFileStore} from '../../../Store/useProjectFileStore';
+import {useShallow} from 'zustand/shallow';
+import {useAppModalHeaderStore} from '../../../../../GeneralStore/useAppModalHeaderStore';
 import {useFocusEffect} from '@react-navigation/native';
-
-import FileMenuRootMode from '../Components/FilePopupMenu/FileMenuRootMode';
-import {useCompany} from '../../../Providers/CompanyProvider';
-import {useAppModalHeaderStore} from '../../../GeneralStore/useAppModalHeaderStore';
+import FileMenuRootMode from '../../FilePopupMenu/FileMenuRootMode';
 
 type Props = {};
 

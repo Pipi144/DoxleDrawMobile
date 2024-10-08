@@ -2,7 +2,7 @@ import Animated from 'react-native-reanimated';
 import {FasterImageView, clearCache} from '@candlefinance/faster-image';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
-import {Pressable} from 'react-native';
+import {Image, Pressable} from 'react-native';
 import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
 export const StyledProjectFileDisplayerContainer = styled(
   GestureHandlerRootView,
@@ -159,6 +159,12 @@ export const StyledFolderFilesGridViewContainer = styled(Animated.View)`
 `;
 
 export const StyledFileImageWrapper = styled(FasterImageView)<{$width: number}>`
+  width: ${p => p.$width}px;
+  aspect-ratio: 1;
+  overflow: hidden;
+`;
+
+export const StyledPendingImageWrapper = styled(Image)<{$width: number}>`
   width: ${p => p.$width}px;
   aspect-ratio: 1;
   overflow: hidden;

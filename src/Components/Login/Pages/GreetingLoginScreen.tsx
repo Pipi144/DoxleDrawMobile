@@ -29,7 +29,7 @@ const TEXT_HEADER = ['Budget ', 'better ', 'with ', 'Doxle.'];
 const GreetingLoginScreen = ({}: {navigation: any}) => {
   const navigation = useNavigation<StackNavigationProp<TLoginStack>>();
   const {THEME_COLOR, DOXLE_FONT} = useDOXLETheme();
-  const {deviceType} = useOrientation();
+  const {deviceType, deviceSize} = useOrientation();
   const handlePressLoginBtn = () => {
     navigation.navigate('LoginScreen');
   };
@@ -41,7 +41,7 @@ const GreetingLoginScreen = ({}: {navigation: any}) => {
         containerStyle={{
           position: 'absolute',
           left: 14,
-          top: 14,
+          top: deviceSize.insetTop + 14,
           width: deviceType === 'Smartphone' ? 44 : 50,
         }}
       />

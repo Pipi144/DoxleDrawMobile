@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import React, {useEffect} from 'react';
 import {TFileBgUploadData} from '../../Provider/StorageModels';
 import {
@@ -19,11 +19,11 @@ import {
   StyledFileImageWrapper,
   StyledListFileInfoText,
   StyledListFileNameText,
+  StyledPendingImageWrapper,
   StyledProjectFileListItemContainer,
 } from './StyledComponentProjectFileDisplayer';
 import {LinearTransition} from 'react-native-reanimated';
 import {useOrientation} from '../../../../Providers/OrientationContext';
-import {DOXLE_MIME_TYPE} from '../../../../Models/MimeFileType';
 import {
   DoxleCSVIcon,
   DoxleExcelIcon,
@@ -33,6 +33,7 @@ import {
 import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import useUploadFileState from '../../../../CustomHooks/useUploadFileState';
+
 type Props = {
   item: TFileBgUploadData;
 };
@@ -43,10 +44,9 @@ const FilePendingItem = ({item}: Props) => {
   const {fileState} = useUploadFileState({fileId: item.file.fileId});
   useEffect(() => {
     console.log('pENDING:', item);
+    console.log('IS IMG:', item.file.type.toLowerCase().includes('image'));
   }, []);
-  useEffect(() => {
-    console.log('fileState:', fileState);
-  }, [fileState]);
+
   return (
     <StyledProjectFileListItemContainer
       delayLongPress={200}
@@ -54,7 +54,7 @@ const FilePendingItem = ({item}: Props) => {
       unstable_pressDelay={100}
       pointerEvents={'none'}
       style={{
-        opacity: 0.7,
+        opacity: 0.5,
       }}>
       <StyledFileIconWrapper $width={deviceType === 'Smartphone' ? 45 : 55}>
         {item.file.type.toLowerCase().includes('pdf') ? (
@@ -86,28 +86,27 @@ const FilePendingItem = ({item}: Props) => {
           />
         ) : item.file.type.toLowerCase().includes('image') ? (
           <>
-            <StyledFileImageWrapper
+            <StyledPendingImageWrapper
               style={{}}
               $width={deviceType === 'Smartphone' ? 35 : 45}
               source={{
-                url: item.file.uri,
-                resizeMode: 'contain',
-                cachePolicy: 'discWithCacheControl',
+                uri: item.file.uri,
               }}
+              resizeMode="cover"
             />
           </>
         ) : (
           <>
-            {/* <StyledFileImageWrapper
-                    style={{}}
-                    $width={deviceType === 'Smartphone' ? 35 : 45}
-                    source={{
-                      url: fileItem.thumbUrl,
-                      resizeMode: 'contain',
-                      cachePolicy: 'discWithCacheControl',
-                    }}
-                   
-                  /> */}
+            {item.thumbnailPath && (
+              <StyledPendingImageWrapper
+                style={{}}
+                $width={deviceType === 'Smartphone' ? 35 : 45}
+                source={{
+                  uri: item.thumbnailPath,
+                }}
+                resizeMode="cover"
+              />
+            )}
             <IonIcons
               name="play-outline"
               color={THEME_COLOR.doxleColor}

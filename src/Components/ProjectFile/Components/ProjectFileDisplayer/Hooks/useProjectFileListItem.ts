@@ -1,39 +1,40 @@
-import {Linking, StyleSheet, Text, View} from 'react-native';
-import React, {useState} from 'react';
+import {Linking, StyleSheet} from 'react-native';
+import {useRef, useState} from 'react';
 import {StackNavigationProp} from '@react-navigation/stack';
-
-import {shallow} from 'zustand/shallow';
+import {SharedValue, useSharedValue, withTiming} from 'react-native-reanimated';
 import {useNavigation} from '@react-navigation/native';
 
 import {useIsMutating} from '@tanstack/react-query';
-import {useProjectFileStore} from '../Store/useProjectFileStore';
 
 import {useShallow} from 'zustand/react/shallow';
-import {TProjectFileTabStack} from '../Routes/ProjectFileRouteTypes';
-import {DoxleFile, DoxleFolder} from '../../../Models/files';
+import {DoxleFile, DoxleFolder} from '../../../../../Models/files';
+import {TProjectFileTabStack} from '../../../Routes/ProjectFileRouteTypes';
+import {useProjectFileStore} from '../../../Store/useProjectFileStore';
 import {
   DeleteFileParams,
   getFileMutationKey,
   getFolderMutationKey,
-} from '../../../API/fileQueryAPI';
+  TUpdateFileParams,
+  TUpdateFolderParams,
+} from '../../../../../API/fileQueryAPI';
 
 type Props = {fileItem?: DoxleFile; folderItem?: DoxleFolder};
 
-const useProjectFileGridItem = ({fileItem, folderItem}: Props) => {
+const useProjectFileListItem = ({fileItem, folderItem}: Props) => {
   const [isLoadingImg, setIsLoadingImg] = useState(true);
   const [isErrorImg, setIsErrorImg] = useState(false);
-  const {setCurrentFile, setEdittedFolder, setShowModal, setCurrentFolder} =
-    useProjectFileStore(
-      useShallow(state => ({
-        setCurrentFile: state.setCurrentFile,
-        setEdittedFolder: state.setEdittedFolder,
-        setCurrentFolder: state.setCurrentFolder,
-        setShowModal: state.setShowModal,
-      })),
-    );
 
   const navigator = useNavigation<StackNavigationProp<TProjectFileTabStack>>();
 
+  const {setCurrentFile, setCurrentFolder, setShowModal, setEdittedFolder} =
+    useProjectFileStore(
+      useShallow(state => ({
+        setCurrentFile: state.setCurrentFile,
+        setCurrentFolder: state.setCurrentFolder,
+        setShowModal: state.setShowModal,
+        setEdittedFolder: state.setEdittedFolder,
+      })),
+    );
   const onLongPress = (itemPressed: 'file' | 'folder') => {
     if (itemPressed === 'file') {
       if (fileItem) setCurrentFile(fileItem);
@@ -44,9 +45,11 @@ const useProjectFileGridItem = ({fileItem, folderItem}: Props) => {
     setShowModal(true);
   };
 
+  //* WHEN A FOLDER IS CLICKED
   const folderPressed = () => {
-    setCurrentFolder(folderItem);
+    //! SET THE CURRENT FOLDER FOR ZUSTAND
     navigator.navigate('ProjectFolderFileScreen', {});
+    setCurrentFolder(folderItem);
   };
 
   const filePressed = (url: string, type: string) => {
@@ -57,7 +60,10 @@ const useProjectFileGridItem = ({fileItem, folderItem}: Props) => {
       type.toLowerCase().includes('mp4') ||
       type.toLowerCase().includes('video')
     ) {
-      navigator.navigate('ProjectFileViewerScreen', {url, type});
+      navigator.navigate('ProjectFileViewerScreen', {
+        url: url,
+        type: type,
+      });
     } else {
       Linking.openURL(url);
     }
@@ -85,20 +91,56 @@ const useProjectFileGridItem = ({fileItem, folderItem}: Props) => {
             ),
         ),
     }) > 0;
+
+  const isUpdatingFile =
+    useIsMutating({
+      mutationKey: getFileMutationKey('update'),
+      predicate: query =>
+        Boolean(
+          fileItem &&
+            (query.state.variables as TUpdateFileParams).fileId ===
+              fileItem.fileId,
+        ),
+    }) > 0;
+
+  const isUpdatingFolder =
+    useIsMutating({
+      mutationKey: getFolderMutationKey('update'),
+      predicate: query =>
+        Boolean(
+          folderItem &&
+            (query.state.variables as TUpdateFolderParams).folderId ===
+              folderItem.folderId,
+        ),
+    }) > 0;
+
+  const pressAnimatedValue = useRef<SharedValue<number>>(
+    useSharedValue(0),
+  ).current;
+  const onPressIn = () => {
+    pressAnimatedValue.value = withTiming(1, {duration: 200});
+  };
+  const onPressOut = () => {
+    pressAnimatedValue.value = withTiming(0, {duration: 200});
+  };
   return {
     onLongPress,
     folderPressed,
     filePressed,
-
+    isDeletingFile,
+    isDeletingFolder,
+    isUpdatingFile,
+    isUpdatingFolder,
+    onPressIn,
+    onPressOut,
+    pressAnimatedValue,
     isLoadingImg,
     setIsLoadingImg,
     isErrorImg,
     setIsErrorImg,
-    isDeletingFile,
-    isDeletingFolder,
   };
 };
 
-export default useProjectFileGridItem;
+export default useProjectFileListItem;
 
 const styles = StyleSheet.create({});

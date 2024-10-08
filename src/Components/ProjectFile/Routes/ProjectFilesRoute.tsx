@@ -15,6 +15,7 @@ import {useShallow} from 'zustand/react/shallow';
 import {useFocusEffect} from '@react-navigation/native';
 import {useDOXLETheme} from '../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
 import {useAppModalHeaderStore} from '../../../GeneralStore/useAppModalHeaderStore';
+import {clearCache} from '@candlefinance/faster-image';
 
 type Props = {};
 const FileStack = createNativeStackNavigator<TProjectFileTabStack>();
@@ -35,6 +36,8 @@ const ProjectFilesRoute = (props: Props) => {
         setCustomisedPopupMenu(null);
         setOveridenRouteName(undefined);
         setBackBtn(null);
+
+        clearCache();
       };
     }, []),
   );
@@ -47,6 +50,7 @@ const ProjectFilesRoute = (props: Props) => {
           backgroundColor: THEME_COLOR.primaryContainerColor,
         },
         freezeOnBlur: true,
+        animationDuration: 50,
       }}>
       <FileStack.Screen
         name="RootProjectFile"

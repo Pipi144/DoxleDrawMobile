@@ -1,6 +1,6 @@
 import {StyleSheet, View} from 'react-native';
 import React from 'react';
-import useProjectFileGridItem from '../../Hooks/useProjectFileGridItem';
+
 import {
   StyledFileImageWrapper,
   StyledGridContentWrapper,
@@ -30,6 +30,7 @@ import {
   DoxlePNGIcon,
   DoxleWordIcon,
 } from '../../../DesignPattern/DoxleIcons';
+import useProjectFileGridItem from './Hooks/useProjectFileGridItem';
 
 dayjs.extend(relativeTime);
 

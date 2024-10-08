@@ -9,7 +9,6 @@ import {
   StyledFileImageWrapper,
   StyledListFileInfoText,
 } from './StyledComponentProjectFileDisplayer';
-import useProjectFileListItem from '../../Hooks/useProjectFileListItem';
 import {
   FadeInDown,
   interpolate,
@@ -34,6 +33,7 @@ import {
   DoxlePNGIcon,
   DoxleWordIcon,
 } from '../../../DesignPattern/DoxleIcons';
+import useProjectFileListItem from './Hooks/useProjectFileListItem';
 
 dayjs.extend(relativeTime);
 type Props = {fileItem?: DoxleFile; folderItem?: DoxleFolder};

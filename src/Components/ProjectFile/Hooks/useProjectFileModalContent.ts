@@ -12,6 +12,8 @@ import {useAuth} from '../../../Providers/AuthProvider';
 import {useCompany} from '../../../Providers/CompanyProvider';
 import {useNotification} from '../../../Providers/NotificationProvider';
 import FilesAPI from '../../../API/fileQueryAPI';
+import useSetFileQueryData from '../../../QueryDataHooks/useSetFileQueryData';
+import useSetRootFolderQueryData from '../../../QueryDataHooks/useSetRootFolderQueryData';
 
 type Props = {};
 
@@ -52,7 +54,8 @@ const useProjectFileModalContent = (props: Props) => {
   const onDeleteFolderSuccessCallback = () => {
     setEdittedFolder(undefined);
   };
-
+  const {handleRemoveMultipleFile} = useSetFileQueryData({});
+  const {handleDeleteMultipleFolders} = useSetRootFolderQueryData({});
   //! USE DELETE FOLDER QUERY
   const deleteFolderQuery = FilesAPI.useDeleteFolder({
     accessToken,
@@ -102,10 +105,12 @@ const useProjectFileModalContent = (props: Props) => {
           },
           {
             text: 'Delete',
-            onPress: () =>
+            onPress: () => {
+              handleRemoveMultipleFile([currentFile]);
               deleteFileQuery.mutate({
                 files: [currentFile],
-              }),
+              });
+            },
           },
         ],
       );
@@ -120,7 +125,10 @@ const useProjectFileModalContent = (props: Props) => {
           },
           {
             text: 'Delete',
-            onPress: () => deleteFolderQuery.mutate([edittedFolder]),
+            onPress: () => {
+              handleDeleteMultipleFolders([edittedFolder]);
+              deleteFolderQuery.mutate([edittedFolder]);
+            },
           },
         ],
       );

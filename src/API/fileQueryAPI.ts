@@ -598,8 +598,6 @@ const useDeleteFolder = ({
   showNotification,
   onDeleteFolderCallback,
 }: DeleteFolderQueryProps) => {
-  const {handleDeleteMultipleFolders} = useSetRootFolderQueryData({});
-
   const deleteFolderMutation = useMutation({
     mutationKey: getFolderMutationKey('delete'),
     mutationFn: async (data: DoxleFolder[]) => {
@@ -622,7 +620,6 @@ const useDeleteFolder = ({
       if (onDeleteFolderCallback) {
         onDeleteFolderCallback();
       }
-      handleDeleteMultipleFolders(request);
     },
     onError(error, variables, context) {
       if (showNotification) {
@@ -652,7 +649,6 @@ const useDeleteFileQuery = ({
   showNotification,
   onDeleteFileCallback,
 }: DeleteFileQueryProps) => {
-  const {handleRemoveMultipleFile} = useSetFileQueryData({});
   const deleteFileMutation = useMutation({
     mutationKey: getFileMutationKey('delete'),
     mutationFn: async (props: DeleteFileParams) => {
@@ -676,7 +672,6 @@ const useDeleteFileQuery = ({
     },
     onSuccess(response, request, context) {
       if (onDeleteFileCallback) onDeleteFileCallback();
-      handleRemoveMultipleFile(request.files);
     },
     onError(error, variables, context) {
       if (showNotification) {

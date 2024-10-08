@@ -1,7 +1,6 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
-import useGetProjectFolderQuery from './useGetProjectFolderQuery';
-import useGetProjectFileQuery from './useGetProjectFileQuery';
+import {StyleSheet} from 'react-native';
+import useGetProjectFolderQuery from '../../../Hooks/useGetProjectFolderQuery';
+import useGetProjectFileQuery from '../../../Hooks/useGetProjectFileQuery';
 
 type Props = {};
 
