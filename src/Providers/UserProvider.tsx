@@ -8,12 +8,8 @@ import React, {
 } from 'react';
 
 import {ICompanyProviderContextValue, useCompany} from './CompanyProvider';
-import UserQueryAPI from '../service/DoxleAPI/QueryHookAPI/userQueryAPI';
 import {authContextInterface, useAuth} from './AuthProvider';
 import {INotificationContext, useNotification} from './NotificationProvider';
-import Notification, {
-  getContainerStyleWithTranslateY,
-} from '../components/content/GeneralComponents/Notification/Notification';
 import {User} from '../Models/user';
 import {IStorageInfo} from './CacheQAProvider/CacheQAType';
 import {
@@ -25,7 +21,8 @@ import {
   moveFile,
   unlink,
 } from 'react-native-fs';
-type Props = {};
+import UserQueryAPI from '../API/userQueryAPI';
+import Notification from '../Components/DesignPattern/Notification/Notification';
 
 export interface SaveSignatureFileParams {
   signaturePath: string;
@@ -63,39 +60,10 @@ const UserProvider = (children: any) => {
 
     // deleteFileSystemWithPath(PATH_TO_ROOT_LOCAL_USER_FOLDER);
   }, []);
+  const {accessToken, user} = useAuth();
 
-  //##################### HELPER FUNCTIONS #######################
+  const {company} = useCompany();
 
-  //************* AUTH PROVIDER*************** */
-  const {accessToken, user} = useAuth() as authContextInterface;
-  //*********************************************** */
-  //************* NOTIFICATION PROVIDER*************** */
-  const {notifierRootAppRef} = useNotification() as INotificationContext;
-  //handle show notification
-  const showNotification = useCallback(
-    (
-      message: string,
-      messageType: 'success' | 'error',
-      extraMessage?: string,
-    ) => {
-      notifierRootAppRef.current?.showNotification({
-        title: message,
-        description: extraMessage,
-        Component: Notification,
-        queueMode: 'immediate',
-        componentProps: {
-          type: messageType,
-        },
-        containerStyle: getContainerStyleWithTranslateY,
-      });
-    },
-    [],
-  );
-  //*********************************************** */
-  //************ COMPANY PROVIDER ************* */
-  const {company} = useCompany() as ICompanyProviderContextValue;
-
-  //************END OF COMPANY PROVIDER ******** */
   //retrieve storage capacity info
   const getInfoStorage = async () => {
     try {
@@ -182,9 +150,7 @@ const UserProvider = (children: any) => {
       return false;
     }
   };
-  //################ END OF HELPER FUNCTIONS #######################
 
-  //################## RETRIEVE USER INFO ####################
   const onSuccessRetrieveCB = (userServer: User) => {
     if (userServer.signature)
       downloadSignatureFile({
@@ -193,13 +159,11 @@ const UserProvider = (children: any) => {
       });
   };
   const getUserInfo = UserQueryAPI.userRetrieveUserInfo({
-    showNotification,
     accessToken,
     company,
     userId: user?.userId || '',
     onSuccessCB: onSuccessRetrieveCB,
   });
-  //############ END OF RETRIEVE USER INFO ####################
   const saveSignatureFile = async ({
     signaturePath,
     userId,

@@ -58,17 +58,19 @@ const ProjectFileViewerScreen = (props: Props) => {
             initialZoom={layoutEditStage.width / ITEM_WIDTH} //this scale will make the img fit the screen
             bindToBorders={true}
             doubleTapZoomToCenter={true}>
-            <AnimatedImage
-              style={{width: ITEM_WIDTH, height: imageHeight}}
-              onSuccess={event => {
-                setImageHeight(
-                  (event.nativeEvent.height / event.nativeEvent.width) *
-                    ITEM_WIDTH,
-                );
-                setIsLoadingImage(false);
-              }}
-              source={{url: url, resizeMode: 'contain'}}
-            />
+            <View pointerEvents="none">
+              <AnimatedImage
+                style={{width: ITEM_WIDTH, height: imageHeight}}
+                onSuccess={event => {
+                  setImageHeight(
+                    (event.nativeEvent.height / event.nativeEvent.width) *
+                      ITEM_WIDTH,
+                  );
+                  setIsLoadingImage(false);
+                }}
+                source={{url: url, resizeMode: 'contain'}}
+              />
+            </View>
           </StyledZoomableStageView>
         )
       ) : type.toLowerCase().includes('mp4') ||

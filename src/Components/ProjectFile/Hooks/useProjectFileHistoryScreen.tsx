@@ -16,15 +16,12 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useProjectFileStore} from '../Store/useProjectFileStore';
 import {useShallow} from 'zustand/react/shallow';
 import {Linking} from 'react-native';
-import {useAppModalHeaderStore} from '../../../../../../GeneralStore/useAppModalHeaderStore';
-import AntIcon from 'react-native-vector-icons/AntDesign';
-import Animated, {ZoomIn, ZoomOut} from 'react-native-reanimated';
-import {useDOXLETheme} from '../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
 
-const AnimatedAntIcon = Animated.createAnimatedComponent(AntIcon);
+import {useAppModalHeaderStore} from '../../../GeneralStore/useAppModalHeaderStore';
+
 const useProjectFileHistoryScreen = () => {
   const navigator = useNavigation();
-  const {staticMenuColor} = useDOXLETheme();
+
   const {setCustomisedPopupMenu, setOveridenRouteName, setBackBtn} =
     useAppModalHeaderStore(
       useShallow(state => ({
@@ -52,15 +49,6 @@ const useProjectFileHistoryScreen = () => {
     setCustomisedPopupMenu(null);
     setOveridenRouteName('File History');
     setBackBtn({
-      icon: (
-        <AnimatedAntIcon
-          name="left"
-          color={staticMenuColor.staticWhiteFontColor}
-          size={25}
-          entering={ZoomIn.springify().damping(16).stiffness(120)}
-          exiting={ZoomOut.springify().damping(16).stiffness(120)}
-        />
-      ),
       onPress: handleNavBack,
     });
   });

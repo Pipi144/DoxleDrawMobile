@@ -8,7 +8,7 @@ import {
   IDOXLEThemeColor,
   useDOXLETheme,
 } from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import Skeleton from 'react-native-reanimated-skeleton';
 
 type Props = {
   mode?: 'list' | 'grid';
@@ -80,33 +80,34 @@ const styles = (themeColor: IDOXLEThemeColor) =>
   });
 
 const SkeletonRow: React.FC = () => {
-  const {THEME_COLOR} = useDOXLETheme();
+  const {THEME_COLOR, theme} = useDOXLETheme();
   return (
-    <SkeletonPlaceholder>
-      <SkeletonPlaceholder.Item
-        flexDirection="row"
-        alignItems="center"
+    <Skeleton
+      containerStyle={{
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+      }}
+      isLoading={true}>
+      <Text
         style={{
-          width: '100%',
-        }}>
-        <SkeletonPlaceholder.Item
-          backgroundColor={THEME_COLOR.skeletonColor}
-          width={14}
-          height={14}
-        />
-        <SkeletonPlaceholder.Item
-          backgroundColor={THEME_COLOR.skeletonColor}
-          width={'60%'}
-          height={14}
-        />
-
-        <SkeletonPlaceholder.Item
-          backgroundColor={THEME_COLOR.skeletonColor}
-          width={28}
-          height={14}
-        />
-      </SkeletonPlaceholder.Item>
-    </SkeletonPlaceholder>
+          width: 14,
+          height: 14,
+        }}
+      />
+      <Text
+        style={{
+          width: '60%',
+          height: 14,
+        }}
+      />
+      <Text
+        style={{
+          width: 28,
+          height: 14,
+        }}
+      />
+    </Skeleton>
   );
 };
 
@@ -117,29 +118,31 @@ const SkeletonGrid: React.FC<{numOfCol: number}> = ({
 }) => {
   const {theme, THEME_COLOR} = useDOXLETheme();
   return (
-    <SkeletonPlaceholder>
-      <StyledSkeletonGridWrapper $numOfCol={numOfCol}>
-        <View style={styles(THEME_COLOR).gridSkelCell}>
-          <SkeletonPlaceholder.Item
-            backgroundColor={THEME_COLOR.skeletonColor}
-            width="40%"
-            height="30%"
-            marginBottom={4}
-          />
-          <SkeletonPlaceholder.Item
-            backgroundColor={THEME_COLOR.skeletonColor}
-            width="20%"
-            height={14}
-            marginBottom={8}
-          />
-          <SkeletonPlaceholder.Item
-            backgroundColor={THEME_COLOR.skeletonColor}
-            width="70%"
-            height={14}
-            marginBottom={8}
-          />
-        </View>
-      </StyledSkeletonGridWrapper>
-    </SkeletonPlaceholder>
+    <StyledSkeletonGridWrapper $numOfCol={numOfCol}>
+      <Skeleton
+        containerStyle={styles(THEME_COLOR).gridSkelCell}
+        isLoading={true}>
+        <Text
+          style={{
+            width: '40%',
+            height: '30%',
+            marginBottom: 4,
+          }}
+        />
+        <Text
+          style={{
+            width: '20%',
+            height: 14,
+            marginBottom: 8,
+          }}
+        />
+        <Text
+          style={{
+            width: '70%',
+            height: 14,
+          }}
+        />
+      </Skeleton>
+    </StyledSkeletonGridWrapper>
   );
 };

@@ -1,6 +1,6 @@
 //!PT: Each ref is the notifierRoot placed on each component, to control the notification should show in the selected component by calling ref.current?.showNotification({.....}). Ex: notifierLoginRef.current?.showNotification({.....}).
 
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import React, {
   createContext,
   useCallback,
@@ -11,7 +11,7 @@ import React, {
 import {NotifierRoot} from 'react-native-notifier';
 import Notification, {
   getContainerStyleWithTranslateY,
-} from '../components/content/GeneralComponents/Notification/Notification';
+} from '../Components/DesignPattern/Notification/Notification';
 
 export interface INotificationContext {
   notifierLoginRef: React.RefObject<NotifierRoot>;

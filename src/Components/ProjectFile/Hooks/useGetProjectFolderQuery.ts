@@ -1,27 +1,19 @@
 import {useIsFocused} from '@react-navigation/native';
-import React, {useCallback, useMemo} from 'react';
+import {useCallback, useMemo} from 'react';
 
-import {shallow} from 'zustand/shallow';
-import {DoxleFolder} from '../../../../../../Models/files';
-import {useAuth} from '../../../../../../Providers/AuthProvider';
-import {useCompany} from '../../../../../../Providers/CompanyProvider';
-import {useNotification} from '../../../../../../Providers/NotificationProvider';
-import FilesAPI from '../../../../../../service/DoxleAPI/QueryHookAPI/fileQueryAPI';
+import {shallow, useShallow} from 'zustand/shallow';
+import {useProjectFileStore} from '../Store/useProjectFileStore';
+import {useAuth} from '../../../Providers/AuthProvider';
+import {useCompany} from '../../../Providers/CompanyProvider';
 import Notification, {
   getContainerStyleWithTranslateY,
-} from '../../../../GeneralComponents/Notification/Notification';
-import {useProjectFileStore} from '../Store/useProjectFileStore';
+} from '../../DesignPattern/Notification/Notification';
+import FilesAPI from '../../../API/fileQueryAPI';
+import {useNotification} from '../../../Providers/NotificationProvider';
 
 type Props = {};
-interface IGetDocketFolderQuery {
-  folderListSuccess: DoxleFolder[];
-  isFetchingFolderList: boolean;
-  isSuccessFetchingFolderList: boolean;
-  isErrorFetchingFolderList: boolean;
-  refetchFolderList: () => void;
-  isRefetchingFolderList: boolean;
-}
-const useGetProjectFolderQuery = (props: Props): IGetDocketFolderQuery => {
+
+const useGetProjectFolderQuery = (props: Props) => {
   const {accessToken} = useAuth();
   const {company} = useCompany();
   const {notifierRootAppRef} = useNotification();
@@ -47,10 +39,9 @@ const useGetProjectFolderQuery = (props: Props): IGetDocketFolderQuery => {
   );
 
   const {filterProjectFolderQuery} = useProjectFileStore(
-    state => ({
+    useShallow(state => ({
       filterProjectFolderQuery: state.filterProjectFolderQuery,
-    }),
-    shallow,
+    })),
   );
   const isFocused = useIsFocused();
   const getFolderListQuery = FilesAPI.useGetFolderQuery({
@@ -64,9 +55,7 @@ const useGetProjectFolderQuery = (props: Props): IGetDocketFolderQuery => {
 
   const folderListSuccess = useMemo(
     () =>
-      getFolderListQuery.isSuccess
-        ? (getFolderListQuery.data?.data as DoxleFolder[])
-        : [],
+      getFolderListQuery.isSuccess ? getFolderListQuery.data?.data ?? [] : [],
     [getFolderListQuery.data],
   );
   const refetchFolderList = () => {

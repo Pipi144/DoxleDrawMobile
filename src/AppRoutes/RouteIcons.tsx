@@ -1,6 +1,6 @@
 import Svg, {Path, Rect} from 'react-native-svg';
 import {ISVGResponsiveCustom} from '../Models/utilityType';
-import {View} from 'native-base';
+import {View} from 'react-native';
 
 export const PricebookTabIcon = ({
   themeColor,

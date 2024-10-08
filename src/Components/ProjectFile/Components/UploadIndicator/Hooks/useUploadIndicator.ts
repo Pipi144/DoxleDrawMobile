@@ -12,13 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {useIsMutating, useQueryClient} from '@tanstack/react-query';
-import {
-  AddFileMutateProps,
-  getFileMutationKey,
-} from '../../../../../../../../service/DoxleAPI/QueryHookAPI/fileQueryAPI';
-import {useEffect, useState} from 'react';
-import {useProjectStore} from '../../../../../Store/useProjectStore';
+import {useIsMutating, useMutationState} from '@tanstack/react-query';
+
 import {useShallow} from 'zustand/react/shallow';
 import {
   useAnimatedStyle,
@@ -29,13 +24,15 @@ import {
 } from 'react-native-reanimated';
 import {Directions, Gesture} from 'react-native-gesture-handler';
 import {useProjectFileStore} from '../../../Store/useProjectFileStore';
+import {useCompany} from '../../../../../Providers/CompanyProvider';
+import {
+  AddFileMutateProps,
+  getFileMutationKey,
+} from '../../../../../API/fileQueryAPI';
+import {useEffect} from 'react';
 
 const useUploadIndicator = () => {
-  const {selectedProject} = useProjectStore(
-    useShallow(state => ({
-      selectedProject: state.selectedProject,
-    })),
-  );
+  const {selectedProject} = useCompany();
   const {currentFolder} = useProjectFileStore(
     useShallow(state => ({
       currentFolder: state.currentFolder,

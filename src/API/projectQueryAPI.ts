@@ -8,7 +8,7 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-import axios, {isAxiosError} from 'axios';
+import axios from 'axios';
 import {BaseAPIProps} from '../Models/basedAPIProps';
 import {IFullProject, NewProject, Project} from '../Models/project';
 import {baseAddress} from './settings';
@@ -30,7 +30,6 @@ interface RetrieveFullProjectListQuery extends BaseAPIProps {
 const useRetrieveFullProjectListQuery = ({
   onSuccessCb,
   enable,
-  showNotification,
   company,
 
   filter,
@@ -40,7 +39,7 @@ const useRetrieveFullProjectListQuery = ({
   const qKey = formFullProjectListQKey(company, filter);
   let projectURL = `${baseAddress}/project/?page=1`;
   const getParams: any = {view};
-  // if (company) getParams.company = company?.companyId;
+
   if (searchText) getParams.search = searchText;
   const projectQuery = useInfiniteQuery({
     queryKey: qKey,
@@ -57,13 +56,18 @@ const useRetrieveFullProjectListQuery = ({
             params: getParams,
           },
         );
-        if (onSuccessCb) onSuccessCb(response.data.results);
+        console.log('RUN:', onSuccessCb);
+        if (onSuccessCb) {
+          console.log('onSuccessCb:', onSuccessCb);
+          onSuccessCb(response.data.results);
+        }
         return response;
       } catch (error) {
         console.log('ERROR useRetrieveFullProjectListQuery:', error);
       }
     },
-    enabled: Boolean(company && (enable || true)),
+    enabled:
+      company !== undefined && accessToken !== undefined && (enable || true),
     // retry: 1,
     // staleTime: Infinity,
     staleTime: 15 * 60 * 1000,

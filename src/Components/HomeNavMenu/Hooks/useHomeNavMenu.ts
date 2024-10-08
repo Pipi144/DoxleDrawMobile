@@ -14,7 +14,7 @@
 
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {TDoxleRootStack} from '../../../../Routes/RouteTypes';
+import {TDoxleRootStack} from '../../../AppRoutes/RouteTypes';
 
 const useHomeNavMenu = () => {
   const navigation = useNavigation<StackNavigationProp<TDoxleRootStack>>();

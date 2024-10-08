@@ -1,16 +1,7 @@
-import {
-  ColorValue,
-  PressableProps,
-  StyleSheet,
-  Text,
-  View,
-  Pressable,
-} from 'react-native';
+import {PressableProps, StyleSheet, View, Pressable} from 'react-native';
 import React, {useEffect, useMemo, useRef} from 'react';
-import {StyledDoxleAnimatedButton} from './StyledComponentDoxleButton';
 import Animated, {
   Extrapolation,
-  Layout,
   SharedValue,
   interpolate,
   interpolateColor,

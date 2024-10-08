@@ -87,7 +87,7 @@ const ProjectFilesRoute = (props: Props) => {
         screenOptions={{
           headerShown: false,
           presentation: 'containedModal',
-          gestureEnabled: false,
+
           animation: 'fade',
         }}>
         <FileStack.Screen

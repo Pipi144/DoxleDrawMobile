@@ -3,8 +3,9 @@
 #import <React/RCTBundleURLProvider.h>
 #import "Orientation.h"
 #import "RNSplashScreen.h"
-@implementation AppDelegate
 
+
+@implementation AppDelegate
 - (UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
   return [Orientation getOrientation];
 }
@@ -15,9 +16,9 @@
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
-   bool didFinish=[super application:application didFinishLaunchingWithOptions:launchOptions];
+  bool didFinish=[super application:application didFinishLaunchingWithOptions:launchOptions];
   [RNSplashScreen show];
-  return didFinish
+  return didFinish;
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge

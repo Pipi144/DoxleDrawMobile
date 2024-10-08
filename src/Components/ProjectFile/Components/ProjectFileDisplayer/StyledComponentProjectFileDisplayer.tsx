@@ -72,7 +72,7 @@ export const StyledSkeletonGridWrapper = styled.View<{$numOfCol: number}>`
   width: ${p => 100 / p.$numOfCol}%;
   aspect-ratio: 1;
   display: flex;
-  padding: 4px;
+  padding: 10px;
 `;
 
 export const StyledGridListItemWrapper = styled(Animated.View)<{

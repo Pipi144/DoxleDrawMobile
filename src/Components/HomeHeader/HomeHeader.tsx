@@ -9,25 +9,26 @@ import DoxleAnimatedButton from '../DesignPattern/DoxleButton/DoxleAnimatedButto
 import {FadeInUp, FadeOutUp} from 'react-native-reanimated';
 import {useIsFetching} from '@tanstack/react-query';
 import {formFullProjectListQKey} from '../../API/projectQueryAPI';
-import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {editRgbaAlpha} from '../../Utilities/FunctionUtilities';
 import EntyIcon from 'react-native-vector-icons/Entypo';
 import ProjectListModal from '../ProjectListModal/ProjectListModal';
+import {ActivityIndicator} from 'react-native-paper';
 
 type Props = {};
 
 const HomeHeader = () => {
   const [showModal, setshowModal] = useState(false);
-  const {THEME_COLOR, staticMenuColor} = useDOXLETheme();
+  const {doxleFontSize, staticMenuColor} = useDOXLETheme();
   const {company, selectedProject} = useCompany();
   const {deviceType, deviceSize} = useOrientation();
 
-  const isFetchingProject = useIsFetching({
-    queryKey: formFullProjectListQKey(company, {
-      view: 'budget',
-    }),
-    exact: true,
-  });
+  const isFetchingProject =
+    useIsFetching({
+      queryKey: formFullProjectListQKey(company, {
+        view: 'budget',
+      }),
+      exact: true,
+    }) > 0;
   return (
     <StyledHomeHeader>
       <DoxleAnimatedButton
@@ -39,16 +40,10 @@ const HomeHeader = () => {
           setshowModal(true);
         }}>
         {isFetchingProject && (
-          <SkeletonPlaceholder borderRadius={4}>
-            <SkeletonPlaceholder.Item
-              flexDirection="row"
-              alignItems="center"
-              width={200}
-              height={12}
-              borderRadius={6}
-              backgroundColor={THEME_COLOR.skeletonColor}
-            />
-          </SkeletonPlaceholder>
+          <ActivityIndicator
+            color={staticMenuColor.staticWhiteFontColor}
+            size={doxleFontSize.contentTextSize + 2}
+          />
         )}
 
         {!isFetchingProject && (

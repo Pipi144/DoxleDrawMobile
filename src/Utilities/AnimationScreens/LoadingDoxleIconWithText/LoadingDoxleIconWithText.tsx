@@ -1,14 +1,9 @@
-import {StyleSheet, Text, View, ViewStyle} from 'react-native';
+import {View, ViewStyle} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   RootLoadingDoxleIconWithText,
-  StyledAnimatedChar,
   StyledAnimatedDiamondView,
-  StyledAnimatedIconContainer,
-  StyledMessageContainer,
 } from './StyledComponentsLoadingDoxleIconWithText';
-import {DOXLEDogIcon} from './LoadingIcons';
-import {interpolatePath} from 'd3-interpolate-path';
 import LottieView from 'lottie-react-native';
 import {ISVGResponsiveCustom} from '../../../Models/utilityType';
 
@@ -21,12 +16,12 @@ import Animated, {
   interpolateColor,
   useAnimatedProps,
   useSharedValue,
-  withRepeat,
   withTiming,
 } from 'react-native-reanimated';
 import {TRgbaFormat, editRgbaAlpha} from '../../FunctionUtilities';
-import {useInterval} from '../../../CustomHooks/useInterval';
+
 import {produce} from 'immer';
+import {useInterval} from '../../../CustomHooks/useInterval';
 
 type Props = {
   message?: string;

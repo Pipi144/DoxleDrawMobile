@@ -14,9 +14,9 @@
 
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {TDoxleRootStack} from '../../../../Routes/RouteTypes';
-import {useAppModalHeaderStore} from '../../../../GeneralStore/useAppModalHeaderStore';
 import {useShallow} from 'zustand/react/shallow';
+import {TDoxleRootStack} from '../../../AppRoutes/RouteTypes';
+import {useAppModalHeaderStore} from '../../../GeneralStore/useAppModalHeaderStore';
 
 const useAppModalHeader = () => {
   const navigation = useNavigation<StackNavigationProp<TDoxleRootStack>>();

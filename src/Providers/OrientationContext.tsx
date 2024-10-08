@@ -5,7 +5,6 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
   OrientationType,
   useDeviceOrientationChange,
-  useOrientationChange,
 } from 'react-native-orientation-locker';
 import Orientation from 'react-native-orientation-locker';
 import {isTablet, isLandscape} from 'react-native-device-info';

@@ -7,12 +7,10 @@ import {
   StyledAddFileFolderModeContainer,
   StyledAddMenuBtnText,
 } from './StyledAddFileAndFolder';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import DoxleAnimatedButton from '../../../../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
-import IonIcon from 'react-native-vector-icons/Ionicons';
-import {ZoomIn} from 'react-native-reanimated';
-import {editRgbaAlpha} from '../../../../../../../Utilities/FunctionUtilities';
 import useFileMenuFolderMode from '../../Hooks/useFileMenuFolderMode';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import DoxleAnimatedButton from '../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
+import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
 type Props = {};
 
 const FileMenuFolderMode = ({}: Props) => {
@@ -20,8 +18,6 @@ const FileMenuFolderMode = ({}: Props) => {
   const {
     handlePressAddPhotoLibrary,
     handlePressAddDocument,
-
-    handlePressVideoLibraryMenu,
     toggleView,
     isGridView,
   } = useFileMenuFolderMode({});
@@ -37,7 +33,7 @@ const FileMenuFolderMode = ({}: Props) => {
           },
         ]}>
         {isGridView ? (
-          <IonIcon
+          <IonIcons
             name="list"
             color={staticMenuColor.staticWhiteFontColor}
             size={25}
@@ -46,7 +42,7 @@ const FileMenuFolderMode = ({}: Props) => {
             }}
           />
         ) : (
-          <IonIcon
+          <IonIcons
             name="grid-outline"
             color={staticMenuColor.staticWhiteFontColor}
             size={25}
@@ -96,25 +92,7 @@ const FileMenuFolderMode = ({}: Props) => {
             marginRight: 15,
           }}
         />
-        <StyledAddMenuBtnText>image</StyledAddMenuBtnText>
-      </DoxleAnimatedButton>
-      <DoxleAnimatedButton
-        style={[
-          styles.menuBtn,
-          {
-            borderBottomWidth: 0,
-          },
-        ]}
-        onPress={handlePressVideoLibraryMenu}>
-        <IonIcons
-          name="videocam-outline"
-          color={staticMenuColor.staticWhiteFontColor}
-          size={25}
-          style={{
-            marginRight: 15,
-          }}
-        />
-        <StyledAddMenuBtnText>video</StyledAddMenuBtnText>
+        <StyledAddMenuBtnText>Photos and Videos</StyledAddMenuBtnText>
       </DoxleAnimatedButton>
     </StyledAddFileFolderModeContainer>
   );

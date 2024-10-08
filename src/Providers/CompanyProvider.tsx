@@ -13,7 +13,7 @@ import {useAuth} from './AuthProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useAppState from '../CustomHooks/useAppState';
 import CompanyQueryAPI from '../API/companyQueryAPI';
-import {Project} from '../Models/project';
+import {IFullProject, Project} from '../Models/project';
 import useEffectAfterMount from '../CustomHooks/useEffectAfterMount';
 import useGetProjectList from '../GetQueryDataHooks/useGetProjectList';
 import ProjectQueryAPI from '../API/projectQueryAPI';
@@ -120,11 +120,18 @@ const CompanyProvider = (children: any) => {
     [retrieveCompanyQuery.data],
   );
 
-  const handleSetCompany = useCallback((companyItem: Company) => {
-    setcompany(companyItem);
+  const handleSetCompany = useCallback(
+    (companyItem: Company) => {
+      setcompany(companyItem);
 
-    AsyncStorage.setItem('lastSelectedCompanyId', companyItem.companyId);
-  }, []);
+      setPrevSession(prev => ({...prev, lastCompany: companyItem}));
+      AsyncStorage.setItem(
+        prevSessionStorageKey,
+        JSON.stringify({...prevSession, lastCompany: companyItem}),
+      );
+    },
+    [prevSession],
+  );
   const refetchCompanyList = () => {
     retrieveCompanyQuery.refetch();
   };
@@ -140,15 +147,11 @@ const CompanyProvider = (children: any) => {
     },
     [prevSession],
   );
-  const projectQuery = ProjectQueryAPI.useRetrieveFullProjectListQuery({
-    company,
-    accessToken,
-    enable: Boolean(company),
-    filter: {
-      view: 'budget',
-    },
-    onSuccessCb(data) {
+
+  const onSuccessFetchingProjectList = useCallback(
+    (data: IFullProject[]) => {
       let prevSessionStorage = {...prevSession};
+      console.log('SET PROJECT:', data.length);
       if (data.length > 0) {
         if (!selectedProject) {
           setSelectedProject(data[0]);
@@ -172,7 +175,22 @@ const CompanyProvider = (children: any) => {
         );
       }
     },
+    [prevSession, selectedProject],
+  );
+  const projectQuery = ProjectQueryAPI.useRetrieveFullProjectListQuery({
+    company,
+    accessToken,
+
+    filter: {
+      view: 'budget',
+    },
+    // onSuccessCb: onSuccessFetchingProjectList,
   });
+  useEffect(() => {
+    onSuccessFetchingProjectList(
+      projectQuery.data?.pages.flatMap(p => p?.data.results ?? []) ?? [],
+    );
+  }, [projectQuery.isSuccess]);
 
   const {appState} = useAppState();
 

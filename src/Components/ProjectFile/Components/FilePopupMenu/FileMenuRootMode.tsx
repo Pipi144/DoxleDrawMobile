@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import React, {useEffect} from 'react';
+import React from 'react';
 import {
   StyledAddMenuBtnText,
   StyledAddMenuRootModeContainer,
@@ -7,23 +7,21 @@ import {
 
 import FTIcon from 'react-native-vector-icons/Feather';
 import IonIcon from 'react-native-vector-icons/Ionicons';
-import {LinearTransition, ZoomIn} from 'react-native-reanimated';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import DoxleAnimatedButton from '../../../../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
+import {LinearTransition} from 'react-native-reanimated';
 
-import {AddFileIcon, AddFolderIcon} from '../../ProjectFileIcon';
-import {editRgbaAlpha} from '../../../../../../../Utilities/FunctionUtilities';
 import useFileMenuRootMode from '../../Hooks/useFileMenuRootMode';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import DoxleAnimatedButton from '../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
+import {AddFolderIcon} from '../../ProjectFileIcon';
+import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
 
 type Props = {};
 const FileMenuRootMode = ({}: Props) => {
   const {staticMenuColor} = useDOXLETheme();
   const {
-    setExpandFileMenu,
     handlePressAddFolder,
     handlePressAddPhotoLibrary,
     handlePressAddDocument,
-    handlePressVideoLibraryMenu,
     isGridView,
     toggleView,
   } = useFileMenuRootMode({});
@@ -118,25 +116,7 @@ const FileMenuRootMode = ({}: Props) => {
               marginRight: 15,
             }}
           />
-          <StyledAddMenuBtnText>photos</StyledAddMenuBtnText>
-        </DoxleAnimatedButton>
-        <DoxleAnimatedButton
-          style={[
-            styles.menuBtn,
-            {
-              borderBottomWidth: 0,
-            },
-          ]}
-          onPress={handlePressVideoLibraryMenu}>
-          <IonIcon
-            name="videocam-outline"
-            color={staticMenuColor.staticWhiteFontColor}
-            size={25}
-            style={{
-              marginRight: 15,
-            }}
-          />
-          <StyledAddMenuBtnText>video</StyledAddMenuBtnText>
+          <StyledAddMenuBtnText>Photos and Videos</StyledAddMenuBtnText>
         </DoxleAnimatedButton>
       </>
     </StyledAddMenuRootModeContainer>

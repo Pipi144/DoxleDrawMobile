@@ -17,6 +17,7 @@ import {enableFreeze} from 'react-native-screens';
 import {registerTranslation, en as PaperEn} from 'react-native-paper-dates';
 registerTranslation('en', PaperEn);
 import SplashScreen from 'react-native-splash-screen';
+import RootAppRouting from './src/AppRoutes/AppRoutes';
 
 enableFreeze(true);
 
@@ -30,6 +31,15 @@ const queryClient = new QueryClient({
   },
 });
 function App(): React.JSX.Element {
+  useEffect(() => {
+    // AsyncStorage.clear();
+    // queryClient.clear();
+
+    const timeout = setTimeout(() => {
+      SplashScreen.hide();
+    }, 1400);
+    return () => clearTimeout(timeout);
+  }, []);
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
@@ -42,8 +52,9 @@ function App(): React.JSX.Element {
                     <CompanyProvider>
                       <UserProvider>
                         <EventProvider style={{flex: 1}}>
-                          <GestureHandlerRootView
-                            style={{flex: 1}}></GestureHandlerRootView>
+                          <GestureHandlerRootView style={{flex: 1}}>
+                            <RootAppRouting />
+                          </GestureHandlerRootView>
                         </EventProvider>
                       </UserProvider>
                     </CompanyProvider>

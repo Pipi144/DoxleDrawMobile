@@ -17,7 +17,7 @@ import useUploadIndicator from './Hooks/useUploadIndicator';
 import {GestureDetector} from 'react-native-gesture-handler';
 import Animated, {ZoomIn, ZoomOut} from 'react-native-reanimated';
 import {styled} from 'styled-components/native';
-import UploadingLoader from '../../../../../../../Utilities/AnimationScreens/UploadingLoader/UploadingLoader';
+import UploadingLoader from '../../../../Utilities/AnimationScreens/UploadingLoader/UploadingLoader';
 
 type Props = {};
 const StyledUploadIndicator = styled(Animated.View)`

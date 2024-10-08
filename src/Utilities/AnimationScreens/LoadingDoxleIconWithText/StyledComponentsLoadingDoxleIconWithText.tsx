@@ -1,9 +1,6 @@
 import Animated from 'react-native-reanimated';
 import styled from 'styled-components/native';
-import {
-  DOXLE_MAIN_COLOR_MILD_OPACITY,
-  NORMAL_CONTENT_FONT_FAMILY,
-} from '../../constants';
+import {editRgbaAlpha} from '../../FunctionUtilities';
 
 export const RootLoadingDoxleIconWithText = styled.View`
   width: 100%;
@@ -24,12 +21,16 @@ export const StyledMessageContainer = styled.View`
   margin-top: 20px;
 `;
 export const StyledAnimatedChar = styled(Animated.Text)`
-  font-family: ${NORMAL_CONTENT_FONT_FAMILY};
+  font-family: ${p => p.theme.DOXLE_FONT.primaryFont};
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
   line-height: 18px;
-  color: ${DOXLE_MAIN_COLOR_MILD_OPACITY};
+  color: ${p =>
+    editRgbaAlpha({
+      rgbaColor: p.theme.THEME_COLOR.primaryFontColor,
+      alpha: '0.8',
+    })};
   text-transform: none;
 `;
 export const StyledAnimatedDiamondView = styled.View`

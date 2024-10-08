@@ -1,21 +1,17 @@
 import {StyleSheet} from 'react-native';
 import React, {useCallback, useEffect} from 'react';
-
-import {useProjectStore} from '../../../Store/useProjectStore';
 import {useProjectFileStore} from '../Store/useProjectFileStore';
 import {useShallow} from 'zustand/react/shallow';
 import {useFocusEffect} from '@react-navigation/native';
-import {useAppModalHeaderStore} from '../../../../../../GeneralStore/useAppModalHeaderStore';
+
 import FileMenuRootMode from '../Components/FilePopupMenu/FileMenuRootMode';
+import {useCompany} from '../../../Providers/CompanyProvider';
+import {useAppModalHeaderStore} from '../../../GeneralStore/useAppModalHeaderStore';
 
 type Props = {};
 
 const useProjectFileDisplayer = (props: Props) => {
-  const {selectedProject} = useProjectStore(
-    useShallow(state => ({
-      selectedProject: state.selectedProject,
-    })),
-  );
+  const {selectedProject} = useCompany();
   const {
     setWholeFilterProjectFolderQuery,
     setWholeFilterProjectFileQuery,
