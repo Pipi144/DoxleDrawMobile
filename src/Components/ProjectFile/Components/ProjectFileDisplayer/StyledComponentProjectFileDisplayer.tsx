@@ -183,3 +183,10 @@ export const StyledListFileInfoText = styled.Text<{}>`
   letter-spacing: -0.26px;
   max-width: 100%;
 `;
+export const StyledUploadFileProgressText = styled.Text`
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
+  font-style: normal;
+  font-weight: 400;
+  font-size: ${p => p.theme.doxleFontSize.subContentTextSize}px;
+  color: ${p => p.theme.THEME_COLOR.primaryFontColor};
+`;

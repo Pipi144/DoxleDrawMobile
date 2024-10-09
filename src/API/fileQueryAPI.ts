@@ -347,7 +347,7 @@ const useAddFilesQuery = ({
 interface IAddSingleFileQueryProps extends BaseAPIProps {
   onCancelUpload?: () => void;
   onSuccessUpload?: (files: DoxleFile[]) => void;
-  onErrorUpload?: (payload: IAddSingleFileMutateProps, error?: any) => void;
+  onErrorUpload?: (payload: IAddSingleFileMutateProps, error?: Error) => void;
 }
 export interface IAddSingleFileMutateProps {
   docketId?: string;

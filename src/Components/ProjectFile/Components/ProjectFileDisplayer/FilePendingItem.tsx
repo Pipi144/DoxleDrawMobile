@@ -21,6 +21,7 @@ import {
   StyledListFileNameText,
   StyledPendingImageWrapper,
   StyledProjectFileListItemContainer,
+  StyledUploadFileProgressText,
 } from './StyledComponentProjectFileDisplayer';
 import {LinearTransition} from 'react-native-reanimated';
 import {useOrientation} from '../../../../Providers/OrientationContext';
@@ -35,6 +36,7 @@ import IonIcons from 'react-native-vector-icons/Ionicons';
 import useUploadFileState from '../../../../CustomHooks/useUploadFileState';
 import useFilePendingItem from './Hooks/useFilePendingItem';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
+import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
 
 type Props = {
   item: TFileBgUploadData;
@@ -44,7 +46,7 @@ const FilePendingItem = ({item}: Props) => {
   const {deviceType} = useOrientation();
   const {THEME_COLOR} = useDOXLETheme();
 
-  const {circularRef, fileState, handlePressProgress} = useFilePendingItem({
+  const {fileState, handlePressProgress} = useFilePendingItem({
     item,
   });
   useEffect(() => {
@@ -131,13 +133,15 @@ const FilePendingItem = ({item}: Props) => {
       </View>
 
       <AnimatedCircularProgress
-        size={30}
-        width={3}
-        ref={circularRef}
+        size={deviceType === 'Smartphone' ? 40 : 50}
+        width={deviceType === 'Smartphone' ? 4 : 5}
         fill={fileState.progress}
-        tintColor={THEME_COLOR.doxleColor}
-        tintTransparency
-        backgroundColor={THEME_COLOR.primaryContainerColor}
+        tintColor={THEME_COLOR.primaryFontColor}
+        fillLineCap="round"
+        backgroundColor={editRgbaAlpha({
+          rgbaColor: THEME_COLOR.primaryFontColor,
+          alpha: '0.2',
+        })}
         style={{marginLeft: 4}}
         childrenContainerStyle={{
           justifyContent: 'center',
@@ -150,8 +154,10 @@ const FilePendingItem = ({item}: Props) => {
         // renderCap={({ center }) => <Circle cx={center.x} cy={center.y} r="10" fill="blue" />}
       >
         {fill => (
-          <Pressable onPress={handlePressProgress}>
-            <Text>{fill}</Text>
+          <Pressable onPress={handlePressProgress} hitSlop={10}>
+            <StyledUploadFileProgressText>
+              {Math.floor(fill)}
+            </StyledUploadFileProgressText>
           </Pressable>
         )}
       </AnimatedCircularProgress>

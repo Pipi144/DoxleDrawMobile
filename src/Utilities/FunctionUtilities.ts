@@ -944,3 +944,16 @@ export function getExtensionFromMimeType(mimeType: string): string {
 
   return mimeTypes[mimeType] || 'unknown';
 }
+
+export function replaceExtension(
+  fileName: string,
+  newExtension: string,
+): string {
+  // Get the base file name without extension
+  const baseFileName = fileName.split('.').slice(0, -1).join('.');
+
+  // Replace the extension with the new extension
+  const newFileName = baseFileName + '.' + newExtension;
+
+  return newFileName;
+}

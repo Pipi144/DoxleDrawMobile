@@ -84,7 +84,7 @@ export const moveFileToCache = async ({
   uri,
 }: TAPIServerFile): Promise<IMoveFileToCacheRes | undefined> => {
   try {
-    const fileExtension = getFileType(name);
+    const fileExtension = getExtensionFromMimeType(type);
     if (!fileExtension) {
       return;
     }

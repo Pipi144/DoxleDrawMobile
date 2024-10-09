@@ -28,7 +28,6 @@ type Props = {item: TFileBgUploadData};
 
 const useFilePendingItem = ({item}: Props) => {
   const {fileState} = useUploadFileState({fileId: item.file.fileId});
-  const circularRef = useRef<AnimatedCircularProgress>(null);
   const {updateStatusSingleCachedFile} = useFileBgUploadStore(
     useShallow(state => ({
       updateStatusSingleCachedFile: state.updateStatusSingleCachedFile,
@@ -60,14 +59,8 @@ const useFilePendingItem = ({item}: Props) => {
       updateStatusSingleCachedFile(item.file.fileId, 'pending');
     }
   };
-  useEffect(() => {
-    circularRef.current?.animate(
-      Math.floor(fileState.progress),
-      500,
-      Easing.quad,
-    );
-  }, [fileState.progress]);
-  return {circularRef, fileState, handlePressProgress};
+
+  return {fileState, handlePressProgress};
 };
 
 export default useFilePendingItem;

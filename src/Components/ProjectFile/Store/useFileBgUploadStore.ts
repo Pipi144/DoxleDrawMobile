@@ -28,6 +28,7 @@ import {
   saveCachedFileList,
 } from '../Provider/helperFncs';
 import {DoxleFile} from '../../../Models/files';
+import {replaceExtension} from '../../../Utilities/FunctionUtilities';
 
 type TAddCacheFiles = {
   files: TAPIServerFile[];
@@ -45,9 +46,11 @@ interface IFileBgUploadState {
   updateStatusMultipleCachedFile: (
     fileIds: string[],
     status: TFileBgUploadStatus,
+    errors?: string[],
   ) => void;
   cacheSingleFile: (file: DoxleFile) => Promise<string | undefined>;
 
+  synchronizeCachedFiles: (files: DoxleFile[]) => void;
   getCacheUrl: (fileId: string) => string | undefined;
   getInitialCachedFiles: () => Promise<void>;
 }
@@ -60,9 +63,13 @@ export const useFileBgUploadStore = create(
 
       for await (const file of files) {
         const newFilePath = await moveFileToCache(file);
-
+        const isVideo = file.type.includes('video');
         allData.push({
-          file: {...file, uri: newFilePath ? newFilePath.newUrl : file.uri},
+          file: {
+            ...file,
+            uri: newFilePath ? newFilePath.newUrl : file.uri,
+            name: isVideo ? replaceExtension(file.name, 'mp4') : file.name,
+          },
           thumbnailPath: newFilePath?.thumbUrl,
           hostId,
           status: 'pending',
@@ -89,21 +96,55 @@ export const useFileBgUploadStore = create(
 
       saveCachedFileList(get().cachedFiles);
     },
-    updateStatusMultipleCachedFile: (fileIds, status) => {
+    updateStatusMultipleCachedFile: (fileIds, status, errors) => {
       set(state => {
-        for (const fileId of fileIds) {
-          const index = state.cachedFiles.findIndex(
+        for (const [index, fileId] of fileIds.entries()) {
+          const cacheItem = state.cachedFiles.find(
             item => item.file.fileId === fileId,
           );
-          if (index !== -1) {
-            state.cachedFiles[index].status = status;
+          if (cacheItem) {
+            console.log('UPDATE STATUS MULTIPLE CACHED FILE:', status);
+            cacheItem.status = status;
+            if (errors && errors[index]) {
+              cacheItem.errorMessage = errors[index];
+            }
           }
         }
       });
 
       saveCachedFileList(get().cachedFiles);
     },
-
+    synchronizeCachedFiles: files => {
+      const cachedFiles = get().cachedFiles;
+      const newCachedFiles = files.map(file => {
+        const cacheFile: TFileBgUploadData = {
+          file: {
+            uri: file.url,
+            name: file.fileName,
+            type: file.fileType,
+            size: parseFloat(file.fileSize),
+            fileId: file.fileId,
+          },
+          hostId: file.folder
+            ? file.folder
+            : file.docket
+            ? file.docket
+            : file.project ?? '',
+          status: 'success',
+          expired: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 15,
+          uploadVariant: file.folder
+            ? 'Folder'
+            : file.docket
+            ? 'Docket'
+            : 'Project',
+        };
+        return cacheFile;
+      });
+      set(state => {
+        state.cachedFiles = [...cachedFiles, ...newCachedFiles];
+      });
+      saveCachedFileList(get().cachedFiles);
+    },
     cacheSingleFile: async (file: DoxleFile) => {
       let cacheFile: TFileBgUploadData = {
         file: {

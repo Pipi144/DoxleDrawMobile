@@ -26,6 +26,7 @@ import {useFileBgUploadStore} from '../Store/useFileBgUploadStore';
 import {useShallow} from 'zustand/shallow';
 import FilesAPI from '../../../API/fileQueryAPI';
 import useSetFileQueryData from '../../../QueryDataHooks/useSetFileQueryData';
+import {isAxiosError} from 'axios';
 
 type Props = PropsWithChildren & {};
 
@@ -51,6 +52,13 @@ const FileBgUploader = ({children}: Props) => {
       })),
     );
 
+  interface IFailedUploadFileError {
+    errors: Array<{
+      errors: string;
+      fileName: string;
+    }>;
+    files: any[];
+  }
   const {mutate} = FilesAPI.useBgUpoadSingleFileQuery({
     company,
     accessToken,
@@ -62,8 +70,14 @@ const FileBgUploader = ({children}: Props) => {
       );
       handleAddMultipleFile(files);
     },
-    onErrorUpload(data) {
-      updateStatusMultipleCachedFile([data.file.fileId], 'error');
+    onErrorUpload(data, error) {
+      updateStatusMultipleCachedFile(
+        [data.file.fileId],
+        'error',
+        isAxiosError<IFailedUploadFileError>(error)
+          ? error.response?.data.errors.map(error => error.errors)
+          : undefined,
+      );
     },
   });
 
