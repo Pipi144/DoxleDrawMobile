@@ -348,7 +348,6 @@ interface IAddSingleFileQueryProps extends BaseAPIProps {
   onCancelUpload?: () => void;
   onSuccessUpload?: (files: DoxleFile[]) => void;
   onErrorUpload?: (payload: IAddSingleFileMutateProps, error?: any) => void;
-  onProcessUpload?: (payload: IAddSingleFileMutateProps) => void;
 }
 export interface IAddSingleFileMutateProps {
   docketId?: string;
@@ -361,7 +360,7 @@ const useBgUpoadSingleFileQuery = ({
   onCancelUpload,
   onSuccessUpload,
   onErrorUpload,
-  onProcessUpload,
+
   accessToken,
 }: IAddSingleFileQueryProps) => {
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -426,11 +425,7 @@ const useBgUpoadSingleFileQuery = ({
         signal: abortControllerRef.current?.signal,
       });
     },
-    onMutate(variables) {
-      if (onProcessUpload) {
-        onProcessUpload(variables);
-      }
-    },
+
     onSuccess(response, variables, context) {
       if (onSuccessUpload) {
         onSuccessUpload(response.data.files);
@@ -438,6 +433,8 @@ const useBgUpoadSingleFileQuery = ({
     },
 
     onError(error, variables, context) {
+      console.log('ERROR UPLOADING FILE ', error);
+
       if (onErrorUpload) onErrorUpload(variables, error);
     },
     onSettled(data, error, variable) {

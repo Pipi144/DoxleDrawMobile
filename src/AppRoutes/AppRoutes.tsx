@@ -66,6 +66,9 @@ const RootAppRouting = (props: Props) => {
       }),
     },
   };
+  // useEffect(() => {
+  //   unlink(DocumentDirectoryPath);
+  // }, []);
 
   return (
     <ThemeProvider theme={{...doxleThemeContext, ...orientationContext}}>

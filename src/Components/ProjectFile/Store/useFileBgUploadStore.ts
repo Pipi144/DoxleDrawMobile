@@ -21,11 +21,13 @@ import {
 } from '../Provider/StorageModels';
 import {TAPIServerFile} from '../../../Models/utilityType';
 import {
+  cacheFileServer,
   deleteCacheInfo,
   getCachedFileInfo,
   moveFileToCache,
   saveCachedFileList,
 } from '../Provider/helperFncs';
+import {DoxleFile} from '../../../Models/files';
 
 type TAddCacheFiles = {
   files: TAPIServerFile[];
@@ -44,7 +46,9 @@ interface IFileBgUploadState {
     fileIds: string[],
     status: TFileBgUploadStatus,
   ) => void;
+  cacheSingleFile: (file: DoxleFile) => Promise<string | undefined>;
 
+  getCacheUrl: (fileId: string) => string | undefined;
   getInitialCachedFiles: () => Promise<void>;
 }
 export const useFileBgUploadStore = create(
@@ -56,24 +60,15 @@ export const useFileBgUploadStore = create(
 
       for await (const file of files) {
         const newFilePath = await moveFileToCache(file);
-        if (newFilePath) {
-          allData.push({
-            file: {...file, uri: newFilePath.newUrl},
-            thumbnailPath: newFilePath.thumbUrl,
-            hostId,
-            status: 'pending',
-            expired: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 15,
-            uploadVariant: variants,
-          });
-        } else {
-          allData.push({
-            file,
-            hostId,
-            status: 'error',
-            expired: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 3,
-            uploadVariant: variants,
-          });
-        }
+
+        allData.push({
+          file: {...file, uri: newFilePath ? newFilePath.newUrl : file.uri},
+          thumbnailPath: newFilePath?.thumbUrl,
+          hostId,
+          status: 'pending',
+          expired: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 15,
+          uploadVariant: variants,
+        });
       }
 
       set(state => {
@@ -109,6 +104,49 @@ export const useFileBgUploadStore = create(
       saveCachedFileList(get().cachedFiles);
     },
 
+    cacheSingleFile: async (file: DoxleFile) => {
+      let cacheFile: TFileBgUploadData = {
+        file: {
+          uri: file.url,
+          name: file.fileName,
+          type: file.fileType,
+          size: parseFloat(file.fileSize),
+          fileId: file.fileId,
+        },
+        hostId: file.folder
+          ? file.folder
+          : file.docket
+          ? file.docket
+          : file.project ?? '',
+        status: 'success',
+        expired: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 15,
+        uploadVariant: file.folder
+          ? 'Folder'
+          : file.docket
+          ? 'Docket'
+          : 'Project',
+      };
+
+      try {
+        const resCache = await cacheFileServer(file);
+        if (resCache) {
+          cacheFile.file.uri = resCache.newUrl;
+          cacheFile.thumbnailPath = resCache.thumbUrl;
+          set(state => {
+            state.cachedFiles.push(cacheFile);
+          });
+          saveCachedFileList(get().cachedFiles);
+          return resCache.newUrl;
+        }
+      } catch (error) {
+        console.log('ERROR cacheSingleFile:', error);
+      }
+    },
+
+    getCacheUrl: fileId => {
+      const file = get().cachedFiles.find(item => item.file.fileId === fileId);
+      return file?.file.uri;
+    },
     getInitialCachedFiles: async () => {
       try {
         const listFile = await getCachedFileInfo();

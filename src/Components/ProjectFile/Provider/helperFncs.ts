@@ -14,6 +14,7 @@
 
 import {
   copyFile,
+  downloadFile,
   moveFile,
   readDir,
   readFile,
@@ -23,6 +24,7 @@ import {
   checkPathExist,
   createLocalFolder,
   deleteFileSystemWithPath,
+  getExtensionFromMimeType,
 } from '../../../Utilities/FunctionUtilities';
 import {
   ALL_CACHED_FILES,
@@ -33,6 +35,7 @@ import {TFileBgUploadData, TFileBgUploadStatus} from './StorageModels';
 import {Platform} from 'react-native';
 import {TAPIServerFile} from '../../../Models/utilityType';
 import {createThumbnail} from 'react-native-create-thumbnail';
+import {DoxleFile} from '../../../Models/files';
 
 //# HELPER FUNCTION
 export const getCachedFileInfo = async (): Promise<TFileBgUploadData[]> => {
@@ -135,5 +138,52 @@ export const deleteCacheInfo = async (
     }
   } catch (error) {
     console.log('ERROR deleteCacheInfo:', error);
+  }
+};
+
+export const cacheFileServer = async (
+  file: DoxleFile,
+): Promise<IMoveFileToCacheRes | undefined> => {
+  let res: IMoveFileToCacheRes = {
+    newUrl: file.url,
+  };
+  try {
+    const isVideo = file.fileType.toLowerCase().includes('video');
+    const fileExtension = getExtensionFromMimeType(file.fileType);
+    const fileCachedPath = `${ALL_CACHED_FILES}/${file.fileId}.${
+      isVideo ? 'mp4' : fileExtension
+    }`;
+    const fileThumbCachedPath = `${ALL_CACHED_FILES}/${file.fileId}_thumb.jpg`;
+
+    const resultDownload = await downloadFile({
+      fromUrl: file.url,
+      toFile: fileCachedPath,
+      background: Platform.OS === 'ios' ? true : undefined,
+      discretionary: Platform.OS === 'ios' ? true : undefined,
+      cacheable: Platform.OS === 'ios' ? false : undefined,
+    }).promise;
+    if (isVideo && file.thumbUrl) {
+      const resThumbDownload = await downloadFile({
+        fromUrl: file.thumbUrl,
+        toFile: fileThumbCachedPath,
+        background: Platform.OS === 'ios' ? true : undefined,
+        discretionary: Platform.OS === 'ios' ? true : undefined,
+        cacheable: Platform.OS === 'ios' ? false : undefined,
+      }).promise;
+      if (resThumbDownload.statusCode === 200) {
+        console.log('DOWNLOAD THUMB SUCCESSFULL');
+        res.thumbUrl = fileThumbCachedPath;
+      }
+    }
+    if (resultDownload.statusCode === 200) {
+      console.log('DOWNLOAD FILE SUCCESSFULL');
+      res.newUrl = fileCachedPath;
+    } else if (resultDownload.statusCode >= 400) {
+      console.log('FILE NOT FOUND');
+      return;
+    }
+    return res;
+  } catch (error) {
+    console.log('ERROR cacheFileServer:', error);
   }
 };

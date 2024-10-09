@@ -47,8 +47,7 @@ const ProjectFileListItem: React.FC<Props> = ({
     onLongPress,
     folderPressed,
     filePressed,
-    isDeletingFile,
-    isDeletingFolder,
+
     isUpdatingFile,
     isUpdatingFolder,
     onPressIn,
@@ -84,23 +83,19 @@ const ProjectFileListItem: React.FC<Props> = ({
       onPressIn={onPressIn}
       onPressOut={onPressOut}
       unstable_pressDelay={100}
-      pointerEvents={isDeletingFile || isDeletingFolder ? 'none' : 'auto'}
       onPress={() => {
-        if (fileItem) filePressed(fileItem.url, fileItem.fileType);
+        if (fileItem) filePressed();
         else folderPressed();
       }}
       onLongPress={() => {
         if (fileItem) onLongPress('file');
         else onLongPress('folder');
-      }}
-      style={{
-        opacity: isDeletingFile || isDeletingFolder ? 0.5 : 1,
       }}>
       <StyledFilePressEffect style={[pressAnimatedStyle]} />
       {fileItem && (
         <>
           <StyledFileIconWrapper $width={deviceType === 'Smartphone' ? 45 : 55}>
-            {!isDeletingFile && !isUpdatingFile ? (
+            {!isUpdatingFile ? (
               <>
                 {fileItem.fileType
                   .toLowerCase()
@@ -149,7 +144,7 @@ const ProjectFileListItem: React.FC<Props> = ({
                       style={{}}
                       $width={deviceType === 'Smartphone' ? 35 : 45}
                       source={{
-                        url: fileItem.thumbUrl,
+                        url: fileItem.thumbUrl ?? fileItem.url,
                         resizeMode: 'contain',
                         cachePolicy: 'discWithCacheControl',
                       }}
@@ -231,7 +226,7 @@ const ProjectFileListItem: React.FC<Props> = ({
               </>
             ) : (
               <ActivityIndicator
-                color={isDeletingFile ? 'red' : THEME_COLOR.primaryFontColor}
+                color={THEME_COLOR.primaryFontColor}
                 size={doxleFontSize.errorToggleTextSize}
               />
             )}
@@ -253,7 +248,7 @@ const ProjectFileListItem: React.FC<Props> = ({
       {folderItem && (
         <>
           <StyledFileIconWrapper $width={deviceType === 'Smartphone' ? 45 : 55}>
-            {!isDeletingFolder && !isUpdatingFolder ? (
+            {!isUpdatingFolder ? (
               <FolderItemIcon
                 containerStyle={{
                   width: '100%',
@@ -261,7 +256,7 @@ const ProjectFileListItem: React.FC<Props> = ({
               />
             ) : (
               <ActivityIndicator
-                color={isDeletingFolder ? 'red' : THEME_COLOR.primaryFontColor}
+                color={THEME_COLOR.primaryFontColor}
                 size={16}
               />
             )}

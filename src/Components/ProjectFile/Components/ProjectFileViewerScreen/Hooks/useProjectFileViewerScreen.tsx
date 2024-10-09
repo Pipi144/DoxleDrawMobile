@@ -18,23 +18,27 @@ import {
   useNavigation,
   useRoute,
 } from '@react-navigation/native';
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {useShallow} from 'zustand/react/shallow';
 
-import {TProjectFileTabStack} from '../Routes/ProjectFileRouteTypes';
-import {useOrientation} from '../../../Providers/OrientationContext';
-import {useAppModalHeaderStore} from '../../../GeneralStore/useAppModalHeaderStore';
+import {TProjectFileTabStack} from '../../../Routes/ProjectFileRouteTypes';
+import {useOrientation} from '../../../../../Providers/OrientationContext';
+import {useAppModalHeaderStore} from '../../../../../GeneralStore/useAppModalHeaderStore';
 import {LayoutChangeEvent} from 'react-native';
+import {AnimatedCircularProgress} from 'react-native-circular-progress';
 
 const useProjectFileViewerScreen = () => {
   const [isLoadingImage, setIsLoadingImage] = useState(true);
   const [isImageError, setisImageError] = useState<boolean>(false);
   const [imageHeight, setImageHeight] = useState<number>(0);
+  const [isLoadingPdf, setIsLoadingPdf] = useState(true);
+  const [pdfLoadProgress, setPdfLoadProgress] = useState(0);
   const [layoutEditStage, setlayoutEditStage] = useState<
     {width: number; height: number; x: number; y: number} | undefined
   >(undefined);
   const {url, type} = useRoute()
     .params as TProjectFileTabStack['ProjectFileViewerScreen'];
+
   const navigation = useNavigation();
   const {deviceSize} = useOrientation();
   const {setCustomisedPopupMenu, setOveridenRouteName, setBackBtn} =
@@ -47,7 +51,7 @@ const useProjectFileViewerScreen = () => {
       })),
     );
   const ITEM_WIDTH = 0.95 * deviceSize.deviceWidth;
-
+  const pdfLoaderRef = useRef<AnimatedCircularProgress>(null);
   const handleNavBack = () => {
     navigation.goBack();
     setBackBtn(null);
@@ -84,6 +88,11 @@ const useProjectFileViewerScreen = () => {
     ITEM_WIDTH,
     isLoadingImage,
     isImageError,
+    pdfLoaderRef,
+    isLoadingPdf,
+    setIsLoadingPdf,
+    pdfLoadProgress,
+    setPdfLoadProgress,
   };
 };
 

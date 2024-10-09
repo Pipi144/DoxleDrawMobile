@@ -55,6 +55,7 @@ const FileBgUploader = ({children}: Props) => {
     company,
     accessToken,
     onSuccessUpload(files) {
+      console.log('SUCCESS:', files);
       updateStatusMultipleCachedFile(
         files.map(file => file.fileId),
         'success',
@@ -64,29 +65,23 @@ const FileBgUploader = ({children}: Props) => {
     onErrorUpload(data) {
       updateStatusMultipleCachedFile([data.file.fileId], 'error');
     },
-    onProcessUpload(data) {
-      updateStatusMultipleCachedFile([data.file.fileId], 'processing');
-    },
   });
 
   useEffect(() => {
-    const pendingFiles = cachedFiles.filter(file => file.status === 'pending');
+    const pendingFile = cachedFiles.find(file => file.status === 'pending');
 
-    if (pendingFiles.length > 0) {
-      pendingFiles.forEach(pendingFile => {
-        const {file, hostId, uploadVariant} = pendingFile;
-        mutate({
-          file: file,
-          projectId: uploadVariant === 'Project' ? hostId : undefined,
-          docketId: uploadVariant === 'Docket' ? hostId : undefined,
-          folderId: uploadVariant === 'Folder' ? hostId : undefined,
-        });
+    if (pendingFile) {
+      const {file, hostId, uploadVariant} = pendingFile;
+      mutate({
+        file: file,
+        projectId: uploadVariant === 'Project' ? hostId : undefined,
+        docketId: uploadVariant === 'Docket' ? hostId : undefined,
+        folderId: uploadVariant === 'Folder' ? hostId : undefined,
       });
     }
   }, [cachedFiles]);
 
   useEffect(() => {
-    console.log('RELOAD');
     getInitialCachedFiles();
   }, []);
 

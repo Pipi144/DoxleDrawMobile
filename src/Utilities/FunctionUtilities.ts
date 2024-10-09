@@ -924,3 +924,23 @@ export function areColorsSimilar(
     colorDiff(color1Val.a, color2Val.a) <= tolerance / 255 // Assuming tolerance for alpha is scaled similarly
   );
 }
+
+export function getExtensionFromMimeType(mimeType: string): string {
+  const mimeTypes: {[key: string]: string} = {
+    'image/jpeg': 'jpg',
+    'image/png': 'png',
+    'image/gif': 'gif',
+    'application/msword': 'doc',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+      'docx',
+    'application/vnd.ms-excel': 'xls',
+    'text/csv': 'csv',
+    'application/pdf': 'pdf',
+    'video/mp4': 'mp4',
+    'video/x-msvideo': 'avi',
+    'text/plain': 'txt',
+    // Add more MIME types and their corresponding extensions as needed
+  };
+
+  return mimeTypes[mimeType] || 'unknown';
+}

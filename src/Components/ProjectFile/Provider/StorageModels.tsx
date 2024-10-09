@@ -12,11 +12,7 @@
 // See the License for the specific language governing permissions and
 
 import {TAPIServerFile} from '../../../Models/utilityType';
-export type TFileBgUploadStatus =
-  | 'success'
-  | 'pending'
-  | 'processing'
-  | 'error';
+export type TFileBgUploadStatus = 'success' | 'pending' | 'error';
 export type TFileBgUploadVariants = 'Project' | 'Docket' | 'Folder';
 // limitations under the License.
 export type TFileBgUploadData = {

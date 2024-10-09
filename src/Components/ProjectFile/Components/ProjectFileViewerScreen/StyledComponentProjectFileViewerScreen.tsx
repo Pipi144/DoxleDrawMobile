@@ -21,3 +21,9 @@ export const StyledZoomableStageView = styled(ReactNativeZoomableView)`
   align-items: center;
   position: relative;
 `;
+export const StyledPDFLoaderText = styled.Text`
+  color: ${p => p.theme.staticMenuColor.staticWhiteFontColor};
+  font-size: ${p => p.theme.doxleFontSize.contentTextSize}px;
+  font-weight: 500;
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
+`;

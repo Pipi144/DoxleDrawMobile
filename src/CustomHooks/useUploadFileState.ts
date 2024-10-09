@@ -37,23 +37,19 @@ const useUploadFileState = ({fileId}: Props) => {
     payload: Partial<IFileUploadFileState> & {fileId: string},
   ) => {
     const qKey = [...fileStateRootKey, payload.fileId];
-    const dataActive = queryClient.getQueryCache().findAll({
-      predicate: query =>
-        qKey.every(key => query.queryKey.includes(key)) && query.isActive(),
+
+    queryClient.setQueryData<IFileUploadFileState>(qKey, old => {
+      if (old) {
+        return produce(old, draft => {
+          Object.assign(draft, payload);
+          return draft;
+        });
+      } else
+        return {
+          progress: payload.progress ?? 0,
+          estimatedTime: payload.estimatedTime ?? 0,
+        };
     });
-    if (dataActive.length > 0) {
-      queryClient.setQueryData<IFileUploadFileState>(
-        dataActive[0].queryKey,
-        old => {
-          if (old) {
-            return produce(old, draft => {
-              Object.assign(draft, payload);
-              return draft;
-            });
-          } else return old;
-        },
-      );
-    }
   };
 
   const destroyState = (fileId: string) => {

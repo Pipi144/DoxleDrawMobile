@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import {StyleSheet, View} from 'react-native';
+import {Pressable, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect} from 'react';
 import {TFileBgUploadData} from '../../Provider/StorageModels';
 import {
@@ -33,6 +33,8 @@ import {
 import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
 import IonIcons from 'react-native-vector-icons/Ionicons';
 import useUploadFileState from '../../../../CustomHooks/useUploadFileState';
+import useFilePendingItem from './Hooks/useFilePendingItem';
+import {AnimatedCircularProgress} from 'react-native-circular-progress';
 
 type Props = {
   item: TFileBgUploadData;
@@ -41,10 +43,12 @@ type Props = {
 const FilePendingItem = ({item}: Props) => {
   const {deviceType} = useOrientation();
   const {THEME_COLOR} = useDOXLETheme();
-  const {fileState} = useUploadFileState({fileId: item.file.fileId});
+
+  const {circularRef, fileState, handlePressProgress} = useFilePendingItem({
+    item,
+  });
   useEffect(() => {
     console.log('pENDING:', item);
-    console.log('IS IMG:', item.file.type.toLowerCase().includes('image'));
   }, []);
 
   return (
@@ -52,9 +56,8 @@ const FilePendingItem = ({item}: Props) => {
       delayLongPress={200}
       layout={LinearTransition.springify().damping(16)}
       unstable_pressDelay={100}
-      pointerEvents={'none'}
       style={{
-        opacity: 0.5,
+        opacity: 0.8,
       }}>
       <StyledFileIconWrapper $width={deviceType === 'Smartphone' ? 45 : 55}>
         {item.file.type.toLowerCase().includes('pdf') ? (
@@ -126,6 +129,32 @@ const FilePendingItem = ({item}: Props) => {
           {(Number(item.file.size ?? 0) / 1024 / 1024).toFixed(2)} MB /{' '}
         </StyledListFileInfoText>
       </View>
+
+      <AnimatedCircularProgress
+        size={30}
+        width={3}
+        ref={circularRef}
+        fill={fileState.progress}
+        tintColor={THEME_COLOR.doxleColor}
+        tintTransparency
+        backgroundColor={THEME_COLOR.primaryContainerColor}
+        style={{marginLeft: 4}}
+        childrenContainerStyle={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'transparent',
+          padding: 2,
+        }}
+        prefill={0}
+
+        // renderCap={({ center }) => <Circle cx={center.x} cy={center.y} r="10" fill="blue" />}
+      >
+        {fill => (
+          <Pressable onPress={handlePressProgress}>
+            <Text>{fill}</Text>
+          </Pressable>
+        )}
+      </AnimatedCircularProgress>
     </StyledProjectFileListItemContainer>
   );
 };
