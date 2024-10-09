@@ -1,24 +1,19 @@
-import {StyleSheet} from 'react-native';
-
 import {StackNavigationProp} from '@react-navigation/stack';
 import {useNavigation} from '@react-navigation/native';
 
 import * as ImagePicker from 'react-native-image-picker';
 import * as DocumentPicker from 'react-native-document-picker';
 
-import {useProjectFileStore} from '../Store/useProjectFileStore';
+import {useProjectFileStore} from '../../../Store/useProjectFileStore';
 
-import {TProjectFileTabStack} from '../Routes/ProjectFileRouteTypes';
+import {TProjectFileTabStack} from '../../../Routes/ProjectFileRouteTypes';
 import {useShallow} from 'zustand/react/shallow';
-import {useAppModalHeaderStore} from '../../../GeneralStore/useAppModalHeaderStore';
-import {useAuth} from '../../../Providers/AuthProvider';
-import {useNotification} from '../../../Providers/NotificationProvider';
-import {useCompany} from '../../../Providers/CompanyProvider';
-import FilesAPI, {AddFileMutateProps} from '../../../API/fileQueryAPI';
-import {TAPIServerFile} from '../../../Models/utilityType';
+import {useAppModalHeaderStore} from '../../../../../GeneralStore/useAppModalHeaderStore';
+import {useCompany} from '../../../../../Providers/CompanyProvider';
+import {TAPIServerFile} from '../../../../../Models/utilityType';
 
 import uuid from 'react-native-uuid';
-import {useFileBgUploadStore} from '../Store/useFileBgUploadStore';
+import {useFileBgUploadStore} from '../../../Store/useFileBgUploadStore';
 
 type Props = {};
 
@@ -36,22 +31,13 @@ const useFileMenuRootMode = ({}: Props) => {
       navigator.navigate('ProjectNewFolderScreen', {});
     }, 500);
   };
-
-  const {accessToken} = useAuth();
-  const {showNotification} = useNotification();
-  const {company, selectedProject} = useCompany();
+  const {selectedProject} = useCompany();
   const {currentView, setCurrentView} = useProjectFileStore(
     useShallow(state => ({
       currentView: state.currentView,
       setCurrentView: state.setCurrentView,
     })),
   );
-
-  const addFileQuery = FilesAPI.useAddFilesQuery({
-    accessToken: accessToken,
-    company: company,
-    showNotification: showNotification,
-  });
 
   const {addCachedFiles} = useFileBgUploadStore(
     useShallow(state => ({addCachedFiles: state.addCachedFiles})),
@@ -75,7 +61,7 @@ const useFileMenuRootMode = ({}: Props) => {
 
       if (result) {
         let addedFiles: TAPIServerFile[] = [];
-        result.forEach((file, fileIndex) => {
+        result.forEach(file => {
           if (file.uri && file.name && file.type) {
             const fileBlob: TAPIServerFile = {
               uri: file.uri,
@@ -126,7 +112,7 @@ const useFileMenuRootMode = ({}: Props) => {
       if (imagePickerResult.assets) {
         let pickedImgs: TAPIServerFile[] = [];
 
-        for await (const [index, img] of imagePickerResult.assets.entries()) {
+        for await (const [, img] of imagePickerResult.assets.entries()) {
           if (img.uri && img.fileName && img.type) {
             pickedImgs.push({
               uri: img.uri,
@@ -168,5 +154,3 @@ const useFileMenuRootMode = ({}: Props) => {
 };
 
 export default useFileMenuRootMode;
-
-const styles = StyleSheet.create({});

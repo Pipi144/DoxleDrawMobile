@@ -13,10 +13,10 @@
 // limitations under the License.
 import React, {useCallback} from 'react';
 import {useShallow} from 'zustand/react/shallow';
-import {useProjectFileStore} from '../Store/useProjectFileStore';
-import FileMenuFolderMode from '../Components/FilePopupMenu/FileMenuFolderMode';
+import {useProjectFileStore} from '../../../Store/useProjectFileStore';
+import FileMenuFolderMode from '../../FilePopupMenu/FileMenuFolderMode';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {useAppModalHeaderStore} from '../../../GeneralStore/useAppModalHeaderStore';
+import {useAppModalHeaderStore} from '../../../../../GeneralStore/useAppModalHeaderStore';
 
 const useProjectFileInsideFolderScreen = () => {
   const {setCustomisedPopupMenu, setOveridenRouteName, setBackBtn} =

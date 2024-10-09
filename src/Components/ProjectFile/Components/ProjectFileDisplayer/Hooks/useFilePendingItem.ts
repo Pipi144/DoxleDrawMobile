@@ -16,7 +16,7 @@ import React, {useEffect, useRef} from 'react';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import useUploadFileState from '../../../../../CustomHooks/useUploadFileState';
 import {TFileBgUploadData} from '../../../Provider/StorageModels';
-import {useMutationState} from '@tanstack/react-query';
+import {useMutationState, useQueryClient} from '@tanstack/react-query';
 import {
   getFileMutationKey,
   IAddSingleFileMutateProps,
@@ -28,32 +28,27 @@ type Props = {item: TFileBgUploadData};
 
 const useFilePendingItem = ({item}: Props) => {
   const {fileState} = useUploadFileState({fileId: item.file.fileId});
-  const {updateStatusSingleCachedFile} = useFileBgUploadStore(
+  const queryClient = useQueryClient();
+  const {updateStatusSingleCachedFile, destroyCacheFile} = useFileBgUploadStore(
     useShallow(state => ({
       updateStatusSingleCachedFile: state.updateStatusSingleCachedFile,
+      destroyCacheFile: state.destroyCacheFile,
     })),
   );
 
-  const mutationFile = useMutationState({
-    filters: {
-      exact: true,
-      mutationKey: getFileMutationKey('bg-upload-single'),
-      predicate: query =>
-        query.state.variables &&
-        query.state.variables.file &&
-        (query.state.variables as IAddSingleFileMutateProps).file.fileId ===
-          item.file.fileId &&
-        query.state.status === 'pending',
-    },
-    select(mutation) {
-      return mutation.destroy;
-    },
+  const mutationFile = queryClient.getMutationCache().find({
+    mutationKey: getFileMutationKey('bg-upload-single'),
+    predicate: mutation =>
+      mutation.state.variables &&
+      (mutation.state.variables as any).file.fileId === item.file.fileId &&
+      mutation.state.status === 'pending',
   });
 
   const handlePressProgress = () => {
     if (item.status === 'pending') {
-      if (mutationFile.length > 0) {
-        mutationFile[0]();
+      if (mutationFile) {
+        destroyCacheFile(item);
+        mutationFile.destroy();
       }
     } else if (item.status === 'error') {
       updateStatusSingleCachedFile(item.file.fileId, 'pending');

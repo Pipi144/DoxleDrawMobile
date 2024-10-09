@@ -9,7 +9,7 @@ import FTIcon from 'react-native-vector-icons/Feather';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import {LinearTransition} from 'react-native-reanimated';
 
-import useFileMenuRootMode from '../../Hooks/useFileMenuRootMode';
+import useFileMenuRootMode from './Hooks/useFileMenuRootMode';
 import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
 import DoxleAnimatedButton from '../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
 import {AddFolderIcon} from '../../ProjectFileIcon';

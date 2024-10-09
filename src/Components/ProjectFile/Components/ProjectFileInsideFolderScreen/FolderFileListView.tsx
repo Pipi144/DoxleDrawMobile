@@ -15,6 +15,11 @@ import {useOrientation} from '../../../../Providers/OrientationContext';
 import {DoxleFile} from '../../../../Models/files';
 import DoxleEmptyPlaceholder from '../../../DesignPattern/DoxleEmptyPlaceholder/DoxleEmptyPlaceholder';
 import {ErrorFetchingBanner} from '../../../DesignPattern/DoxleBanners';
+import {useFileBgUploadStore} from '../../Store/useFileBgUploadStore';
+import {useShallow} from 'zustand/shallow';
+import {useProjectFileStore} from '../../Store/useProjectFileStore';
+import {TFileBgUploadData} from '../../Provider/StorageModels';
+import FilePendingItem from '../ProjectFileDisplayer/FilePendingItem';
 
 const FolderFileListView = () => {
   const {THEME_COLOR} = useDOXLETheme();
@@ -26,17 +31,40 @@ const FolderFileListView = () => {
     isRefetchingFileInsideFolder,
     refetchFileInsideFolder,
   } = useGetProjectFileInsideFolder({});
-
+  const {currentFolder} = useProjectFileStore(
+    useShallow(state => ({currentFolder: state.currentFolder})),
+  );
+  const {cachedFiles} = useFileBgUploadStore(
+    useShallow(state => ({
+      cachedFiles: state.cachedFiles,
+    })),
+  );
+  const pendingFiles = useMemo(
+    () =>
+      cachedFiles.filter(
+        item =>
+          item.uploadVariant === 'Folder' &&
+          item.hostId === currentFolder?.folderId &&
+          item.status !== 'success',
+      ),
+    [currentFolder, cachedFiles],
+  );
   //*render List
   const layout = LinearTransition.springify().damping(16);
   const renderItem = useCallback(
-    (props: {item: DoxleFile; index: number}) => (
-      <ProjectFileListItem fileItem={props.item} />
-    ),
+    (props: {item: DoxleFile | TFileBgUploadData; index: number}) =>
+      (props.item as DoxleFile).fileId !== undefined ? (
+        <ProjectFileListItem fileItem={props.item as DoxleFile} />
+      ) : (
+        <FilePendingItem item={props.item as TFileBgUploadData} />
+      ),
     [],
   );
   const keyExtractor = useCallback(
-    (item: DoxleFile) => `folderFileItem#${item.fileId}`,
+    (item: DoxleFile | TFileBgUploadData, index: number) =>
+      (item as DoxleFile).fileId !== undefined
+        ? `listItem#${(item as DoxleFile).fileId}`
+        : (item as TFileBgUploadData).file.fileId,
     [],
   );
   const listEmptyComponent = useMemo(
@@ -67,7 +95,7 @@ const FolderFileListView = () => {
 
       {!isFetchingFileInsideFolder && (
         <Animated.FlatList
-          data={filesInsideFolderList}
+          data={[...pendingFiles, ...filesInsideFolderList]}
           itemLayoutAnimation={layout}
           initialNumToRender={8}
           maxToRenderPerBatch={4}

@@ -7,10 +7,10 @@ import {
   StyledAddFileFolderModeContainer,
   StyledAddMenuBtnText,
 } from './StyledAddFileAndFolder';
-import useFileMenuFolderMode from '../../Hooks/useFileMenuFolderMode';
 import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
 import DoxleAnimatedButton from '../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
 import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
+import useFileMenuFolderMode from './Hooks/useFileMenuFolderMode';
 type Props = {};
 
 const FileMenuFolderMode = ({}: Props) => {

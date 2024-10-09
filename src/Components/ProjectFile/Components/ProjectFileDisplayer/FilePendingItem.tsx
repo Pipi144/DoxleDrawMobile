@@ -22,7 +22,11 @@ import {
   StyledProjectFileListItemContainer,
   StyledUploadFileProgressText,
 } from './StyledComponentProjectFileDisplayer';
-import Animated, {LinearTransition} from 'react-native-reanimated';
+import Animated, {
+  LinearTransition,
+  ZoomIn,
+  ZoomOut,
+} from 'react-native-reanimated';
 import {useOrientation} from '../../../../Providers/OrientationContext';
 import {
   DoxleCSVIcon,
@@ -126,7 +130,13 @@ const FilePendingItem = ({item}: Props) => {
         </StyledListFileNameText>
 
         <StyledListFileInfoText numberOfLines={1} ellipsizeMode="tail">
-          {(Number(item.file.size ?? 0) / 1024 / 1024).toFixed(2)} MB /{' '}
+          {(Number(item.file.size ?? 0) / 1024 / 1024).toFixed(2)} MB -{' '}
+          <StyledListFileInfoText
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={{color: item.status === 'pending' ? '#FFC700' : 'red'}}>
+            {item.status}
+          </StyledListFileInfoText>
         </StyledListFileInfoText>
       </View>
 
@@ -156,17 +166,23 @@ const FilePendingItem = ({item}: Props) => {
         // renderCap={({ center }) => <Circle cx={center.x} cy={center.y} r="10" fill="blue" />}
       >
         {fill => (
-          <Pressable onPress={handlePressProgress} hitSlop={10}>
+          <Pressable onPress={handlePressProgress} hitSlop={14}>
             {item.status === 'pending' && (
-              <StyledUploadFileProgressText>
-                {Math.floor(fill)}
-              </StyledUploadFileProgressText>
+              <AnimatedIonIcon
+                name="close"
+                size={doxleFontSize.headTitleTextSize}
+                color={THEME_COLOR.primaryFontColor}
+                entering={ZoomIn}
+                exiting={ZoomOut}
+              />
             )}
             {item.status === 'error' && (
               <AnimatedIonIcon
                 name="reload"
                 size={doxleFontSize.headTitleTextSize}
                 color={'red'}
+                entering={ZoomIn}
+                exiting={ZoomOut}
               />
             )}
           </Pressable>

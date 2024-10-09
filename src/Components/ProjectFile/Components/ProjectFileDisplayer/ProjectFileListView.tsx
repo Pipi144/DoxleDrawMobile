@@ -42,12 +42,6 @@ const ProjectFileListView = (props: Props) => {
   const {selectedProject} = useCompany();
   const {cachedFiles} = useFileBgUploadStore(
     useShallow(state => ({
-      // cachedProjectFile: state.cachedFiles.filter(
-      //   item =>
-      //     item.uploadVariant === 'Project' &&
-      //     item.hostId === selectedProject?.projectId &&
-      //     (item.status === 'pending' || item.status === 'processing'),
-      // ),
       cachedFiles: state.cachedFiles,
     })),
   );
@@ -75,7 +69,10 @@ const ProjectFileListView = (props: Props) => {
   );
 
   //* render list
-  const layout = LinearTransition.springify().damping(16);
+  const layout = LinearTransition.springify()
+    .damping(16)
+    .mass(0.4)
+    .stiffness(100);
   const renderItem = useCallback(
     (props: {
       item: DoxleFile | DoxleFolder | TFileBgUploadData;

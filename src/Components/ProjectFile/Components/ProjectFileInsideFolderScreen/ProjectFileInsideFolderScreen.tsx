@@ -6,7 +6,7 @@ import FolderFilesGridView from './FolderFilesGridView';
 
 import EditProjectFileModal from '../EditProjectFileModal/EditProjectFileModal';
 
-import useProjectFileInsideFolderScreen from '../../Hooks/useProjectFileInsideFolderScreen';
+import useProjectFileInsideFolderScreen from './Hooks/useProjectFileInsideFolderScreen';
 
 import UploadIndicator from '../UploadIndicator/UploadIndicator';
 import SearchSection from '../../../DesignPattern/SearchSection/SearchSection';

@@ -4,18 +4,15 @@ import {useCallback, useMemo} from 'react';
 import * as ImagePicker from 'react-native-image-picker';
 import * as DocumentPicker from 'react-native-document-picker';
 
-import {useProjectFileStore} from '../Store/useProjectFileStore';
 import {useShallow} from 'zustand/react/shallow';
-import {Image, Video} from 'react-native-compressor';
-import {useIsFocused} from '@react-navigation/native';
-import {useAppModalHeaderStore} from '../../../GeneralStore/useAppModalHeaderStore';
-import {useAuth} from '../../../Providers/AuthProvider';
-import {useNotification} from '../../../Providers/NotificationProvider';
-import {useCompany} from '../../../Providers/CompanyProvider';
-import FilesAPI, {
-  AddFileMutateProps,
-  TAddDoxleFile,
-} from '../../../API/fileQueryAPI';
+import {useAuth} from '../../../../../Providers/AuthProvider';
+import {useNotification} from '../../../../../Providers/NotificationProvider';
+import {useCompany} from '../../../../../Providers/CompanyProvider';
+import {useProjectFileStore} from '../../../Store/useProjectFileStore';
+import {useFileBgUploadStore} from '../../../Store/useFileBgUploadStore';
+import {useAppModalHeaderStore} from '../../../../../GeneralStore/useAppModalHeaderStore';
+import {TAPIServerFile} from '../../../../../Models/utilityType';
+import uuid from 'react-native-uuid';
 
 type Props = {};
 
@@ -37,12 +34,10 @@ const useFileMenuFolderMode = ({}: Props) => {
       setOpenPopupMenu: state.setOpenPopupMenu,
     })),
   );
-  const addFileQuery = FilesAPI.useAddFilesQuery({
-    accessToken: accessToken,
-    company: company,
-    showNotification: showNotification,
-  });
 
+  const {addCachedFiles} = useFileBgUploadStore(
+    useShallow(state => ({addCachedFiles: state.addCachedFiles})),
+  );
   const handlePressAddDocument = async () => {
     try {
       const result = await DocumentPicker.pick({
@@ -60,23 +55,25 @@ const useFileMenuFolderMode = ({}: Props) => {
       });
 
       if (result) {
-        let addedFiles: TAddDoxleFile[] = [];
+        let addedFiles: TAPIServerFile[] = [];
         result.forEach((file, fileIndex) => {
           if (file.uri && file.name && file.type) {
-            const fileBlob: TAddDoxleFile = {
+            const fileBlob: TAPIServerFile = {
               uri: file.uri,
               name: file.name,
               type: file.type,
+              size: file.size ?? 1,
+              fileId: uuid.v4().toString(),
             };
             addedFiles.push(fileBlob);
           }
         });
 
-        const addFileData: AddFileMutateProps = {
-          folderId: currentFolder?.folderId ?? undefined,
+        addCachedFiles({
           files: addedFiles,
-        };
-        addFileQuery.mutate(addFileData);
+          hostId: currentFolder?.folderId ?? '',
+          variants: 'Folder',
+        });
       }
     } catch (err) {
       //Handling any exception (If any)
@@ -109,21 +106,23 @@ const useFileMenuFolderMode = ({}: Props) => {
       }
       if (imagePickerResult.assets) {
         setOpenPopupMenu(false);
-        let pickedImgs: TAddDoxleFile[] = [];
+        let pickedImgs: TAPIServerFile[] = [];
         for await (const [index, img] of imagePickerResult.assets.entries()) {
           if (img.uri && img.fileName && img.type && img.width && img.height) {
             pickedImgs.push({
               uri: img.uri,
               name: img.fileName,
               type: img.type,
+              size: img.fileSize ?? 1,
+              fileId: uuid.v4().toString(),
             });
           }
         }
-        const addFileData: AddFileMutateProps = {
+        addCachedFiles({
           files: pickedImgs,
-          folderId: currentFolder?.folderId ?? undefined,
-        };
-        addFileQuery.mutate(addFileData);
+          hostId: currentFolder?.folderId ?? '',
+          variants: 'Folder',
+        });
       }
       if (imagePickerResult.errorMessage) throw imagePickerResult.errorMessage;
     } catch (error) {

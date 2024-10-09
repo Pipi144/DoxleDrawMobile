@@ -28,7 +28,11 @@ import {
   saveCachedFileList,
 } from '../Provider/helperFncs';
 import {DoxleFile} from '../../../Models/files';
-import {replaceExtension} from '../../../Utilities/FunctionUtilities';
+import {
+  checkPathExist,
+  deleteFileSystemWithPath,
+  replaceExtension,
+} from '../../../Utilities/FunctionUtilities';
 
 type TAddCacheFiles = {
   files: TAPIServerFile[];
@@ -50,6 +54,7 @@ interface IFileBgUploadState {
   ) => void;
   cacheSingleFile: (file: DoxleFile) => Promise<string | undefined>;
 
+  destroyCacheFile: (data: TFileBgUploadData) => Promise<void>;
   synchronizeCachedFiles: (files: DoxleFile[]) => void;
   getCacheUrl: (fileId: string) => string | undefined;
   getInitialCachedFiles: () => Promise<void>;
@@ -170,7 +175,25 @@ export const useFileBgUploadStore = create(
         console.log('ERROR cacheSingleFile:', error);
       }
     },
+    destroyCacheFile: async data => {
+      set(state => {
+        const index = state.cachedFiles.findIndex(
+          item => item.file.fileId === data.file.fileId,
+        );
+        if (index !== -1) {
+          state.cachedFiles.splice(index, 1);
+        }
+      });
 
+      saveCachedFileList(get().cachedFiles);
+
+      if (await checkPathExist(data.file.uri)) {
+        await deleteFileSystemWithPath(data.file.uri);
+      }
+      if (data.thumbnailPath && (await checkPathExist(data.thumbnailPath))) {
+        await deleteFileSystemWithPath(data.thumbnailPath);
+      }
+    },
     getCacheUrl: fileId => {
       const file = get().cachedFiles.find(item => item.file.fileId === fileId);
       return file?.file.uri;
