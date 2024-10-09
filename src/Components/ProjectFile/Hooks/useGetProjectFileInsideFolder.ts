@@ -7,14 +7,13 @@ import {useAuth} from '../../../Providers/AuthProvider';
 import {useCompany} from '../../../Providers/CompanyProvider';
 import {useNotification} from '../../../Providers/NotificationProvider';
 import FilesAPI, {IFilterGetFileQueryFilter} from '../../../API/fileQueryAPI';
+import {useFileBgUploadStore} from '../Store/useFileBgUploadStore';
 
 type Props = {};
 
 const useGetProjectFileInsideFolder = (props: Props) => {
   const {accessToken} = useAuth();
   const {company} = useCompany();
-  const {notifierRootAppRef} = useNotification();
-  //handle show notification
 
   const {currentFolder} = useProjectFileStore(
     useShallow(state => ({
@@ -28,18 +27,24 @@ const useGetProjectFileInsideFolder = (props: Props) => {
     [currentFolder],
   );
   const isFocused = useIsFocused();
+  const {synchronizeCachedFiles} = useFileBgUploadStore(
+    useShallow(state => ({
+      synchronizeCachedFiles: state.synchronizeCachedFiles,
+    })),
+  );
   const getFilesInsideFolderQuery = FilesAPI.useGetFilesInsideFolderQuery({
     company,
     accessToken,
     filter: filterGetFileInsideFolder,
     enable: Boolean(currentFolder && isFocused),
+    onSuccessCallback: synchronizeCachedFiles,
   });
 
   const filesInsideFolderList = useMemo(
     () =>
       getFilesInsideFolderQuery.isSuccess
         ? getFilesInsideFolderQuery.data?.pages.flatMap(
-            data => data.data.results,
+            data => data?.data.results ?? [],
           )
         : [],
     [getFilesInsideFolderQuery.data],

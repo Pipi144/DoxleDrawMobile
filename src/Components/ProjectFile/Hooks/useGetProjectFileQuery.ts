@@ -6,6 +6,7 @@ import {useAuth} from '../../../Providers/AuthProvider';
 import {useCompany} from '../../../Providers/CompanyProvider';
 import {useNotification} from '../../../Providers/NotificationProvider';
 import FilesAPI from '../../../API/fileQueryAPI';
+import {useFileBgUploadStore} from '../Store/useFileBgUploadStore';
 
 type Props = {};
 
@@ -17,6 +18,11 @@ const useGetProjectFileQuery = (props: Props) => {
       filterProjectFileQuery: state.filterProjectFileQuery,
     })),
   );
+  const {synchronizeCachedFiles} = useFileBgUploadStore(
+    useShallow(state => ({
+      synchronizeCachedFiles: state.synchronizeCachedFiles,
+    })),
+  );
   const isFocused = useIsFocused();
   const getFileListQuery = FilesAPI.useGetFilesQuery({
     company,
@@ -24,6 +30,7 @@ const useGetProjectFileQuery = (props: Props) => {
 
     filter: filterProjectFileQuery,
     enable: Boolean(filterProjectFileQuery.projectId && isFocused),
+    onSuccessCallback: synchronizeCachedFiles,
   });
 
   const fileListSuccess = useMemo(

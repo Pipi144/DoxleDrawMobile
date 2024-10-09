@@ -11,19 +11,18 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {Pressable, StyleSheet, View} from 'react-native';
 import React, {useEffect} from 'react';
 import {TFileBgUploadData} from '../../Provider/StorageModels';
 import {
   StyledFileIconWrapper,
-  StyledFileImageWrapper,
   StyledListFileInfoText,
   StyledListFileNameText,
   StyledPendingImageWrapper,
   StyledProjectFileListItemContainer,
   StyledUploadFileProgressText,
 } from './StyledComponentProjectFileDisplayer';
-import {LinearTransition} from 'react-native-reanimated';
+import Animated, {LinearTransition} from 'react-native-reanimated';
 import {useOrientation} from '../../../../Providers/OrientationContext';
 import {
   DoxleCSVIcon,
@@ -33,7 +32,6 @@ import {
 } from '../../../DesignPattern/DoxleIcons';
 import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import useUploadFileState from '../../../../CustomHooks/useUploadFileState';
 import useFilePendingItem from './Hooks/useFilePendingItem';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
@@ -41,10 +39,10 @@ import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
 type Props = {
   item: TFileBgUploadData;
 };
-
+const AnimatedIonIcon = Animated.createAnimatedComponent(IonIcons);
 const FilePendingItem = ({item}: Props) => {
   const {deviceType} = useOrientation();
-  const {THEME_COLOR} = useDOXLETheme();
+  const {THEME_COLOR, doxleFontSize} = useDOXLETheme();
 
   const {fileState, handlePressProgress} = useFilePendingItem({
     item,
@@ -136,7 +134,11 @@ const FilePendingItem = ({item}: Props) => {
         size={deviceType === 'Smartphone' ? 40 : 50}
         width={deviceType === 'Smartphone' ? 4 : 5}
         fill={fileState.progress}
-        tintColor={THEME_COLOR.primaryFontColor}
+        tintColor={
+          item.status === 'pending'
+            ? THEME_COLOR.primaryFontColor
+            : 'transparent'
+        }
         fillLineCap="round"
         backgroundColor={editRgbaAlpha({
           rgbaColor: THEME_COLOR.primaryFontColor,
@@ -155,9 +157,18 @@ const FilePendingItem = ({item}: Props) => {
       >
         {fill => (
           <Pressable onPress={handlePressProgress} hitSlop={10}>
-            <StyledUploadFileProgressText>
-              {Math.floor(fill)}
-            </StyledUploadFileProgressText>
+            {item.status === 'pending' && (
+              <StyledUploadFileProgressText>
+                {Math.floor(fill)}
+              </StyledUploadFileProgressText>
+            )}
+            {item.status === 'error' && (
+              <AnimatedIonIcon
+                name="reload"
+                size={doxleFontSize.headTitleTextSize}
+                color={'red'}
+              />
+            )}
           </Pressable>
         )}
       </AnimatedCircularProgress>

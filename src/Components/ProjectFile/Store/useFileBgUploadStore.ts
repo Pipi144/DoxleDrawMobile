@@ -115,34 +115,21 @@ export const useFileBgUploadStore = create(
       saveCachedFileList(get().cachedFiles);
     },
     synchronizeCachedFiles: files => {
-      const cachedFiles = get().cachedFiles;
-      const newCachedFiles = files.map(file => {
-        const cacheFile: TFileBgUploadData = {
-          file: {
-            uri: file.url,
-            name: file.fileName,
-            type: file.fileType,
-            size: parseFloat(file.fileSize),
-            fileId: file.fileId,
-          },
-          hostId: file.folder
-            ? file.folder
-            : file.docket
-            ? file.docket
-            : file.project ?? '',
-          status: 'success',
-          expired: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 15,
-          uploadVariant: file.folder
-            ? 'Folder'
-            : file.docket
-            ? 'Docket'
-            : 'Project',
-        };
-        return cacheFile;
-      });
       set(state => {
-        state.cachedFiles = [...cachedFiles, ...newCachedFiles];
+        console.log('SYNC CACHED FILES:', files);
+
+        files.forEach(file => {
+          const matchedFile = state.cachedFiles.find(
+            item => item.file.fileId === file.fileId,
+          );
+          if (matchedFile) {
+            if (matchedFile.status !== 'success') {
+              matchedFile.status = 'success';
+            }
+          }
+        });
       });
+
       saveCachedFileList(get().cachedFiles);
     },
     cacheSingleFile: async (file: DoxleFile) => {

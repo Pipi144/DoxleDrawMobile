@@ -15,6 +15,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import React, {
   createContext,
   PropsWithChildren,
+  useCallback,
   useEffect,
   useRef,
 } from 'react';
@@ -24,9 +25,10 @@ import {useConnection} from '../../../Providers/InternetConnectionProvider';
 import {NetInfoStateType} from '@react-native-community/netinfo';
 import {useFileBgUploadStore} from '../Store/useFileBgUploadStore';
 import {useShallow} from 'zustand/shallow';
-import FilesAPI from '../../../API/fileQueryAPI';
+import FilesAPI, {getFileMutationKey} from '../../../API/fileQueryAPI';
 import useSetFileQueryData from '../../../QueryDataHooks/useSetFileQueryData';
 import {isAxiosError} from 'axios';
+import {useQueryClient} from '@tanstack/react-query';
 
 type Props = PropsWithChildren & {};
 
@@ -35,7 +37,7 @@ const FileBgUploader = ({children}: Props) => {
   const {accessToken, loggedIn} = useAuth();
   const {company} = useCompany();
   const {isConnectionWeak, networkType, isConnected} = useConnection();
-
+  const queryClient = useQueryClient();
   const isConnectionNotSatisfy =
     networkType === NetInfoStateType.cellular ||
     isConnectionWeak ||
@@ -82,18 +84,28 @@ const FileBgUploader = ({children}: Props) => {
   });
 
   useEffect(() => {
-    const pendingFile = cachedFiles.find(file => file.status === 'pending');
+    const pendingFiles = cachedFiles.filter(file => file.status === 'pending');
 
-    if (pendingFile) {
-      const {file, hostId, uploadVariant} = pendingFile;
-      mutate({
-        file: file,
-        projectId: uploadVariant === 'Project' ? hostId : undefined,
-        docketId: uploadVariant === 'Docket' ? hostId : undefined,
-        folderId: uploadVariant === 'Folder' ? hostId : undefined,
+    if (pendingFiles.length > 0 && accessToken && company) {
+      pendingFiles.forEach(pendingFile => {
+        const {file, hostId, uploadVariant} = pendingFile;
+        const isUploading = queryClient.getMutationCache().find({
+          mutationKey: getFileMutationKey('bg-upload-single'),
+          predicate: mutation =>
+            mutation.state.variables &&
+            (mutation.state.variables as any).file.fileId === file.fileId &&
+            mutation.state.status === 'pending',
+        });
+        if (!isUploading)
+          mutate({
+            file: file,
+            projectId: uploadVariant === 'Project' ? hostId : undefined,
+            docketId: uploadVariant === 'Docket' ? hostId : undefined,
+            folderId: uploadVariant === 'Folder' ? hostId : undefined,
+          });
       });
     }
-  }, [cachedFiles]);
+  }, [cachedFiles, accessToken, company]);
 
   useEffect(() => {
     getInitialCachedFiles();

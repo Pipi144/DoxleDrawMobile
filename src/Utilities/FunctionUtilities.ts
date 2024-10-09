@@ -928,6 +928,7 @@ export function areColorsSimilar(
 export function getExtensionFromMimeType(mimeType: string): string {
   const mimeTypes: {[key: string]: string} = {
     'image/jpeg': 'jpg',
+    'image/jpg': 'jpg',
     'image/png': 'png',
     'image/gif': 'gif',
     'application/msword': 'doc',

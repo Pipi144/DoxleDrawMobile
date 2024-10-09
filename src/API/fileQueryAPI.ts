@@ -91,14 +91,15 @@ const useGetFolderQuery = ({
 
 interface GetFileQueryProps extends BaseAPIProps {
   filter: IFilterGetFileQueryFilter;
+  onSuccessCallback?: (files: DoxleFile[]) => void;
   enable?: boolean;
 }
 const useGetFilesQuery = ({
   company,
   accessToken,
-  showNotification,
   filter,
   enable,
+  onSuccessCallback,
 }: GetFileQueryProps) => {
   const queryKey = getFileQKey(filter, company);
   const {projectId, docketId} = filter;
@@ -125,7 +126,7 @@ const useGetFilesQuery = ({
             signal,
           },
         );
-
+        if (onSuccessCallback) onSuccessCallback(response.data.results);
         return response;
       } catch (error) {
         return;
@@ -136,7 +137,7 @@ const useGetFilesQuery = ({
     },
 
     enabled:
-      company !== undefined && accessToken !== undefined && (enable ?? true),
+      company !== undefined && accessToken !== undefined && (enable || true),
 
     retry: 1,
 
@@ -158,8 +159,9 @@ const useGetFilesQuery = ({
 const useGetFilesInsideFolderQuery = ({
   company,
   accessToken,
-  showNotification,
+  onSuccessCallback,
   filter,
+  onErrorCb,
 }: GetFileQueryProps) => {
   let queryKey = getFileQKey(filter, company);
   const getParams: any = {
@@ -172,47 +174,45 @@ const useGetFilesInsideFolderQuery = ({
   const filesQuery = useInfiniteQuery({
     queryKey,
     initialPageParam: url,
-    queryFn: ({pageParam, signal}) => {
-      return axios.get<AxiosInfiniteReturn<DoxleFile>>(pageParam, {
-        headers: {
-          Authorization: 'Bearer ' + accessToken,
-          'User-Company': company?.companyId,
-        },
+    queryFn: async ({pageParam, signal}) => {
+      try {
+        const response = await axios.get<AxiosInfiniteReturn<DoxleFile>>(
+          pageParam,
+          {
+            headers: {
+              Authorization: 'Bearer ' + accessToken,
+              'User-Company': company?.companyId,
+            },
 
-        params: getParams,
-        signal,
-      });
+            params: getParams,
+            signal,
+          },
+        );
+        if (onSuccessCallback) onSuccessCallback(response.data.results);
+
+        return response;
+      } catch (error) {
+        if (onErrorCb) onErrorCb(error);
+      }
     },
     getNextPageParam: prev => {
-      return prev.data.next;
+      return prev?.data.next;
     },
-    //* FETCHING ON MOUNT WILL BE SET TO FALSE, IF ENABLED = FALSE
+
     enabled:
       company !== undefined &&
       accessToken !== undefined &&
       filter.folderId !== undefined,
 
     retry: 1,
-    //* AFTER 5 MINUTES THE QUERY IS GARBAGE COLLECTED AND isLoading IS SET TO TRUE TO MAKE AND API CALL
-    //* BACKGROUND REFETCH WILL BE TRIGGERED EVERY TIME BECAUSE STALE TIME = 0, WHILE isLoading=False, isFetching=True
-    gcTime: 4 * 60 * 1000,
 
-    //* WHEN AN API CALL IS MADE AND THE DATA IS fetchBundle, IT GOES STALE STRAIGHTAWAY, BY SETTING THE STALE TIME TO 30 SECS, IT REMAINS FRESH FOR 30 SECS AND
-    //* THEN GOES STALE, WHICH MEANS NO BACKGROUND REQUEST IS MADE WHEN THE QUERY IS FRESH. STRENGTH = BETTER OPTIMISATION. WEAKNESS = USER MIGHT SEE ODL DATA FOR 30 SECS
-    //* isFetching=False FOR 30SECS
+    gcTime: 4 * 60 * 1000,
     staleTime: 3 * 60 * 1000,
 
-    //* IF THIS IS SET TO false, WHEN THE COMPONENT IS MOUNTED, THERE WILL BE NO API CALL, DEFAULT = TRUE
     refetchOnMount: false,
-
-    //* DEFAULT = TRUE, WHEN THE WINDOW LOOSES AND REGAINS FOCUS, THE DATA IS REFETCHED IN THE BACKGROUND AND UPDATED
     refetchOnWindowFocus: false,
-
-    //* POLLING DATA FROM THE BACKEND AT REGULAR INTERVALS, THINK ABOUT THE STOCK MARKET IF YOUR BACKEND CHANGES CONSTANTLY THEN POLLING IS THE BETS OPTION
     refetchInterval: 4 * 60 * 1000,
     // refetchInterval:2000,
-
-    //* THE ABOVE WILL NOT POLL WHEN THE BROWSER LOOSES FOCUS, THE BELOW COMMAND WILL POLL IRRELEVANT OF WINDOW / BROWSER FOCUS
     refetchIntervalInBackground: true,
   });
 

@@ -62,15 +62,14 @@ export const getCachedFileInfo = async (): Promise<TFileBgUploadData[]> => {
 };
 export const saveCachedFileList = async (list: TFileBgUploadData[]) => {
   try {
+    if (!(await checkPathExist(ROOT_FILE_CACHE_DIR))) {
+      await createLocalFolder(ROOT_FILE_CACHE_DIR);
+    }
     await writeFile(CACHE_STORAGE_INFO, JSON.stringify(list));
   } catch (error) {
     console.log('FAILED savePendingVideoList:', error);
     return false;
   }
-};
-const getFileType = (fileName: string): string | null | undefined => {
-  const parts = fileName.split('.');
-  return parts.length > 1 ? parts.pop() : null;
 };
 
 interface IMoveFileToCacheRes {
@@ -85,17 +84,16 @@ export const moveFileToCache = async ({
 }: TAPIServerFile): Promise<IMoveFileToCacheRes | undefined> => {
   try {
     const fileExtension = getExtensionFromMimeType(type);
-    if (!fileExtension) {
-      return;
-    }
+
     let res: IMoveFileToCacheRes = {
       newUrl: uri,
     };
     const isVideo = type.toLowerCase().includes('video');
-    const fileCachedPath = `${ALL_CACHED_FILES}/${fileId}.${
-      isVideo ? 'mp4' : fileExtension
-    }`;
-
+    const fileCachedPath =
+      fileExtension === 'unknown'
+        ? `${ALL_CACHED_FILES}/${fileId}-${name}`
+        : `${ALL_CACHED_FILES}/${fileId}.${isVideo ? 'mp4' : fileExtension}`;
+    console.log('FILE CACHE PATH:', fileCachedPath);
     if (isVideo && Platform.OS === 'android') {
       await copyFile(uri, fileCachedPath);
     } else {
