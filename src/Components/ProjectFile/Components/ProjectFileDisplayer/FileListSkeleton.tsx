@@ -74,38 +74,38 @@ const styles = (themeColor: IDOXLEThemeColor) =>
       justifyContent: 'center',
       alignItems: 'center',
       borderWidth: 1,
-      borderColor: themeColor.primaryDividerColor,
+      borderColor: themeColor.rowBorderColor,
       borderRadius: 2,
     },
   });
 
 const SkeletonRow: React.FC = () => {
-  const {THEME_COLOR, theme} = useDOXLETheme();
   return (
     <Skeleton
       containerStyle={{
         width: '100%',
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 8,
+        paddingVertical: 10,
+        justifyContent: 'space-between',
       }}
       isLoading={true}>
       <Text
         style={{
-          width: 14,
-          height: 14,
+          width: 20,
+          height: 20,
         }}
       />
       <Text
         style={{
           width: '60%',
-          height: 14,
+          height: 20,
         }}
       />
       <Text
         style={{
-          width: 28,
-          height: 14,
+          width: 40,
+          height: 20,
         }}
       />
     </Skeleton>
@@ -117,7 +117,7 @@ const SkeletonGrid: React.FC<{numOfCol: number}> = ({
 }: {
   numOfCol: number;
 }) => {
-  const {theme, THEME_COLOR} = useDOXLETheme();
+  const {THEME_COLOR} = useDOXLETheme();
   return (
     <StyledSkeletonGridWrapper $numOfCol={numOfCol}>
       <Skeleton
@@ -127,7 +127,7 @@ const SkeletonGrid: React.FC<{numOfCol: number}> = ({
           style={{
             width: '40%',
             height: '30%',
-            marginBottom: 4,
+            marginBottom: 14,
           }}
         />
         <Text

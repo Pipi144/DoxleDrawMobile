@@ -4,12 +4,7 @@ import useGetProjectFileQuery from '../../../Hooks/useGetProjectFileQuery';
 
 type Props = {};
 
-interface GridBottomSection {
-  isLoaderShow: boolean;
-  handleRefetchList: () => void;
-  isListRefetching: boolean;
-}
-const useProjectFileGridView = (props: Props): GridBottomSection => {
+const useProjectFileGridView = (props: Props) => {
   const {isFetchingFolderList, refetchFolderList, isRefetchingFolderList} =
     useGetProjectFolderQuery({});
 
@@ -19,7 +14,8 @@ const useProjectFileGridView = (props: Props): GridBottomSection => {
     refetchFileList,
     isRefetchingFileList,
   } = useGetProjectFileQuery({});
-  const isLoaderShow = Boolean(isFetchingFolderList || isFetchingFileList);
+  const isLoaderShow =
+    true || Boolean(isFetchingFolderList || isFetchingFileList);
 
   const handleRefetchList = () => {
     refetchFolderList();

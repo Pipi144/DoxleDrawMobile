@@ -20,6 +20,7 @@ import useSetFileQueryData from '../QueryDataHooks/useSetFileQueryData';
 import {useCallback, useRef, useState} from 'react';
 import {TAPIServerFile} from '../Models/utilityType';
 import useUploadFileState from '../CustomHooks/useUploadFileState';
+import {checkPathExist} from '../Utilities/FunctionUtilities';
 
 export interface IFilterGetFolderQueryFilter {
   projectId?: string;
@@ -376,54 +377,62 @@ const useBgUpoadSingleFileQuery = ({
       projectId,
       folderId,
     }: IAddSingleFileMutateProps) => {
-      const formData = new FormData();
-      if (projectId) formData.append('projectId', projectId);
-      if (docketId) formData.append('docketId', docketId);
-      if (folderId) formData.append('folderId', folderId);
-      const {fileId, size, ...rest} = file;
-      formData.append('files', rest);
-      formData.append('fileIds', fileId);
-      lastTimeRef.current = Date.now();
-      lastLoadedRef.current = 0;
-      abortControllerRef.current = new AbortController();
-      return axios.post<{
-        files: DoxleFile[];
-        errors: any;
-      }>(baseAddress + '/storage/file/', formData, {
-        headers: {
-          Authorization: 'Bearer ' + accessToken,
-          'User-Company': company?.companyId,
-          'Content-Type': 'multipart/form-data',
-        },
+      try {
+        const formData = new FormData();
+        if (projectId) formData.append('projectId', projectId);
+        if (docketId) formData.append('docketId', docketId);
+        if (folderId) formData.append('folderId', folderId);
+        const {fileId, size, ...rest} = file;
+        if (!(await checkPathExist(file.uri))) throw 'File not found';
+        formData.append('files', rest);
+        formData.append('fileIds', fileId);
+        lastTimeRef.current = Date.now();
+        lastLoadedRef.current = 0;
+        abortControllerRef.current = new AbortController();
+        const res = await axios.post<{
+          files: DoxleFile[];
+          errors: any;
+        }>(baseAddress + '/storage/file/', formData, {
+          headers: {
+            Authorization: 'Bearer ' + accessToken,
+            'User-Company': company?.companyId,
+            'Content-Type': 'multipart/form-data',
+          },
 
-        onUploadProgress: progressEvent => {
-          const currentTime = Date.now();
-          const currentLoaded = progressEvent.loaded;
-          const total = progressEvent.total || (file.size ?? 1);
-          let estimateTimeLeft = 0;
-          if (lastTimeRef.current && lastLoadedRef.current !== null) {
-            const timeDiff = (currentTime - lastTimeRef.current) / 1000; // in seconds
-            const bytesDiff = currentLoaded - lastLoadedRef.current;
-            const uploadSpeed = bytesDiff / timeDiff; // bytes per second
+          onUploadProgress: progressEvent => {
+            const currentTime = Date.now();
+            const currentLoaded = progressEvent.loaded;
+            const total = progressEvent.total || (file.size ?? 1);
+            let estimateTimeLeft = 0;
+            if (lastTimeRef.current && lastLoadedRef.current !== null) {
+              const timeDiff = (currentTime - lastTimeRef.current) / 1000; // in seconds
+              const bytesDiff = currentLoaded - lastLoadedRef.current;
+              const uploadSpeed = bytesDiff / timeDiff; // bytes per second
 
-            estimateTimeLeft = Math.round(
-              (total - currentLoaded) / uploadSpeed,
-            ); // in seconds
-          }
+              estimateTimeLeft = Math.round(
+                (total - currentLoaded) / uploadSpeed,
+              ); // in seconds
+            }
 
-          const percentage = Math.round((currentLoaded / total) * 100);
+            const percentage = Math.round((currentLoaded / total) * 100);
 
-          updateFileUploadState({
-            fileId,
-            progress: percentage,
-            estimatedTime: estimateTimeLeft,
-          });
+            updateFileUploadState({
+              fileId,
+              progress: percentage,
+              estimatedTime: estimateTimeLeft,
+            });
 
-          lastTimeRef.current = currentTime;
-          lastLoadedRef.current = currentLoaded;
-        },
-        signal: abortControllerRef.current?.signal,
-      });
+            lastTimeRef.current = currentTime;
+            lastLoadedRef.current = currentLoaded;
+          },
+          signal: abortControllerRef.current?.signal,
+        });
+
+        return res;
+      } catch (error) {
+        console.log('ERROR UPLOADING FILE ', error);
+        throw error;
+      }
     },
 
     onSuccess(response, variables, context) {

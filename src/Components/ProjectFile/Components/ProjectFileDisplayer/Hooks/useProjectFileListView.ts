@@ -4,12 +4,7 @@ import useGetProjectFileQuery from '../../../Hooks/useGetProjectFileQuery';
 
 type Props = {};
 
-interface DocketFileListView {
-  isLoaderShow: boolean;
-  handleRefetchList: () => void;
-  isListRefetching: boolean;
-}
-const useProjectFileListView = (props: Props): DocketFileListView => {
+const useProjectFileListView = (props: Props) => {
   const {isFetchingFolderList, refetchFolderList, isRefetchingFolderList} =
     useGetProjectFolderQuery({});
 
