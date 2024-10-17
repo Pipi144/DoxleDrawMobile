@@ -48,7 +48,18 @@ const HomeHeader = () => {
 
         {!isFetchingProject && (
           <>
-            <StyledProjectAddressText numberOfLines={1} ellipsizeMode="tail">
+            <StyledProjectAddressText
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              $textSizeMode={
+                selectedProject
+                  ? selectedProject.siteAddress.length < 40
+                    ? undefined
+                    : selectedProject.siteAddress.length < 55
+                    ? 's'
+                    : 'xs'
+                  : undefined
+              }>
               {isFetchingProject
                 ? 'Getting projects...'
                 : selectedProject

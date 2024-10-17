@@ -23,8 +23,13 @@ export const StyledDoxleIconButton = styled.Pressable`
   align-items: center;
   justify-content: center;
 `;
-export const StyledProjectAddressText = styled.Text`
-  font-size: ${p => p.theme.doxleFontSize.contentTextSize + 2}px;
+export const StyledProjectAddressText = styled.Text<{
+  $textSizeMode?: 's' | 'xs';
+}>`
+  font-size: ${p =>
+    p.theme.doxleFontSize.contentTextSize +
+    2 -
+    (p.$textSizeMode === 's' ? 1 : p.$textSizeMode === 'xs' ? 2 : 0)}px;
   font-weight: 600;
   color: ${p =>
     editRgbaAlpha({
