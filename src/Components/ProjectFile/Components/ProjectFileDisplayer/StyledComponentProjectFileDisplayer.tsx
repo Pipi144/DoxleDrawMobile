@@ -80,7 +80,7 @@ export const StyledGridListItemWrapper = styled(Animated.View)<{
 }>`
   width: ${p => 100 / p.$numOfCol}%;
   aspect-ratio: 1;
-  padding: 8px;
+  padding: 4px;
   display: flex;
 `;
 export const StyledGridContentWrapper = styled(Pressable)<{}>`

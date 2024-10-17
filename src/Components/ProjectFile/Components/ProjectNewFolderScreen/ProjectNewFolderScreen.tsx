@@ -8,7 +8,6 @@ import React from 'react';
 
 import {ActivityIndicator} from 'react-native-paper';
 
-import useProjectNewFolderScreen from '../../Hooks/useProjectNewFolderScreen';
 import {
   StyledAddFolderButtonText,
   StyledAddFolderTitleText,
@@ -24,6 +23,7 @@ import {
 import {useOrientation} from '../../../../Providers/OrientationContext';
 import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
 import DoxleAnimatedButton from '../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
+import useProjectNewFolderScreen from './Hooks/useProjectNewFolderScreen';
 type Props = {
   navigation: any;
 };
@@ -71,6 +71,7 @@ const ProjectNewFolderScreen: React.FC<Props> = ({navigation}: Props) => {
             rgbaColor: THEME_COLOR.primaryFontColor,
             alpha: '0.4',
           })}
+          focusable
         />
         <DoxleAnimatedButton
           style={[

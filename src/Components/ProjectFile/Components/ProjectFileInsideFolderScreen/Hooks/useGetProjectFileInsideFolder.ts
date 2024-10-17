@@ -1,13 +1,14 @@
 import {useIsFocused} from '@react-navigation/native';
-import {useCallback, useMemo} from 'react';
+import {useMemo} from 'react';
 
-import {useProjectFileStore} from '../Store/useProjectFileStore';
+import {useProjectFileStore} from '../../../Store/useProjectFileStore';
 import {useShallow} from 'zustand/react/shallow';
-import {useAuth} from '../../../Providers/AuthProvider';
-import {useCompany} from '../../../Providers/CompanyProvider';
-import {useNotification} from '../../../Providers/NotificationProvider';
-import FilesAPI, {IFilterGetFileQueryFilter} from '../../../API/fileQueryAPI';
-import {useFileBgUploadStore} from '../Store/useFileBgUploadStore';
+import {useAuth} from '../../../../../Providers/AuthProvider';
+import {useCompany} from '../../../../../Providers/CompanyProvider';
+import FilesAPI, {
+  IFilterGetFileQueryFilter,
+} from '../../../../../API/fileQueryAPI';
+import {useFileBgUploadStore} from '../../../Store/useFileBgUploadStore';
 
 type Props = {};
 

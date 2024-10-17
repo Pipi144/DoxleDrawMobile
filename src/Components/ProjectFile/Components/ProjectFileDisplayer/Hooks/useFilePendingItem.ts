@@ -45,27 +45,18 @@ const useFilePendingItem = ({item}: Props) => {
       mutation.state.status === 'pending',
   });
 
-  const mutationState = useMutationState({
-    filters: {
-      mutationKey: getFileMutationKey('bg-upload-single'),
-      predicate: mutation =>
-        mutation.state.variables &&
-        (mutation.state.variables as any).file.fileId === item.file.fileId &&
-        mutation.state.status === 'pending',
-    },
-    select: mutation => mutation.state.context,
-  });
   const handlePressProgress = () => {
     if (item.status === 'pending') {
       if (mutationFile) {
         console.log('mutationFile', mutationFile);
-        destroyCacheFile(item);
-        mutationFile.destroy();
+
         const contextMutate = mutationFile.state
           .context as TBgUploadSingleFileContext;
         if (contextMutate.cancelUpload) {
           contextMutate.cancelUpload();
         }
+        mutationFile.destroy();
+        destroyCacheFile(item);
       }
     } else if (item.status === 'error') {
       // updateStatusSingleCachedFile(item.file.fileId, 'pending');

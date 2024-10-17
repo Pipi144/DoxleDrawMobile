@@ -199,10 +199,10 @@ const ProjectFileGridItem: React.FC<Props> = ({
             )}
           </View>
 
-          <StyledGridFileNameText numberOfLines={1} ellipsizeMode="tail">
+          <StyledGridFileNameText numberOfLines={1} ellipsizeMode="middle">
             {fileItem.fileName}
           </StyledGridFileNameText>
-          <StyledGridFileInfoText>
+          <StyledGridFileInfoText numberOfLines={1} ellipsizeMode="middle">
             {(parseInt(fileItem.fileSize) / 1024 / 1024).toFixed(2)} MB /{' '}
             {modifiedTime}
           </StyledGridFileInfoText>
@@ -221,10 +221,10 @@ const ProjectFileGridItem: React.FC<Props> = ({
             />
           </View>
 
-          <StyledGridFileNameText numberOfLines={1} ellipsizeMode="tail">
+          <StyledGridFileNameText numberOfLines={1} ellipsizeMode="middle">
             {folderItem.folderName}
           </StyledGridFileNameText>
-          <StyledGridFileInfoText>
+          <StyledGridFileInfoText numberOfLines={1} ellipsizeMode="middle">
             {folderItem.folderSize
               ? (folderItem.folderSize / 1024 / 1024).toFixed(2)
               : '0'}

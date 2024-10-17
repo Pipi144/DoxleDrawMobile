@@ -83,6 +83,9 @@ const AppModalHeader = (props: NativeStackHeaderProps) => {
         popoverStyle={{
           backgroundColor: 'transparent',
         }}
+        animationConfig={{
+          duration: 50,
+        }}
         from={
           <DoxleAnimatedButton
             hitSlop={30}

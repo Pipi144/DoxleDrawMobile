@@ -29,7 +29,7 @@ const useFileMenuRootMode = ({}: Props) => {
 
     setTimeout(() => {
       navigator.navigate('ProjectNewFolderScreen', {});
-    }, 500);
+    }, 400);
   };
   const {selectedProject} = useCompany();
   const {currentView, setCurrentView} = useProjectFileStore(

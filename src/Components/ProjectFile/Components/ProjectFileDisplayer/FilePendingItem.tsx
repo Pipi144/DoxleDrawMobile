@@ -205,10 +205,7 @@ const FilePendingItem = ({item, mode = 'list', ...rest}: Props) => {
     return (
       <StyledGridListItemWrapper
         $numOfCol={rest.numOfCol}
-        layout={LinearTransition.springify().damping(16)}
-        style={{
-          opacity: 0.6,
-        }}>
+        layout={LinearTransition.springify().damping(16)}>
         <StyledGridContentWrapper>
           <View style={styles.iconWrapper}>
             {item.file.type.toLowerCase().includes('pdf') ? (
@@ -284,39 +281,40 @@ const FilePendingItem = ({item, mode = 'list', ...rest}: Props) => {
             </StyledGridFileInfoText>
           </StyledGridFileInfoText>
 
-          <AnimatedCircularProgress
-            size={deviceType === 'Smartphone' ? 40 : 50}
-            width={deviceType === 'Smartphone' ? 4 : 5}
-            fill={fileState.progress}
-            tintColor={
-              item.status === 'pending'
-                ? THEME_COLOR.primaryFontColor
-                : 'transparent'
-            }
-            fillLineCap="round"
-            backgroundColor={editRgbaAlpha({
-              rgbaColor: THEME_COLOR.primaryFontColor,
-              alpha: '0.2',
-            })}
-            style={{
-              marginLeft: 4,
-              position: 'absolute',
-              alignSelf: 'center',
-              zIndex: 10,
-            }}
-            childrenContainerStyle={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: 'transparent',
-              padding: 2,
-            }}
-            prefill={0}
+          {item.status === 'pending' && (
+            <AnimatedCircularProgress
+              size={deviceType === 'Smartphone' ? 40 : 50}
+              width={deviceType === 'Smartphone' ? 4 : 5}
+              fill={fileState.progress}
+              tintColor={
+                item.status === 'pending'
+                  ? THEME_COLOR.primaryFontColor
+                  : 'transparent'
+              }
+              fillLineCap="round"
+              backgroundColor={editRgbaAlpha({
+                rgbaColor: THEME_COLOR.primaryFontColor,
+                alpha: '0.2',
+              })}
+              style={{
+                marginLeft: 4,
+                position: 'absolute',
+                top: 8,
+                right: 8,
+                zIndex: 10,
+              }}
+              childrenContainerStyle={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: 'transparent',
+                padding: 2,
+              }}
+              prefill={0}
 
-            // renderCap={({ center }) => <Circle cx={center.x} cy={center.y} r="10" fill="blue" />}
-          >
-            {fill => (
-              <Pressable onPress={handlePressProgress} hitSlop={14}>
-                {item.status === 'pending' && (
+              // renderCap={({ center }) => <Circle cx={center.x} cy={center.y} r="10" fill="blue" />}
+            >
+              {fill => (
+                <Pressable onPress={handlePressProgress} hitSlop={14}>
                   <AnimatedIonIcon
                     name="close"
                     size={doxleFontSize.headTitleTextSize}
@@ -324,19 +322,27 @@ const FilePendingItem = ({item, mode = 'list', ...rest}: Props) => {
                     entering={ZoomIn}
                     exiting={ZoomOut}
                   />
-                )}
-                {item.status === 'error' && (
-                  <AnimatedIonIcon
-                    name="reload"
-                    size={doxleFontSize.headTitleTextSize}
-                    color={'red'}
-                    entering={ZoomIn}
-                    exiting={ZoomOut}
-                  />
-                )}
-              </Pressable>
-            )}
-          </AnimatedCircularProgress>
+                </Pressable>
+              )}
+            </AnimatedCircularProgress>
+          )}
+
+          {item.status === 'error' && (
+            <AnimatedIonIcon
+              name="reload"
+              size={doxleFontSize.headTitleTextSize}
+              color={'red'}
+              entering={ZoomIn}
+              exiting={ZoomOut}
+              style={{
+                position: 'absolute',
+                top: 8,
+                right: 8,
+                zIndex: 10,
+              }}
+              onPress={handlePressProgress}
+            />
+          )}
         </StyledGridContentWrapper>
       </StyledGridListItemWrapper>
     );
@@ -373,5 +379,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+    opacity: 0.7,
   },
 });

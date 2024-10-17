@@ -3,7 +3,7 @@ import React, {useCallback, useMemo} from 'react';
 
 import Animated, {FadeInLeft, LinearTransition} from 'react-native-reanimated';
 
-import useGetProjectFileInsideFolder from '../../Hooks/useGetProjectFileInsideFolder';
+import useGetProjectFileInsideFolder from './Hooks/useGetProjectFileInsideFolder';
 
 import ProjectFileListItem from '../ProjectFileDisplayer/ProjectFileListItem';
 import {StyledFolderFileListViewContainer} from '../ProjectFileDisplayer/StyledComponentProjectFileDisplayer';
@@ -56,7 +56,7 @@ const FolderFileListView = () => {
       (props.item as DoxleFile).fileId !== undefined ? (
         <ProjectFileListItem fileItem={props.item as DoxleFile} />
       ) : (
-        <FilePendingItem item={props.item as TFileBgUploadData} />
+        <FilePendingItem item={props.item as TFileBgUploadData} mode="list" />
       ),
     [],
   );

@@ -3,7 +3,7 @@ import React, {useCallback, useMemo} from 'react';
 
 import Animated, {FadeInRight, LinearTransition} from 'react-native-reanimated';
 
-import useGetProjectFileInsideFolder from '../../Hooks/useGetProjectFileInsideFolder';
+import useGetProjectFileInsideFolder from './Hooks/useGetProjectFileInsideFolder';
 
 import DocketFileGridItem from '../ProjectFileDisplayer/ProjectFileGridItem';
 import {StyledFolderFilesGridViewContainer} from '../ProjectFileDisplayer/StyledComponentProjectFileDisplayer';
@@ -15,6 +15,11 @@ import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleTheme
 import {DoxleFile} from '../../../../Models/files';
 import DoxleEmptyPlaceholder from '../../../DesignPattern/DoxleEmptyPlaceholder/DoxleEmptyPlaceholder';
 import {ErrorFetchingBanner} from '../../../DesignPattern/DoxleBanners';
+import {useProjectFileStore} from '../../Store/useProjectFileStore';
+import {useShallow} from 'zustand/shallow';
+import {useFileBgUploadStore} from '../../Store/useFileBgUploadStore';
+import {TFileBgUploadData} from '../../Provider/StorageModels';
+import FilePendingItem from '../ProjectFileDisplayer/FilePendingItem';
 
 type Props = {};
 
@@ -44,18 +49,48 @@ const FolderFilesGridView = (props: Props) => {
     handleFetchNextFileInsideFolder,
     refetchFileInsideFolder,
   } = useGetProjectFileInsideFolder({});
+  const {currentFolder} = useProjectFileStore(
+    useShallow(state => ({currentFolder: state.currentFolder})),
+  );
+  const {cachedFiles} = useFileBgUploadStore(
+    useShallow(state => ({
+      cachedFiles: state.cachedFiles,
+    })),
+  );
+  const pendingFiles = useMemo(
+    () =>
+      cachedFiles.filter(
+        item =>
+          item.uploadVariant === 'Folder' &&
+          item.hostId === currentFolder?.folderId &&
+          item.status !== 'success',
+      ),
+    [currentFolder, cachedFiles],
+  );
 
-  //* render list
+  //*render List
   const layout = LinearTransition.springify().damping(16);
   const renderItem = useCallback(
-    (props: {item: DoxleFile; index: number}) => (
-      <DocketFileGridItem fileItem={props.item} numOfCol={numOfCol} />
-    ),
-    [numOfCol],
+    (props: {item: DoxleFile | TFileBgUploadData; index: number}) =>
+      (props.item as DoxleFile).fileId !== undefined ? (
+        <DocketFileGridItem
+          fileItem={props.item as DoxleFile}
+          numOfCol={numOfCol}
+        />
+      ) : (
+        <FilePendingItem
+          item={props.item as TFileBgUploadData}
+          mode="grid"
+          numOfCol={numOfCol}
+        />
+      ),
+    [],
   );
   const keyExtractor = useCallback(
-    (item: DoxleFile, index: number) =>
-      `gridFolderFilesItem#${(item as DoxleFile).fileId}`,
+    (item: DoxleFile | TFileBgUploadData, index: number) =>
+      (item as DoxleFile).fileId !== undefined
+        ? `listItem#${(item as DoxleFile).fileId}`
+        : (item as TFileBgUploadData).file.fileId,
     [],
   );
 
@@ -87,7 +122,7 @@ const FolderFilesGridView = (props: Props) => {
 
       {!isFetchingFileInsideFolder && (
         <Animated.FlatList
-          data={filesInsideFolderList}
+          data={[...pendingFiles, ...filesInsideFolderList]}
           numColumns={numOfCol}
           extraData={[numOfCol]}
           key={`gridFolderFiles`}

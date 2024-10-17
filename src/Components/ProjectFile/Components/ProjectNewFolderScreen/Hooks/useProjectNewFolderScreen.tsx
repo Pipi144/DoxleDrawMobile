@@ -1,46 +1,18 @@
 import {Keyboard, StyleSheet} from 'react-native';
-import {useCallback, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {useProjectFileStore} from '../Store/useProjectFileStore';
-import {useShallow} from 'zustand/react/shallow';
-import {useAuth} from '../../../Providers/AuthProvider';
-import {useCompany} from '../../../Providers/CompanyProvider';
-import {useDOXLETheme} from '../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {useNotification} from '../../../Providers/NotificationProvider';
-import Notification, {
-  getContainerStyleWithTranslateY,
-} from '../../DesignPattern/Notification/Notification';
-import {useAppModalHeaderStore} from '../../../GeneralStore/useAppModalHeaderStore';
-import FilesAPI from '../../../API/fileQueryAPI';
-import {DoxleFolder} from '../../../Models/files';
+import {useAuth} from '../../../../../Providers/AuthProvider';
+import {useCompany} from '../../../../../Providers/CompanyProvider';
+import {useAppModalHeaderStore} from '../../../../../GeneralStore/useAppModalHeaderStore';
+import {useShallow} from 'zustand/shallow';
+import FilesAPI from '../../../../../API/fileQueryAPI';
+import {DoxleFolder} from '../../../../../Models/files';
 
 const useProjectNewFolderScreen = () => {
   const [newFolderName, setNewFolderName] = useState<string>('');
 
   const {accessToken} = useAuth();
   const {company, selectedProject} = useCompany();
-  const {staticMenuColor} = useDOXLETheme();
-  const {notifierRootAppRef} = useNotification();
-  //handle show notification
-  const showNotification = useCallback(
-    (
-      message: string,
-      messageType: 'success' | 'error',
-      extraMessage?: string,
-    ) => {
-      notifierRootAppRef.current?.showNotification({
-        title: message,
-        description: extraMessage,
-        Component: Notification,
-        queueMode: 'immediate',
-        componentProps: {
-          type: messageType,
-        },
-        containerStyle: getContainerStyleWithTranslateY,
-      });
-    },
-    [],
-  );
   const {setCustomisedPopupMenu, setOveridenRouteName, setBackBtn} =
     useAppModalHeaderStore(
       useShallow(state => ({
@@ -50,11 +22,6 @@ const useProjectNewFolderScreen = () => {
       })),
     );
   const navigator = useNavigation();
-  const {filterProjectFolderQuery} = useProjectFileStore(
-    useShallow(state => ({
-      filterProjectFolderQuery: state.filterProjectFolderQuery,
-    })),
-  );
   const handleNavBack = () => {
     navigator.goBack();
     setBackBtn(null);
@@ -66,7 +33,6 @@ const useProjectNewFolderScreen = () => {
   const addFolderQuery = FilesAPI.useAddFolder({
     accessToken,
     company,
-    showNotification,
     onAddFolderSuccessCallback: addFolderSuccessCallback,
   });
 
@@ -99,6 +65,10 @@ const useProjectNewFolderScreen = () => {
       });
     }, []),
   );
+  useEffect(() => {
+    console.log('FOLDER FOCUS');
+  }, []);
+
   return {
     newFolderName,
     handleNewFolderNameChange,
