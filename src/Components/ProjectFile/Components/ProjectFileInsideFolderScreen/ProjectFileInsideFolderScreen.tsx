@@ -14,7 +14,8 @@ import SearchSection from '../../../DesignPattern/SearchSection/SearchSection';
 type Props = {navigation: any};
 
 const ProjectFileInsideFolderScreen = (props: Props) => {
-  const {currentView} = useProjectFileInsideFolderScreen();
+  const {currentView, onSearch, searchInput} =
+    useProjectFileInsideFolderScreen();
   return (
     <StyledProjectFileInsideFolderContainer $paddingTop={4}>
       <SearchSection
@@ -22,9 +23,14 @@ const ProjectFileInsideFolderScreen = (props: Props) => {
         containerStyle={{
           marginVertical: 14,
         }}
+        onSearch={onSearch}
       />
-      {currentView === 'ListView' && <FolderFileListView />}
-      {currentView === 'GridView' && <FolderFilesGridView />}
+      {currentView === 'ListView' && (
+        <FolderFileListView search={searchInput} />
+      )}
+      {currentView === 'GridView' && (
+        <FolderFilesGridView search={searchInput} />
+      )}
 
       <EditProjectFileModal />
 

@@ -20,8 +20,10 @@ import {useShallow} from 'zustand/shallow';
 import {useProjectFileStore} from '../../Store/useProjectFileStore';
 import {TFileBgUploadData} from '../../Provider/StorageModels';
 import FilePendingItem from '../ProjectFileDisplayer/FilePendingItem';
-
-const FolderFileListView = () => {
+type Props = {
+  search?: string;
+};
+const FolderFileListView = ({search}: Props) => {
   const {THEME_COLOR} = useDOXLETheme();
   const {deviceSize} = useOrientation();
   const {
@@ -30,7 +32,7 @@ const FolderFileListView = () => {
     isErrorFetchingFileInsideFolder,
     isRefetchingFileInsideFolder,
     refetchFileInsideFolder,
-  } = useGetProjectFileInsideFolder({});
+  } = useGetProjectFileInsideFolder({search});
   const {currentFolder} = useProjectFileStore(
     useShallow(state => ({currentFolder: state.currentFolder})),
   );

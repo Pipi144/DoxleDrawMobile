@@ -40,7 +40,6 @@ const SearchSection = ({placeholder, onSearch, containerStyle}: Props) => {
     <StyledSearchSection
       style={containerStyle}
       onPress={() => {
-        console.log('PRESS');
         inputRef.current?.focus();
       }}>
       <OutsidePressHandler

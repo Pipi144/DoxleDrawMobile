@@ -11,14 +11,16 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useShallow} from 'zustand/react/shallow';
 import {useProjectFileStore} from '../../../Store/useProjectFileStore';
 import FileMenuFolderMode from '../../FilePopupMenu/FileMenuFolderMode';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useAppModalHeaderStore} from '../../../../../GeneralStore/useAppModalHeaderStore';
+import useSetFileQueryData from '../../../../../QueryDataHooks/useSetFileQueryData';
 
 const useProjectFileInsideFolderScreen = () => {
+  const [searchInput, setSearchInput] = useState('');
   const {setCustomisedPopupMenu, setOveridenRouteName, setBackBtn} =
     useAppModalHeaderStore(
       useShallow(state => ({
@@ -34,6 +36,10 @@ const useProjectFileInsideFolderScreen = () => {
       setCurrentFolder: state.setCurrentFolder,
     })),
   );
+  const {removeFileQueryDataWithSearch} = useSetFileQueryData({});
+  const onSearch = (val: string) => {
+    setSearchInput(val);
+  };
   const navigation = useNavigation();
   const handleNavBack = () => {
     navigation.goBack();
@@ -42,6 +48,11 @@ const useProjectFileInsideFolderScreen = () => {
 
     setBackBtn(null);
   };
+  useEffect(() => {
+    if (!searchInput) {
+      removeFileQueryDataWithSearch();
+    }
+  }, [searchInput]);
 
   useFocusEffect(
     useCallback(() => {
@@ -52,9 +63,11 @@ const useProjectFileInsideFolderScreen = () => {
           onPress: handleNavBack,
         });
       }
+
+      return () => setSearchInput('');
     }, [currentFolder]),
   );
-  return {currentView};
+  return {currentView, onSearch, searchInput};
 };
 
 export default useProjectFileInsideFolderScreen;

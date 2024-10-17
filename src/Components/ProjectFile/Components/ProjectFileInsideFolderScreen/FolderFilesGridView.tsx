@@ -20,10 +20,11 @@ import {useShallow} from 'zustand/shallow';
 import {useFileBgUploadStore} from '../../Store/useFileBgUploadStore';
 import {TFileBgUploadData} from '../../Provider/StorageModels';
 import FilePendingItem from '../ProjectFileDisplayer/FilePendingItem';
+type Props = {
+  search?: string;
+};
 
-type Props = {};
-
-const FolderFilesGridView = (props: Props) => {
+const FolderFilesGridView = ({search}: Props) => {
   const {deviceSize} = useOrientation();
   const numOfCol = useMemo(
     () =>
@@ -48,7 +49,7 @@ const FolderFilesGridView = (props: Props) => {
     isRefetchingFileInsideFolder,
     handleFetchNextFileInsideFolder,
     refetchFileInsideFolder,
-  } = useGetProjectFileInsideFolder({});
+  } = useGetProjectFileInsideFolder({search});
   const {currentFolder} = useProjectFileStore(
     useShallow(state => ({currentFolder: state.currentFolder})),
   );

@@ -1,15 +1,19 @@
 import {StyleSheet} from 'react-native';
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useCompany} from '../../../../../Providers/CompanyProvider';
 import {useProjectFileStore} from '../../../Store/useProjectFileStore';
 import {useShallow} from 'zustand/shallow';
 import {useAppModalHeaderStore} from '../../../../../GeneralStore/useAppModalHeaderStore';
 import {useFocusEffect} from '@react-navigation/native';
 import FileMenuRootMode from '../../FilePopupMenu/FileMenuRootMode';
+import useSetFileQueryData from '../../../../../QueryDataHooks/useSetFileQueryData';
+import useSetRootFolderQueryData from '../../../../../QueryDataHooks/useSetRootFolderQueryData';
 
 type Props = {};
 
 const useProjectFileDisplayer = (props: Props) => {
+  const [searchInput, setSearchInput] = useState<string>('');
+
   const {selectedProject} = useCompany();
   const {
     setWholeFilterProjectFolderQuery,
@@ -33,9 +37,10 @@ const useProjectFileDisplayer = (props: Props) => {
       setOveridenRouteName: state.setOveridenRouteName,
     })),
   );
+  const {removeFileQueryDataWithSearch} = useSetFileQueryData({});
+  const {removeFolderQueryDataWithSearch} = useSetRootFolderQueryData({});
   const onSearch = (val: string) => {
-    setPartialFilterProjectFileQuery({});
-    setPartialFilterProjectFolderQuery({});
+    setSearchInput(val);
   };
   useEffect(() => {
     setWholeFilterProjectFolderQuery({projectId: selectedProject?.projectId});
@@ -43,13 +48,26 @@ const useProjectFileDisplayer = (props: Props) => {
     setCurrentFolder(undefined);
   }, [selectedProject]);
 
+  useEffect(() => {
+    setPartialFilterProjectFileQuery({
+      search: searchInput || undefined,
+    });
+    setPartialFilterProjectFolderQuery({
+      search: searchInput || undefined,
+    });
+    if (!searchInput) {
+      removeFileQueryDataWithSearch();
+      removeFolderQueryDataWithSearch();
+    }
+  }, [searchInput]);
+
   useFocusEffect(
     useCallback(() => {
       setCustomisedPopupMenu(<FileMenuRootMode />);
       setOveridenRouteName(undefined);
     }, []),
   );
-  return {onSearch};
+  return {onSearch, searchInput};
 };
 
 export default useProjectFileDisplayer;

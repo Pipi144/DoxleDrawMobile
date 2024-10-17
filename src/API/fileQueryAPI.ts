@@ -25,11 +25,13 @@ import {checkPathExist} from '../Utilities/FunctionUtilities';
 export interface IFilterGetFolderQueryFilter {
   projectId?: string;
   docketId?: string;
+  search?: string;
 }
 export interface IFilterGetFileQueryFilter {
   projectId?: string;
   docketId?: string;
   folderId?: string;
+  search?: string;
 }
 
 interface GetFolderQueryProps extends BaseAPIProps {
@@ -47,12 +49,12 @@ const useGetFolderQuery = ({
   enable,
 }: GetFolderQueryProps) => {
   const queryKey = getFolderQKey(filter, company);
-  const {projectId, docketId} = filter;
+  const {projectId, docketId, search} = filter;
   const getParam: any = {};
   if (projectId) getParam.project = projectId;
   else if (docketId) getParam.docket = docketId;
   else if (!projectId && !docketId) getParam.company = company?.companyId;
-
+  if (search) getParam.search = search;
   const folderQuery = useQuery({
     queryKey,
     queryFn: async ({queryKey, meta}) => {
@@ -103,12 +105,12 @@ const useGetFilesQuery = ({
   onSuccessCallback,
 }: GetFileQueryProps) => {
   const queryKey = getFileQKey(filter, company);
-  const {projectId, docketId} = filter;
+  const {projectId, docketId, search} = filter;
   const getParam: any = {};
   if (projectId) getParam.project = projectId;
   else if (docketId) getParam.docket = docketId;
   else if (!projectId && !docketId) getParam.company = company?.companyId;
-
+  if (search) getParam.search = search;
   const initialUrl = baseAddress + '/storage/file/?page=1';
   const filesQuery = useInfiniteQuery({
     queryKey,
@@ -169,7 +171,7 @@ const useGetFilesInsideFolderQuery = ({
     company: company?.companyId,
   };
   if (filter.folderId) getParams.folderId = filter.folderId;
-  console.log('QKEY', queryKey);
+  if (filter.search) getParams.search = filter.search;
   // console.log('%cGET-FILES-INSIDE-FOLDER-QUERY = FOLDER-ID: ', 'background:red; color:white;', currentFolderName, )
   const url = baseAddress + '/storage/file/';
   const filesQuery = useInfiniteQuery({
@@ -720,7 +722,7 @@ export const getFolderQKey = (
   const {projectId, docketId} = filter;
   if (docketId) queryKey.push(docketId);
   else if (projectId) queryKey.push(projectId);
-
+  if (filter.search) queryKey.push(`search-${filter.search}`);
   return queryKey;
 };
 
@@ -737,6 +739,7 @@ export const getFileQKey = (
   else if (docketId) queryKey.push(docketId);
   else if (projectId) queryKey.push(projectId);
 
+  if (filter.search) queryKey.push(`search-${filter.search}`);
   return queryKey;
 };
 

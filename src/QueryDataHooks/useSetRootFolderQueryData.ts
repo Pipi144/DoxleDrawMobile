@@ -136,7 +136,23 @@ const useSetRootFolderQueryData = ({
       queryClient.removeQueries({queryKey: query.queryKey});
     });
   };
-  return {handleAddFolder, handleEditFolder, handleDeleteMultipleFolders};
+
+  const removeFolderQueryDataWithSearch = () => {
+    const qKey = getFolderQKey({}, company);
+    const data = queryClient.getQueryCache().findAll({
+      predicate: query =>
+        query.queryKey.includes('search-') && qKey[0] === query.queryKey[0],
+    });
+    data.forEach(query => {
+      queryClient.removeQueries({queryKey: query.queryKey});
+    });
+  };
+  return {
+    handleAddFolder,
+    handleEditFolder,
+    handleDeleteMultipleFolders,
+    removeFolderQueryDataWithSearch,
+  };
 };
 
 export default useSetRootFolderQueryData;

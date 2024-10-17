@@ -210,11 +210,26 @@ const useSetFileQueryData = ({appendPos = 'end', overwrite = true}: Props) => {
       queryClient.removeQueries({queryKey: query.queryKey});
     });
   };
+
+  const removeFileQueryDataWithSearch = () => {
+    const qKey = getFileQKey({}, company);
+    const qKeyFileFolder = getFileQKey({folderId: '11'}, company);
+    const data = queryClient.getQueryCache().findAll({
+      predicate: query =>
+        query.queryKey.includes('search-') &&
+        (query.queryKey[0] === qKey[0] ||
+          query.queryKey[0] === qKeyFileFolder[0]),
+    });
+    data.forEach(query => {
+      queryClient.removeQueries({queryKey: query.queryKey});
+    });
+  };
   return {
     handleRemoveFile,
     handleUpdateFile,
     handleAddMultipleFile,
     handleRemoveMultipleFile,
+    removeFileQueryDataWithSearch,
   };
 };
 

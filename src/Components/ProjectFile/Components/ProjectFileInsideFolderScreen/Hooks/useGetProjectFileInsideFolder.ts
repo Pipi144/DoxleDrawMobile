@@ -10,9 +10,11 @@ import FilesAPI, {
 } from '../../../../../API/fileQueryAPI';
 import {useFileBgUploadStore} from '../../../Store/useFileBgUploadStore';
 
-type Props = {};
+type Props = {
+  search?: string;
+};
 
-const useGetProjectFileInsideFolder = (props: Props) => {
+const useGetProjectFileInsideFolder = ({search}: Props) => {
   const {accessToken} = useAuth();
   const {company} = useCompany();
 
@@ -24,8 +26,9 @@ const useGetProjectFileInsideFolder = (props: Props) => {
   const filterGetFileInsideFolder: IFilterGetFileQueryFilter = useMemo(
     () => ({
       folderId: currentFolder ? currentFolder.folderId : undefined,
+      search,
     }),
-    [currentFolder],
+    [currentFolder, search],
   );
   const isFocused = useIsFocused();
   const {synchronizeCachedFiles} = useFileBgUploadStore(
