@@ -15,6 +15,7 @@ import {StyleSheet} from 'react-native';
 import React from 'react';
 import styled from 'styled-components/native';
 import HomeNavMenu from '../HomeNavMenu/HomeNavMenu';
+import FloorMenu from './Components/FloorMenu/FloorMenu';
 
 type Props = {};
 
@@ -29,6 +30,7 @@ const StyledHome = styled.View`
 const Home = (props: Props) => {
   return (
     <StyledHome>
+      <FloorMenu />
       <HomeNavMenu />
     </StyledHome>
   );

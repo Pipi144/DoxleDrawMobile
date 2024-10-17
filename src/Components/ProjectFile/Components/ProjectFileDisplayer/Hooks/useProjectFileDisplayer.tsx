@@ -65,6 +65,10 @@ const useProjectFileDisplayer = (props: Props) => {
     useCallback(() => {
       setCustomisedPopupMenu(<FileMenuRootMode />);
       setOveridenRouteName(undefined);
+
+      return () => {
+        setSearchInput('');
+      };
     }, []),
   );
   return {onSearch, searchInput};

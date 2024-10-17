@@ -959,3 +959,5 @@ export function replaceExtension(
 
   return newFileName;
 }
+export const roundingNum = (num: number, numOfDecimal: number = 4) =>
+  parseFloat(num.toFixed(numOfDecimal));

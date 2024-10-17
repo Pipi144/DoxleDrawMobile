@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export const offline: boolean = false;
 export const local: boolean = false;
 
@@ -33,3 +35,13 @@ export const docketsBaseAddress: string = local
 // export const docketsBaseAddress: string = local
 //   ? 'http://127.0.0.1:5000'
 //   : 'https://192.168.1.113:5000';
+
+//*FOR DRAW
+export const baseDrawAddress: string = local
+  ? 'http://127.0.0.1:8000/'
+  : 'https://oafehfyjjnq3frcri2xzkp7qqu0virph.lambda-url.ap-southeast-2.on.aws/';
+
+export const DrawAPI = axios.create({
+  baseURL: baseDrawAddress,
+  withCredentials: false,
+});

@@ -18,3 +18,9 @@ export interface AxiosBackendErrorReturn {
   detail?: string;
   message?: string;
 }
+export type DecimalString = `${number}`;
+
+export type TQueryHookAPIResponse<T> = AxiosResponse<
+  T,
+  AxiosBackendErrorReturn
+>;
