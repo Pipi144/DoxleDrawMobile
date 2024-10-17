@@ -102,8 +102,6 @@ export const StyledGridFileInfoText = styled.Text<{}>`
   font-style: normal;
   font-weight: 400;
   font-size: ${p => p.theme.doxleFontSize.subContentTextSize}px;
-  letter-spacing: 0.24px;
-
   color: ${p =>
     editRgbaAlpha({
       rgbaColor: p.theme.THEME_COLOR.primaryFontColor,
@@ -113,11 +111,11 @@ export const StyledGridFileInfoText = styled.Text<{}>`
 export const StyledGridFileNameText = styled.Text<{}>`
   margin-top: 4px;
 
-  font-family: ${p => p.theme.DOXLE_FONT.monoRegular};
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-style: normal;
   font-weight: 500;
   font-size: ${p => p.theme.doxleFontSize.contentTextSize}px;
-  letter-spacing: -0.24px;
+
   color: ${p => p.theme.THEME_COLOR.primaryFontColor};
 `;
 

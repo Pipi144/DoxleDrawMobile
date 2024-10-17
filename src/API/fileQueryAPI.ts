@@ -356,6 +356,9 @@ export interface IAddSingleFileMutateProps {
   folderId?: string;
   file: TAPIServerFile;
 }
+export type TBgUploadSingleFileContext = {
+  cancelUpload?: () => void;
+};
 const useBgUpoadSingleFileQuery = ({
   company,
   onCancelUpload,
@@ -434,7 +437,16 @@ const useBgUpoadSingleFileQuery = ({
         throw error;
       }
     },
-
+    onMutate: () => {
+      return {
+        cancelUpload: () => {
+          if (onCancelUpload) onCancelUpload();
+          if (abortControllerRef.current) {
+            abortControllerRef.current.abort();
+          }
+        },
+      } as TBgUploadSingleFileContext;
+    },
     onSuccess(response, variables, context) {
       if (onSuccessUpload) {
         onSuccessUpload(response.data.files);
@@ -443,8 +455,11 @@ const useBgUpoadSingleFileQuery = ({
 
     onError(error, variables, context) {
       console.log('ERROR UPLOADING FILE ', error);
+      console.log('CALL ONERROR');
 
-      if (onErrorUpload) onErrorUpload(variables, error);
+      if (onErrorUpload) {
+        onErrorUpload(variables, error);
+      }
     },
     onSettled(data, error, variable) {
       if (abortControllerRef.current) {

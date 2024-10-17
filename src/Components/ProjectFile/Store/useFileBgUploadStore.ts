@@ -56,7 +56,8 @@ interface IFileBgUploadState {
 
   destroyCacheFile: (data: TFileBgUploadData) => Promise<void>;
   synchronizeCachedFiles: (files: DoxleFile[]) => void;
-  getCacheUrl: (fileId: string) => string | undefined;
+  getCacheUrl: (fileId: string) => Promise<string | undefined>;
+  getThumbUrl: (fileId: string) => string | undefined;
   getInitialCachedFiles: () => Promise<void>;
 }
 export const useFileBgUploadStore = create(
@@ -108,7 +109,6 @@ export const useFileBgUploadStore = create(
             item => item.file.fileId === fileId,
           );
           if (cacheItem) {
-            console.log('UPDATE STATUS MULTIPLE CACHED FILE:', status);
             cacheItem.status = status;
             if (errors && errors[index]) {
               cacheItem.errorMessage = errors[index];
@@ -194,9 +194,34 @@ export const useFileBgUploadStore = create(
         await deleteFileSystemWithPath(data.thumbnailPath);
       }
     },
-    getCacheUrl: fileId => {
+    getCacheUrl: async fileId => {
+      try {
+        const file = get().cachedFiles.find(
+          item => item.file.fileId === fileId,
+        );
+        if (
+          file &&
+          file.status === 'success' &&
+          !(await checkPathExist(file.file.uri))
+        ) {
+          await deleteCacheInfo(file);
+          set(state => {
+            state.cachedFiles = state.cachedFiles.filter(
+              item => item.file.fileId !== fileId,
+            );
+          });
+          saveCachedFileList(get().cachedFiles);
+          return;
+        }
+        return file?.file.uri;
+      } catch (error) {
+        console.log('ERROR getCacheUrl:', error);
+        return;
+      }
+    },
+    getThumbUrl: fileId => {
       const file = get().cachedFiles.find(item => item.file.fileId === fileId);
-      return file?.file.uri;
+      return file?.thumbnailPath;
     },
     getInitialCachedFiles: async () => {
       try {

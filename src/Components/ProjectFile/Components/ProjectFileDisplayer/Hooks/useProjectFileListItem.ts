@@ -11,7 +11,6 @@ import {DoxleFile, DoxleFolder} from '../../../../../Models/files';
 import {TProjectFileTabStack} from '../../../Routes/ProjectFileRouteTypes';
 import {useProjectFileStore} from '../../../Store/useProjectFileStore';
 import {
-  DeleteFileParams,
   getFileMutationKey,
   getFolderMutationKey,
   TUpdateFileParams,
@@ -25,6 +24,9 @@ const useProjectFileListItem = ({fileItem, folderItem}: Props) => {
   const [isLoadingImg, setIsLoadingImg] = useState(true);
   const [isErrorImg, setIsErrorImg] = useState(false);
   const [cachedUrl, setCachedUrl] = useState<string | undefined>(undefined);
+  const [cachedThumbUrl, setCachedThumbUrl] = useState<string | undefined>(
+    undefined,
+  );
   const navigator = useNavigation<StackNavigationProp<TProjectFileTabStack>>();
 
   const {setCurrentFile, setCurrentFolder, setShowModal, setEdittedFolder} =
@@ -37,10 +39,11 @@ const useProjectFileListItem = ({fileItem, folderItem}: Props) => {
       })),
     );
 
-  const {getCacheUrl, cacheSingleFile} = useFileBgUploadStore(
+  const {getCacheUrl, cacheSingleFile, getThumbUrl} = useFileBgUploadStore(
     useShallow(state => ({
       getCacheUrl: state.getCacheUrl,
       cacheSingleFile: state.cacheSingleFile,
+      getThumbUrl: state.getThumbUrl,
     })),
   );
   const onLongPress = (itemPressed: 'file' | 'folder') => {
@@ -123,12 +126,26 @@ const useProjectFileListItem = ({fileItem, folderItem}: Props) => {
     pressAnimatedValue.value = withTiming(0, {duration: 200});
   };
 
-  useEffect(() => {
-    if (fileItem) {
-      const fileCached = getCacheUrl(fileItem.fileId);
-      if (fileCached)
-        setCachedUrl(`${Platform.OS === 'ios' ? 'file://' : ''}${fileCached}`);
+  const handleGetCachedData = async () => {
+    try {
+      if (fileItem) {
+        const fileCached = await getCacheUrl(fileItem.fileId);
+        const thumbUrl = getThumbUrl(fileItem.fileId);
+        if (fileCached)
+          setCachedUrl(
+            `${Platform.OS === 'ios' ? 'file://' : ''}${fileCached}`,
+          );
+        if (thumbUrl)
+          setCachedThumbUrl(
+            `${Platform.OS === 'ios' ? 'file://' : ''}${thumbUrl}`,
+          );
+      }
+    } catch (error) {
+      console.log('ERROR handleGetCachedData:', error);
     }
+  };
+  useEffect(() => {
+    handleGetCachedData();
   }, []);
 
   return {
@@ -145,6 +162,7 @@ const useProjectFileListItem = ({fileItem, folderItem}: Props) => {
     setIsLoadingImg,
     isErrorImg,
     setIsErrorImg,
+    cachedThumbUrl,
   };
 };
 

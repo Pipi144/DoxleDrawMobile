@@ -57,6 +57,7 @@ const ProjectFileListItem: React.FC<Props> = ({
     setIsLoadingImg,
     isErrorImg,
     setIsErrorImg,
+    cachedThumbUrl,
   } = useProjectFileListItem({fileItem, folderItem});
   const {deviceType} = useOrientation();
   const pressAnimatedStyle = useAnimatedStyle(() => {
@@ -202,11 +203,11 @@ const ProjectFileListItem: React.FC<Props> = ({
                 ) : (
                   <>
                     <StyledFileImageWrapper
-                      style={{}}
+                      style={{opacity: 0.5}}
                       $width={deviceType === 'Smartphone' ? 35 : 45}
                       source={{
-                        url: fileItem.thumbUrl,
-                        resizeMode: 'contain',
+                        url: cachedThumbUrl ?? fileItem.thumbUrl,
+                        resizeMode: 'cover',
                         cachePolicy: 'discWithCacheControl',
                       }}
                       onSuccess={() => setIsLoadingImg(false)}

@@ -16,6 +16,10 @@ import React, {useEffect} from 'react';
 import {TFileBgUploadData} from '../../Provider/StorageModels';
 import {
   StyledFileIconWrapper,
+  StyledGridContentWrapper,
+  StyledGridFileInfoText,
+  StyledGridFileNameText,
+  StyledGridListItemWrapper,
   StyledListFileInfoText,
   StyledListFileNameText,
   StyledPendingImageWrapper,
@@ -39,12 +43,19 @@ import IonIcons from 'react-native-vector-icons/Ionicons';
 import useFilePendingItem from './Hooks/useFilePendingItem';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
-
-type Props = {
+type TListProps = {
   item: TFileBgUploadData;
+  mode: 'list';
 };
+type TGridProps = {
+  item: TFileBgUploadData;
+  mode: 'grid';
+  numOfCol: number;
+};
+type Props = TListProps | TGridProps;
+
 const AnimatedIonIcon = Animated.createAnimatedComponent(IonIcons);
-const FilePendingItem = ({item}: Props) => {
+const FilePendingItem = ({item, mode = 'list', ...rest}: Props) => {
   const {deviceType} = useOrientation();
   const {THEME_COLOR, doxleFontSize} = useDOXLETheme();
 
@@ -54,142 +65,281 @@ const FilePendingItem = ({item}: Props) => {
   useEffect(() => {
     console.log('pENDING:', item);
   }, []);
-
-  return (
-    <StyledProjectFileListItemContainer
-      delayLongPress={200}
-      layout={LinearTransition.springify().damping(16)}
-      unstable_pressDelay={100}
-      style={{
-        opacity: 0.8,
-      }}>
-      <StyledFileIconWrapper $width={deviceType === 'Smartphone' ? 45 : 55}>
-        {item.file.type.toLowerCase().includes('pdf') ? (
-          <DoxlePDFIcon
-            containerStyle={{
-              width: deviceType === 'Smartphone' ? 35 : 45,
-            }}
-          />
-        ) : item.file.type.toLowerCase().includes('doc') ||
-          item.file.type.toLowerCase().includes('docx') ? (
-          <DoxleWordIcon
-            containerStyle={{
-              width: deviceType === 'Smartphone' ? 35 : 45,
-            }}
-          />
-        ) : item.file.type.toLowerCase().includes('xlsx') ||
-          item.file.type.toLowerCase().includes('xls') ? (
-          <DoxleExcelIcon
-            containerStyle={{
-              width: deviceType === 'Smartphone' ? 35 : 45,
-            }}
-          />
-        ) : item.file.type.toLowerCase().includes('csv') ? (
-          <DoxleCSVIcon
-            themeColor={THEME_COLOR}
-            containerStyle={{
-              width: deviceType === 'Smartphone' ? 35 : 45,
-            }}
-          />
-        ) : item.file.type.toLowerCase().includes('image') ? (
-          <>
-            <StyledPendingImageWrapper
-              style={{}}
-              $width={deviceType === 'Smartphone' ? 35 : 45}
-              source={{
-                uri: item.file.uri,
+  if (mode === 'list')
+    return (
+      <StyledProjectFileListItemContainer
+        delayLongPress={200}
+        layout={LinearTransition.springify().damping(16)}
+        unstable_pressDelay={100}
+        style={{
+          opacity: 0.8,
+        }}>
+        <StyledFileIconWrapper $width={deviceType === 'Smartphone' ? 45 : 55}>
+          {item.file.type.toLowerCase().includes('pdf') ? (
+            <DoxlePDFIcon
+              containerStyle={{
+                width: deviceType === 'Smartphone' ? 35 : 45,
               }}
-              resizeMode="cover"
             />
-          </>
-        ) : (
-          <>
-            {item.thumbnailPath && (
+          ) : item.file.type.toLowerCase().includes('doc') ||
+            item.file.type.toLowerCase().includes('docx') ? (
+            <DoxleWordIcon
+              containerStyle={{
+                width: deviceType === 'Smartphone' ? 35 : 45,
+              }}
+            />
+          ) : item.file.type.toLowerCase().includes('xlsx') ||
+            item.file.type.toLowerCase().includes('xls') ? (
+            <DoxleExcelIcon
+              containerStyle={{
+                width: deviceType === 'Smartphone' ? 35 : 45,
+              }}
+            />
+          ) : item.file.type.toLowerCase().includes('csv') ? (
+            <DoxleCSVIcon
+              themeColor={THEME_COLOR}
+              containerStyle={{
+                width: deviceType === 'Smartphone' ? 35 : 45,
+              }}
+            />
+          ) : item.file.type.toLowerCase().includes('image') ? (
+            <>
               <StyledPendingImageWrapper
                 style={{}}
                 $width={deviceType === 'Smartphone' ? 35 : 45}
                 source={{
-                  uri: item.thumbnailPath,
+                  uri: item.file.uri,
                 }}
                 resizeMode="cover"
               />
-            )}
-            <IonIcons
-              name="play-outline"
-              color={THEME_COLOR.doxleColor}
-              size={deviceType === 'Smartphone' ? 24 : 28}
-              style={styles.playIcon}
-            />
-          </>
-        )}
-      </StyledFileIconWrapper>
+            </>
+          ) : (
+            <>
+              {item.thumbnailPath && (
+                <StyledPendingImageWrapper
+                  style={{}}
+                  $width={deviceType === 'Smartphone' ? 35 : 45}
+                  source={{
+                    uri: item.thumbnailPath,
+                  }}
+                  resizeMode="cover"
+                />
+              )}
+              <IonIcons
+                name="play-outline"
+                color={THEME_COLOR.doxleColor}
+                size={deviceType === 'Smartphone' ? 24 : 28}
+                style={styles.playIcon}
+              />
+            </>
+          )}
+        </StyledFileIconWrapper>
 
-      <View style={styles.fileNameSection}>
-        <StyledListFileNameText numberOfLines={1} ellipsizeMode="tail">
-          {item.file.name}
-        </StyledListFileNameText>
+        <View style={styles.fileNameSection}>
+          <StyledListFileNameText numberOfLines={1} ellipsizeMode="tail">
+            {item.file.name}
+          </StyledListFileNameText>
 
-        <StyledListFileInfoText numberOfLines={1} ellipsizeMode="tail">
-          {(Number(item.file.size ?? 0) / 1024 / 1024).toFixed(2)} MB -{' '}
-          <StyledListFileInfoText
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            style={{color: item.status === 'pending' ? '#FFC700' : 'red'}}>
-            {item.status}
+          <StyledListFileInfoText numberOfLines={1} ellipsizeMode="tail">
+            {(Number(item.file.size ?? 0) / 1024 / 1024).toFixed(2)} MB -{' '}
+            <StyledListFileInfoText
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{color: item.status === 'pending' ? '#FFC700' : 'red'}}>
+              {item.status}
+            </StyledListFileInfoText>
           </StyledListFileInfoText>
-        </StyledListFileInfoText>
-      </View>
+        </View>
 
-      <AnimatedCircularProgress
-        size={deviceType === 'Smartphone' ? 40 : 50}
-        width={deviceType === 'Smartphone' ? 4 : 5}
-        fill={fileState.progress}
-        tintColor={
-          item.status === 'pending'
-            ? THEME_COLOR.primaryFontColor
-            : 'transparent'
-        }
-        fillLineCap="round"
-        backgroundColor={editRgbaAlpha({
-          rgbaColor: THEME_COLOR.primaryFontColor,
-          alpha: '0.2',
-        })}
-        style={{marginLeft: 4}}
-        childrenContainerStyle={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: 'transparent',
-          padding: 2,
-        }}
-        prefill={0}
+        <AnimatedCircularProgress
+          size={deviceType === 'Smartphone' ? 40 : 50}
+          width={deviceType === 'Smartphone' ? 4 : 5}
+          fill={fileState.progress}
+          tintColor={
+            item.status === 'pending'
+              ? THEME_COLOR.primaryFontColor
+              : 'transparent'
+          }
+          fillLineCap="round"
+          backgroundColor={editRgbaAlpha({
+            rgbaColor: THEME_COLOR.primaryFontColor,
+            alpha: '0.2',
+          })}
+          style={{marginLeft: 4}}
+          childrenContainerStyle={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'transparent',
+            padding: 2,
+          }}
+          prefill={0}
 
-        // renderCap={({ center }) => <Circle cx={center.x} cy={center.y} r="10" fill="blue" />}
-      >
-        {fill => (
-          <Pressable onPress={handlePressProgress} hitSlop={14}>
-            {item.status === 'pending' && (
-              <AnimatedIonIcon
-                name="close"
-                size={doxleFontSize.headTitleTextSize}
-                color={THEME_COLOR.primaryFontColor}
-                entering={ZoomIn}
-                exiting={ZoomOut}
+          // renderCap={({ center }) => <Circle cx={center.x} cy={center.y} r="10" fill="blue" />}
+        >
+          {fill => (
+            <Pressable onPress={handlePressProgress} hitSlop={14}>
+              {item.status === 'pending' && (
+                <AnimatedIonIcon
+                  name="close"
+                  size={doxleFontSize.headTitleTextSize}
+                  color={THEME_COLOR.primaryFontColor}
+                  entering={ZoomIn}
+                  exiting={ZoomOut}
+                />
+              )}
+              {item.status === 'error' && (
+                <AnimatedIonIcon
+                  name="reload"
+                  size={doxleFontSize.headTitleTextSize}
+                  color={'red'}
+                  entering={ZoomIn}
+                  exiting={ZoomOut}
+                />
+              )}
+            </Pressable>
+          )}
+        </AnimatedCircularProgress>
+      </StyledProjectFileListItemContainer>
+    );
+  else if (mode === 'grid' && 'numOfCol' in rest)
+    return (
+      <StyledGridListItemWrapper
+        $numOfCol={rest.numOfCol}
+        layout={LinearTransition.springify().damping(16)}
+        style={{
+          opacity: 0.6,
+        }}>
+        <StyledGridContentWrapper>
+          <View style={styles.iconWrapper}>
+            {item.file.type.toLowerCase().includes('pdf') ? (
+              <DoxlePDFIcon
+                containerStyle={{
+                  width: deviceType === 'Smartphone' ? 80 : 100,
+                }}
               />
-            )}
-            {item.status === 'error' && (
-              <AnimatedIonIcon
-                name="reload"
-                size={doxleFontSize.headTitleTextSize}
-                color={'red'}
-                entering={ZoomIn}
-                exiting={ZoomOut}
+            ) : item.file.type.toLowerCase().includes('doc') ||
+              item.file.type.toLowerCase().includes('docx') ? (
+              <DoxleWordIcon
+                containerStyle={{
+                  width: deviceType === 'Smartphone' ? 80 : 100,
+                }}
               />
+            ) : item.file.type.toLowerCase().includes('xlsx') ||
+              item.file.type.toLowerCase().includes('xls') ? (
+              <DoxleExcelIcon
+                containerStyle={{
+                  width: deviceType === 'Smartphone' ? 80 : 100,
+                }}
+              />
+            ) : item.file.type.toLowerCase().includes('csv') ? (
+              <DoxleCSVIcon
+                themeColor={THEME_COLOR}
+                containerStyle={{
+                  width: deviceType === 'Smartphone' ? 80 : 100,
+                }}
+              />
+            ) : item.file.type.toLowerCase().includes('image') ? (
+              <>
+                <StyledPendingImageWrapper
+                  style={{}}
+                  $width={deviceType === 'Smartphone' ? 80 : 100}
+                  source={{
+                    uri: item.file.uri,
+                  }}
+                  resizeMode="cover"
+                />
+              </>
+            ) : (
+              <>
+                {item.thumbnailPath && (
+                  <StyledPendingImageWrapper
+                    style={{}}
+                    $width={deviceType === 'Smartphone' ? 80 : 100}
+                    source={{
+                      uri: item.thumbnailPath,
+                    }}
+                    resizeMode="cover"
+                  />
+                )}
+                <IonIcons
+                  name="play-outline"
+                  color={THEME_COLOR.doxleColor}
+                  size={deviceType === 'Smartphone' ? 24 : 28}
+                  style={styles.playIcon}
+                />
+              </>
             )}
-          </Pressable>
-        )}
-      </AnimatedCircularProgress>
-    </StyledProjectFileListItemContainer>
-  );
+          </View>
+          <StyledGridFileNameText numberOfLines={1} ellipsizeMode="tail">
+            {item.file.name}
+          </StyledGridFileNameText>
+
+          <StyledGridFileInfoText numberOfLines={1} ellipsizeMode="tail">
+            {(Number(item.file.size ?? 0) / 1024 / 1024).toFixed(2)} MB -{' '}
+            <StyledGridFileInfoText
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{color: item.status === 'pending' ? '#FFC700' : 'red'}}>
+              {item.status}
+            </StyledGridFileInfoText>
+          </StyledGridFileInfoText>
+
+          <AnimatedCircularProgress
+            size={deviceType === 'Smartphone' ? 40 : 50}
+            width={deviceType === 'Smartphone' ? 4 : 5}
+            fill={fileState.progress}
+            tintColor={
+              item.status === 'pending'
+                ? THEME_COLOR.primaryFontColor
+                : 'transparent'
+            }
+            fillLineCap="round"
+            backgroundColor={editRgbaAlpha({
+              rgbaColor: THEME_COLOR.primaryFontColor,
+              alpha: '0.2',
+            })}
+            style={{
+              marginLeft: 4,
+              position: 'absolute',
+              alignSelf: 'center',
+              zIndex: 10,
+            }}
+            childrenContainerStyle={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'transparent',
+              padding: 2,
+            }}
+            prefill={0}
+
+            // renderCap={({ center }) => <Circle cx={center.x} cy={center.y} r="10" fill="blue" />}
+          >
+            {fill => (
+              <Pressable onPress={handlePressProgress} hitSlop={14}>
+                {item.status === 'pending' && (
+                  <AnimatedIonIcon
+                    name="close"
+                    size={doxleFontSize.headTitleTextSize}
+                    color={THEME_COLOR.primaryFontColor}
+                    entering={ZoomIn}
+                    exiting={ZoomOut}
+                  />
+                )}
+                {item.status === 'error' && (
+                  <AnimatedIonIcon
+                    name="reload"
+                    size={doxleFontSize.headTitleTextSize}
+                    color={'red'}
+                    entering={ZoomIn}
+                    exiting={ZoomOut}
+                  />
+                )}
+              </Pressable>
+            )}
+          </AnimatedCircularProgress>
+        </StyledGridContentWrapper>
+      </StyledGridListItemWrapper>
+    );
 };
 
 export default FilePendingItem;
@@ -216,5 +366,12 @@ const styles = StyleSheet.create({
   playIcon: {
     position: 'absolute',
     zIndex: 10,
+  },
+  iconWrapper: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
   },
 });

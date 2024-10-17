@@ -1,19 +1,17 @@
 import {Alert, StyleSheet} from 'react-native';
-import {useCallback, useMemo} from 'react';
 
-import {shallow} from 'zustand/shallow';
 import {StackNavigationProp} from '@react-navigation/stack';
 
 import {useNavigation} from '@react-navigation/native';
 
-import {useProjectFileStore} from '../Store/useProjectFileStore';
 import {useShallow} from 'zustand/react/shallow';
-import {useAuth} from '../../../Providers/AuthProvider';
-import {useCompany} from '../../../Providers/CompanyProvider';
-import {useNotification} from '../../../Providers/NotificationProvider';
-import FilesAPI from '../../../API/fileQueryAPI';
-import useSetFileQueryData from '../../../QueryDataHooks/useSetFileQueryData';
-import useSetRootFolderQueryData from '../../../QueryDataHooks/useSetRootFolderQueryData';
+import {useAuth} from '../../../../../Providers/AuthProvider';
+import {useCompany} from '../../../../../Providers/CompanyProvider';
+import {useNotification} from '../../../../../Providers/NotificationProvider';
+import {useProjectFileStore} from '../../../Store/useProjectFileStore';
+import useSetFileQueryData from '../../../../../QueryDataHooks/useSetFileQueryData';
+import useSetRootFolderQueryData from '../../../../../QueryDataHooks/useSetRootFolderQueryData';
+import FilesAPI from '../../../../../API/fileQueryAPI';
 
 type Props = {};
 
@@ -34,9 +32,6 @@ const useProjectFileModalContent = (props: Props) => {
     setCurrentFile,
     setEdittedFolder,
     setShowModal,
-    filterProjectFolderQuery,
-    currentFolder,
-    filterProjectFileQuery,
   } = useProjectFileStore(
     useShallow(state => ({
       currentFile: state.currentFile,
@@ -51,9 +46,7 @@ const useProjectFileModalContent = (props: Props) => {
   );
   const navigator =
     useNavigation<StackNavigationProp<FileEditScreenNavProps>>();
-  const onDeleteFolderSuccessCallback = () => {
-    setEdittedFolder(undefined);
-  };
+
   const {handleRemoveMultipleFile} = useSetFileQueryData({});
   const {handleDeleteMultipleFolders} = useSetRootFolderQueryData({});
   //! USE DELETE FOLDER QUERY
@@ -61,7 +54,6 @@ const useProjectFileModalContent = (props: Props) => {
     accessToken,
     company,
     showNotification,
-    onDeleteFolderCallback: onDeleteFolderSuccessCallback,
   });
 
   const onDeleteFileSuccessCallback = () => {
@@ -128,6 +120,9 @@ const useProjectFileModalContent = (props: Props) => {
             onPress: () => {
               handleDeleteMultipleFolders([edittedFolder]);
               deleteFolderQuery.mutate([edittedFolder]);
+              setTimeout(() => {
+                setEdittedFolder(undefined);
+              }, 100);
             },
           },
         ],

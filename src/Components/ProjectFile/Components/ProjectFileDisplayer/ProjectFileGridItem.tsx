@@ -52,8 +52,7 @@ const ProjectFileGridItem: React.FC<Props> = ({
     setIsLoadingImg,
     isErrorImg,
     setIsErrorImg,
-    isDeletingFile,
-    isDeletingFolder,
+    cachedThumbUrl,
   } = useProjectFileGridItem({fileItem, folderItem});
   const {deviceType} = useOrientation();
   const modifiedTime = folderItem
@@ -68,14 +67,10 @@ const ProjectFileGridItem: React.FC<Props> = ({
   return (
     <StyledGridListItemWrapper
       $numOfCol={numOfCol}
-      layout={LinearTransition.springify().damping(16)}
-      pointerEvents={isDeletingFile || isDeletingFolder ? 'none' : 'auto'}
-      style={{
-        opacity: isDeletingFile || isDeletingFolder ? 0.5 : 1,
-      }}>
+      layout={LinearTransition.springify().damping(16)}>
       {fileItem && (
         <StyledGridContentWrapper
-          onPress={() => filePressed(fileItem.url, fileItem.fileType)}
+          onPress={filePressed}
           onLongPress={() => onLongPress('file')}
           delayLongPress={100}>
           <View style={styles(THEME_COLOR).iconWrapper}>
@@ -180,10 +175,10 @@ const ProjectFileGridItem: React.FC<Props> = ({
             ) : (
               <>
                 <StyledFileImageWrapper
-                  style={{}}
+                  style={{opacity: 0.5}}
                   $width={deviceType === 'Smartphone' ? 80 : 100}
                   source={{
-                    url: fileItem.thumbUrl,
+                    url: cachedThumbUrl ?? fileItem.thumbUrl,
                     resizeMode: 'cover',
                     cachePolicy: 'discWithCacheControl',
                   }}

@@ -14,8 +14,7 @@ const useProjectFileGridView = (props: Props) => {
     refetchFileList,
     isRefetchingFileList,
   } = useGetProjectFileQuery({});
-  const isLoaderShow =
-    true || Boolean(isFetchingFolderList || isFetchingFileList);
+  const isLoaderShow = Boolean(isFetchingFolderList || isFetchingFileList);
 
   const handleRefetchList = () => {
     refetchFolderList();

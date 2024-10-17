@@ -1,10 +1,6 @@
 import React from 'react';
 
-import {StyleSheet} from 'react-native';
-
 import {useProjectFileStore} from '../../Store/useProjectFileStore';
-
-import useProjectFileModalContent from '../../Hooks/useProjectFileModalContent';
 import {
   StyledProjectFileModalContentContainer,
   StyledModalContentTopWrapper,
@@ -27,12 +23,13 @@ import dayjs from 'dayjs';
 import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
 import {DoxleFile} from '../../../../Models/files';
 import {FadeInUp} from 'react-native-reanimated';
+import useProjectFileModalContent from './Hooks/useProjectFileModalContent';
 
 dayjs.extend(relativeTime);
 type Props = {};
 
 const ProjectFileModalContent = ({}: Props) => {
-  const {THEME_COLOR, staticMenuColor} = useDOXLETheme();
+  const {staticMenuColor} = useDOXLETheme();
 
   const {currentFile, edittedFolder} = useProjectFileStore(
     useShallow(state => ({

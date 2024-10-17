@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import {View, Text, Easing} from 'react-native';
+import {View, Text, Easing, Alert} from 'react-native';
 import React, {useEffect, useRef} from 'react';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import useUploadFileState from '../../../../../CustomHooks/useUploadFileState';
@@ -20,6 +20,7 @@ import {useMutationState, useQueryClient} from '@tanstack/react-query';
 import {
   getFileMutationKey,
   IAddSingleFileMutateProps,
+  TBgUploadSingleFileContext,
 } from '../../../../../API/fileQueryAPI';
 import {useFileBgUploadStore} from '../../../Store/useFileBgUploadStore';
 import {useShallow} from 'zustand/shallow';
@@ -44,14 +45,42 @@ const useFilePendingItem = ({item}: Props) => {
       mutation.state.status === 'pending',
   });
 
+  const mutationState = useMutationState({
+    filters: {
+      mutationKey: getFileMutationKey('bg-upload-single'),
+      predicate: mutation =>
+        mutation.state.variables &&
+        (mutation.state.variables as any).file.fileId === item.file.fileId &&
+        mutation.state.status === 'pending',
+    },
+    select: mutation => mutation.state.context,
+  });
   const handlePressProgress = () => {
     if (item.status === 'pending') {
       if (mutationFile) {
+        console.log('mutationFile', mutationFile);
         destroyCacheFile(item);
         mutationFile.destroy();
+        const contextMutate = mutationFile.state
+          .context as TBgUploadSingleFileContext;
+        if (contextMutate.cancelUpload) {
+          contextMutate.cancelUpload();
+        }
       }
     } else if (item.status === 'error') {
-      updateStatusSingleCachedFile(item.file.fileId, 'pending');
+      // updateStatusSingleCachedFile(item.file.fileId, 'pending');
+      Alert.alert('Retry upload', item.errorMessage ?? 'Unknown Error', [
+        {
+          text: 'Remove',
+          style: 'destructive',
+          onPress: () => destroyCacheFile(item),
+        },
+        {
+          text: 'Retry',
+          onPress: () =>
+            updateStatusSingleCachedFile(item.file.fileId, 'pending'),
+        },
+      ]);
     }
   };
 

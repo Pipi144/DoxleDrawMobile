@@ -96,7 +96,6 @@ const useFileMenuRootMode = ({}: Props) => {
   };
 
   const handlePressAddPhotoLibrary = async () => {
-    console.log('handlePressAddPhotoLibrary');
     try {
       let imagePickerResult: ImagePicker.ImagePickerResponse =
         await ImagePicker.launchImageLibrary({
@@ -105,6 +104,7 @@ const useFileMenuRootMode = ({}: Props) => {
           presentationStyle: 'formSheet',
           quality: 1,
           maxHeight: 950,
+          assetRepresentationMode: 'current',
         });
 
       if (imagePickerResult.didCancel) {

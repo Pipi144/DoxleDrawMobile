@@ -18,6 +18,11 @@ import {DoxleFile, DoxleFolder} from '../../../../Models/files';
 import DoxleEmptyPlaceholder from '../../../DesignPattern/DoxleEmptyPlaceholder/DoxleEmptyPlaceholder';
 import {ErrorFetchingBanner} from '../../../DesignPattern/DoxleBanners';
 import useProjectFileGridView from './Hooks/useProjectFileGridView';
+import {useFileBgUploadStore} from '../../Store/useFileBgUploadStore';
+import {useShallow} from 'zustand/shallow';
+import {useCompany} from '../../../../Providers/CompanyProvider';
+import {TFileBgUploadData} from '../../Provider/StorageModels';
+import FilePendingItem from './FilePendingItem';
 
 type Props = {};
 
@@ -39,17 +44,34 @@ const ProjectFileGridView = (props: Props) => {
   const {folderListSuccess, isErrorFetchingFolderList} =
     useGetProjectFolderQuery({});
 
-  const {fileListSuccess, isErrorFetchingFileList, isFetchingFileList} =
-    useGetProjectFileQuery({});
-
-  const combinedFileFolders: Array<DoxleFile | DoxleFolder> = useMemo(
+  const {fileListSuccess, isErrorFetchingFileList} = useGetProjectFileQuery({});
+  const {cachedFiles} = useFileBgUploadStore(
+    useShallow(state => ({
+      cachedFiles: state.cachedFiles,
+    })),
+  );
+  const {selectedProject} = useCompany();
+  const pendingFiles = useMemo(
+    () =>
+      cachedFiles.filter(
+        item =>
+          item.uploadVariant === 'Project' &&
+          item.hostId === selectedProject?.projectId &&
+          item.status !== 'success',
+      ),
+    [selectedProject, cachedFiles],
+  );
+  const combinedFileFolders: Array<
+    DoxleFile | DoxleFolder | TFileBgUploadData
+  > = useMemo(
     () => [
+      ...pendingFiles,
       ...folderListSuccess.sort((a, b) =>
         a.folderName < b.folderName ? -1 : 1,
       ),
       ...fileListSuccess.sort((a, b) => (a.fileName < b.fileName ? -1 : 1)),
     ],
-    [folderListSuccess, fileListSuccess],
+    [folderListSuccess, fileListSuccess, pendingFiles],
   );
 
   const {isLoaderShow, handleRefetchList, isListRefetching} =
@@ -57,25 +79,36 @@ const ProjectFileGridView = (props: Props) => {
   //* render list
   const layout = LinearTransition.springify().damping(16);
   const renderItem = useCallback(
-    (props: {item: DoxleFile | DoxleFolder; index: number}) =>
+    (props: {
+      item: DoxleFile | DoxleFolder | TFileBgUploadData;
+      index: number;
+    }) =>
       (props.item as DoxleFile).fileId !== undefined ? (
         <ProjectFileGridItem
           fileItem={props.item as DoxleFile}
           numOfCol={numOfCol}
         />
-      ) : (
+      ) : (props.item as DoxleFolder).folderId !== undefined ? (
         <ProjectFileGridItem
           folderItem={props.item as DoxleFolder}
+          numOfCol={numOfCol}
+        />
+      ) : (
+        <FilePendingItem
+          item={props.item as TFileBgUploadData}
+          mode="grid"
           numOfCol={numOfCol}
         />
       ),
     [numOfCol],
   );
   const keyExtractor = useCallback(
-    (item: DoxleFile | DoxleFolder, index: number) =>
+    (item: DoxleFile | DoxleFolder | TFileBgUploadData, index: number) =>
       (item as DoxleFolder).folderId !== undefined
-        ? `gridItem#${(item as DoxleFolder).folderId}`
-        : `gridItem#${(item as DoxleFile).fileId}`,
+        ? `listItem#${(item as DoxleFolder).folderId}`
+        : (item as DoxleFile).fileId !== undefined
+        ? `listItem#${(item as DoxleFile).fileId}`
+        : (item as TFileBgUploadData).file.fileId,
     [],
   );
   const listEmptyComponent = useMemo(

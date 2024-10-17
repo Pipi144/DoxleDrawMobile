@@ -83,7 +83,7 @@ const ProjectFileListView = (props: Props) => {
       ) : (props.item as DoxleFolder).folderId !== undefined ? (
         <ProjectFileListItem folderItem={props.item as DoxleFolder} />
       ) : (
-        <FilePendingItem item={props.item as TFileBgUploadData} />
+        <FilePendingItem item={props.item as TFileBgUploadData} mode="list" />
       ),
     [],
   );

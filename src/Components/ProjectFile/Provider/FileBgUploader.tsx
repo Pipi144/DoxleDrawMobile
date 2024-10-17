@@ -73,13 +73,10 @@ const FileBgUploader = ({children}: Props) => {
       handleAddMultipleFile(files);
     },
     onErrorUpload(data, error) {
-      updateStatusMultipleCachedFile(
-        [data.file.fileId],
-        'error',
-        isAxiosError<IFailedUploadFileError>(error)
-          ? error.response?.data.errors.map(error => error.errors)
-          : undefined,
-      );
+      console.log('CALL ON ERROR UPLOAD', data, error);
+      const errorText = [error?.message ?? 'Unknown error'];
+      console.log('ERROR:', errorText);
+      updateStatusMultipleCachedFile([data.file.fileId], 'error', errorText);
     },
   });
 

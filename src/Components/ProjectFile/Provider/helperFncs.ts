@@ -83,19 +83,22 @@ export const moveFileToCache = async ({
   uri,
 }: TAPIServerFile): Promise<IMoveFileToCacheRes | undefined> => {
   try {
+    console.log('TYPE:', type);
     const fileExtension = getExtensionFromMimeType(type);
 
     let res: IMoveFileToCacheRes = {
       newUrl: uri,
     };
     const isVideo = type.toLowerCase().includes('video');
-    const fileCachedPath =
-      fileExtension === 'unknown'
-        ? `${ALL_CACHED_FILES}/${fileId}-${name}`
-        : `${ALL_CACHED_FILES}/${fileId}.${isVideo ? 'mp4' : fileExtension}`;
+    const fileCachedPath = isVideo
+      ? `${ALL_CACHED_FILES}/${fileId}.mp4`
+      : fileExtension === 'unknown'
+      ? `${ALL_CACHED_FILES}/${fileId}-${name}`
+      : `${ALL_CACHED_FILES}/${fileId}.${fileExtension}`;
+
     console.log('FILE CACHE PATH:', fileCachedPath);
     if (isVideo && Platform.OS === 'android') {
-      await copyFile(uri, fileCachedPath);
+      await moveFile(uri, fileCachedPath);
     } else {
       await moveFile(uri, fileCachedPath);
     }

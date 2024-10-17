@@ -938,6 +938,7 @@ export function getExtensionFromMimeType(mimeType: string): string {
     'text/csv': 'csv',
     'application/pdf': 'pdf',
     'video/mp4': 'mp4',
+    'video/mpeg': '.mpeg',
     'video/x-msvideo': 'avi',
     'text/plain': 'txt',
     // Add more MIME types and their corresponding extensions as needed
