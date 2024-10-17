@@ -328,20 +328,23 @@ const FilePendingItem = ({item, mode = 'list', ...rest}: Props) => {
           )}
 
           {item.status === 'error' && (
-            <AnimatedIonIcon
-              name="reload"
-              size={doxleFontSize.headTitleTextSize}
-              color={'red'}
-              entering={ZoomIn}
-              exiting={ZoomOut}
+            <Pressable
+              onPress={handlePressProgress}
+              hitSlop={14}
               style={{
                 position: 'absolute',
                 top: 8,
                 right: 8,
                 zIndex: 10,
-              }}
-              onPress={handlePressProgress}
-            />
+              }}>
+              <AnimatedIonIcon
+                name="reload"
+                size={doxleFontSize.headTitleTextSize}
+                color={'red'}
+                entering={ZoomIn}
+                exiting={ZoomOut}
+              />
+            </Pressable>
           )}
         </StyledGridContentWrapper>
       </StyledGridListItemWrapper>

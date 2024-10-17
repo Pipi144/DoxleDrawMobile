@@ -1,4 +1,3 @@
-import {Alert} from 'react-native';
 import React, {
   createContext,
   useCallback,
@@ -8,14 +7,11 @@ import React, {
   useState,
 } from 'react';
 import {Company} from '../Models/company';
-import {useNotification} from './NotificationProvider';
 import {useAuth} from './AuthProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useAppState from '../CustomHooks/useAppState';
 import CompanyQueryAPI from '../API/companyQueryAPI';
 import {IFullProject, Project} from '../Models/project';
-import useEffectAfterMount from '../CustomHooks/useEffectAfterMount';
-import useGetProjectList from '../GetQueryDataHooks/useGetProjectList';
 import ProjectQueryAPI from '../API/projectQueryAPI';
 import {produce} from 'immer';
 
@@ -44,7 +40,8 @@ const CompanyProvider = (children: any) => {
     undefined,
   );
   const [prevSession, setPrevSession] = useState<TPrevCompanySession>({});
-
+  const [isGettingPrevSessionFinised, setIsGettingPrevSessionFinised] =
+    useState(false);
   const getStoragePrevSession = useCallback(async (): Promise<
     TPrevCompanySession | undefined
   > => {
@@ -62,6 +59,7 @@ const CompanyProvider = (children: any) => {
           setSelectedProject(parsedPrevSession.lastProject);
         }
       }
+      setIsGettingPrevSessionFinised(true);
       return prevSession
         ? (JSON.parse(prevSession) as TPrevCompanySession)
         : undefined;
@@ -69,7 +67,7 @@ const CompanyProvider = (children: any) => {
       console.log('Error getting prev session', error);
     }
   }, []);
-  const {accessToken, logOut, loggedIn} = useAuth();
+  const {accessToken, loggedIn} = useAuth();
 
   const onSuccessFetchingCompany = useCallback(
     (companyList: Company[]) => {
@@ -109,9 +107,8 @@ const CompanyProvider = (children: any) => {
   const retrieveCompanyQuery = CompanyQueryAPI.useRetrieveCompanyList({
     accessToken,
     onSuccessCb: onSuccessFetchingCompany,
-    enable: Boolean(loggedIn && accessToken),
+    enable: Boolean(loggedIn && accessToken && isGettingPrevSessionFinised),
   });
-
   const companyList = useMemo(
     () =>
       retrieveCompanyQuery.isSuccess
@@ -183,13 +180,8 @@ const CompanyProvider = (children: any) => {
     filter: {
       view: 'budget',
     },
-    // onSuccessCb: onSuccessFetchingProjectList,
+    onSuccessCb: onSuccessFetchingProjectList,
   });
-  useEffect(() => {
-    onSuccessFetchingProjectList(
-      projectQuery.data?.pages.flatMap(p => p?.data.results ?? []) ?? [],
-    );
-  }, [projectQuery.isSuccess]);
 
   const {appState} = useAppState();
 
@@ -202,7 +194,7 @@ const CompanyProvider = (children: any) => {
     }
   }, [appState]);
 
-  useEffectAfterMount(() => {
+  useEffect(() => {
     getStoragePrevSession();
   }, []);
 
