@@ -15,11 +15,10 @@ const WallComponent = memo(({wall}: Props) => {
 
   return (
     <Polygon
-      x={wall.xPosition}
-      y={wall.yPosition}
       points={wallPoints}
       strokeWidth={5}
       stroke={THEME_COLOR.primaryFontColor}
+      fill={THEME_COLOR.doxleColor}
     />
   );
 });

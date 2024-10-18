@@ -25,10 +25,14 @@ const useWallComponent = ({wall}: Props) => {
       walls: state.walls,
     })),
   );
-  const wallPoints = useMemo(
-    () => wall.wallPoints.flatMap(p => [p.x, p.y]),
-    [wall.wallPoints],
-  );
+  const wallPoints = useMemo(() => {
+    let points = '';
+    let length = wall.wallPoints.length;
+    for (let i = 0; i < length; i++) {
+      points += `${wall.wallPoints[i].x},${wall.wallPoints[i].y} `;
+    }
+    return points;
+  }, [wall.wallPoints]);
   return {wallPoints};
 };
 

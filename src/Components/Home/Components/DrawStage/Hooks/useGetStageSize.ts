@@ -20,52 +20,61 @@ import {IBackground} from '../../../../../Models/DrawModels/Backgrounds';
 type Props = {
   walls: IWall[];
   background?: IBackground;
+  enableCalculating: boolean;
 };
 
 const useGetStageSize = (props: Props) => {
-  const [isCalculatingSize, setIsCalculatingSize] = useState(false);
+  const [isCalculatingSize, setIsCalculatingSize] = useState(true);
   const [viewBox, setViewBox] = useState('-1000 -1000 1000 1000');
-  const {walls, background} = props;
+  const {walls, background, enableCalculating} = props;
   const calculatingStageSize = useCallback(() => {
     setIsCalculatingSize(true);
-    let xMin: number | undefined = undefined;
-    let yMin: number | undefined = undefined;
-    let xMax: number | undefined = undefined;
-    let yMax: number | undefined = undefined;
+    let xMin: number | undefined;
+    let yMin: number | undefined;
+    let xMax: number | undefined;
+    let yMax: number | undefined;
     // for (let i = 0; i < walls.length; i++) {
     //   const wall = walls[i];
-    //   let minXWallPoints = 0;
-    //   let minYWallPoints = 0;
-    //   let maxXWallPoints = 0;
-    //   let maxYWallPoints = 0;
+    //   if (!wall) continue;
+
+    //   // Get min/max values for current wall's points
+    //   let minXWallPoints = Infinity;
+    //   let minYWallPoints = Infinity;
+    //   let maxXWallPoints = -Infinity;
+    //   let maxYWallPoints = -Infinity;
     //   for (let j = 0; j < wall.wallPoints.length; i++) {
-    //     minXWallPoints = Math.min(minXWallPoints, wall.wallPoints[j].x);
-    //     minYWallPoints = Math.min(minYWallPoints, wall.wallPoints[j].y);
-    //     maxXWallPoints = Math.max(maxXWallPoints, wall.wallPoints[j].x);
-    //     maxYWallPoints = Math.max(maxYWallPoints, wall.wallPoints[j].y);
+    //     const {x, y} = wall.wallPoints[j];
+    //     minXWallPoints = Math.min(minXWallPoints, x);
+    //     minYWallPoints = Math.min(minYWallPoints, y);
+    //     maxXWallPoints = Math.max(maxXWallPoints, x);
+    //     maxYWallPoints = Math.max(maxYWallPoints, y);
     //   }
 
-    //   xMin = Math.min(xMin, minXWallPoints);
-    //   yMin = Math.min(yMin, minYWallPoints);
-    //   xMax = Math.max(xMax, maxXWallPoints);
-    //   yMax = Math.max(yMax, maxYWallPoints);
+    //   xMin =
+    //     xMin !== undefined ? Math.min(xMin, minXWallPoints) : minXWallPoints;
+    //   yMin =
+    //     yMin !== undefined ? Math.min(yMin, minYWallPoints) : minYWallPoints;
+    //   xMax =
+    //     xMax !== undefined ? Math.max(xMax, maxXWallPoints) : maxXWallPoints;
+    //   yMax =
+    //     yMax !== undefined ? Math.max(yMax, maxYWallPoints) : maxYWallPoints;
     // }
     if (background) {
       let minXBg = Math.min(
         background.xPosition,
-        background.xPosition + background.width,
+        background.xPosition + background.width * background.scaleX,
       );
       let minYBg = Math.min(
         background.yPosition,
-        background.yPosition + background.height,
+        background.yPosition + background.height * background.scaleY,
       );
       let maxXBg = Math.max(
         background.xPosition,
-        background.xPosition + background.width,
+        background.xPosition + background.width * background.scaleX,
       );
       let maxYBg = Math.max(
         background.yPosition,
-        background.yPosition + background.height,
+        background.yPosition + background.height * background.scaleY,
       );
       xMin = xMin ? Math.min(xMin, minXBg) : minXBg;
       yMin = yMin ? Math.min(yMin, minYBg) : minYBg;
@@ -79,26 +88,30 @@ const useGetStageSize = (props: Props) => {
       yMax === undefined
     ) {
       setViewBox('-1000 -1000 1000 1000');
-      setIsCalculatingSize(false);
-      return;
-    }
-    setViewBox(
-      `${Math.floor(xMin) - 50} ${Math.floor(yMin) - 50} ${
-        Math.ceil(xMax - xMin) + 50
-      } ${Math.ceil(yMax - yMin) + 50}`,
-    );
+    } else
+      setViewBox(
+        `${Math.floor(xMin) - 200} ${Math.floor(yMin) - 200} ${
+          Math.ceil(xMax - xMin) + 400
+        } ${Math.ceil(yMax - yMin) + 400}`,
+      );
     setIsCalculatingSize(false);
   }, [walls, background]);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      calculatingStageSize();
-    }, 300);
-    return () => clearTimeout(timeout);
-  }, [calculatingStageSize]);
+    console.log('Calculating stage size...', enableCalculating);
+    if (enableCalculating) {
+      const timeout = setTimeout(() => {
+        calculatingStageSize();
+      }, 200);
+      return () => clearTimeout(timeout);
+    }
+  }, [calculatingStageSize, enableCalculating]);
   useEffect(() => {
     console.log('viewBox', viewBox);
   }, [viewBox]);
+  useEffect(() => {
+    console.log('background', background);
+  }, [background]);
 
   return {
     viewBox,

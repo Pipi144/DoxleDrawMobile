@@ -30,10 +30,15 @@ const Background = ({bgItem}: Props) => {
     const height = bgItem?.height ?? 100;
 
     return {
-      width: isNaN(width) ? 100 : width,
-      height: isNaN(height) ? 100 : height,
+      width: isNaN(width) ? 100 : width * bgItem.scaleX,
+      height: isNaN(height) ? 100 : height * bgItem.scaleY,
     };
   }, [bgItem]);
+
+  useEffect(() => {
+    console.log(bgItem);
+  }, [bgItem]);
+
   return (
     <>
       <Image

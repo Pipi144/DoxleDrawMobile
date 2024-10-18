@@ -26,6 +26,7 @@ const useDrawStage = () => {
   const {viewBox, isCalculatingSize} = useGetStageSize({
     walls,
     background: selectedBg,
+    enableCalculating: !isRetrieveLayerData,
   });
   return {isRetrieveLayerData, walls, selectedBg, viewBox, isCalculatingSize};
 };

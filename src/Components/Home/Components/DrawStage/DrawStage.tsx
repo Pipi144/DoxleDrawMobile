@@ -19,6 +19,7 @@ import Svg, {Circle} from 'react-native-svg';
 import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
 import Background from '../Background/Background';
 import FetchingScreen from '../../../../Utilities/AnimationScreens/FetchingScreen/FetchingScreen';
+import WallComponent from '../Wall/WallComponent';
 
 type Props = {};
 
@@ -41,11 +42,17 @@ const DrawStage = (props: Props) => {
             display: 'flex',
           }}>
           <Svg
+            style={{
+              backgroundColor: 'rgba(128,0,0,0.2)',
+            }}
             width={'100%'}
             height={'100%'}
             xmlns="http://www.w3.org/2000/svg"
             viewBox={viewBox}>
             {selectedBg && <Background bgItem={selectedBg} />}
+            {walls.map(w => (
+              <WallComponent wall={w} key={w.wallId} />
+            ))}
           </Svg>
         </ReactNativeZoomableView>
       )}
