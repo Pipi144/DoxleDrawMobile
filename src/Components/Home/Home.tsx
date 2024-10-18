@@ -16,6 +16,7 @@ import React from 'react';
 import styled from 'styled-components/native';
 import HomeNavMenu from '../HomeNavMenu/HomeNavMenu';
 import FloorMenu from './Components/FloorMenu/FloorMenu';
+import DrawStage from './Components/DrawStage/DrawStage';
 
 type Props = {};
 
@@ -30,6 +31,7 @@ const StyledHome = styled.View`
 const Home = (props: Props) => {
   return (
     <StyledHome>
+      <DrawStage />
       <FloorMenu />
       <HomeNavMenu />
     </StyledHome>

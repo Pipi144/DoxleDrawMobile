@@ -15,9 +15,14 @@
 import {useEffect, useMemo} from 'react';
 import {useRetrieveStoreys} from '../../../../../API/PlanQueryHooks';
 import {useCompany} from '../../../../../Providers/CompanyProvider';
+import {useKonvaStore} from '../../../Stores/useKonvaStore';
+import {useShallow} from 'zustand/shallow';
 
 const useFloorMenu = () => {
   const {selectedProject} = useCompany();
+  const setCurrentStorey = useKonvaStore(
+    useShallow(state => state.setCurrentStorey),
+  );
   const storeyQuery = useRetrieveStoreys(
     '23a49ae9-34ce-4c37-b66c-373cf080d057',
   );
@@ -29,7 +34,7 @@ const useFloorMenu = () => {
     [storeyQuery.data],
   );
   useEffect(() => {
-    console.log('storeyList:', storeyList);
+    setCurrentStorey(storeyList[0] ?? undefined);
   }, [storeyList]);
 
   return {

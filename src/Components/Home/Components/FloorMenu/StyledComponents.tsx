@@ -22,7 +22,7 @@ export const StyledFloorMenu = styled(Animated.View)`
   z-index: 100;
   background-color: ${p => p.theme.THEME_COLOR.primaryContainerColor};
   border-radius: 12px;
-  padding-left: 12px;
+  padding-left: 14px;
   border: 1px solid ${p => p.theme.THEME_COLOR.rowBorderColor};
   display: flex;
   flex-direction: row;

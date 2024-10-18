@@ -37,8 +37,8 @@ export const docketsBaseAddress: string = local
 //   : 'https://192.168.1.113:5000';
 
 //*FOR DRAW
-export const baseDrawAddress: string = local
-  ? 'http://127.0.0.1:8000/'
+export const baseDrawAddress: string = true
+  ? 'http://192.168.1.4:8000/'
   : 'https://oafehfyjjnq3frcri2xzkp7qqu0virph.lambda-url.ap-southeast-2.on.aws/';
 
 export const DrawAPI = axios.create({
