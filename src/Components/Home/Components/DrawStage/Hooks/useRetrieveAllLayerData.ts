@@ -6,6 +6,7 @@ import {
   useRetrieveWalls,
   useRetrieveWallTypes,
 } from '../../../../../API/WallQueryHooks';
+import {useRetrieveOpeningItems} from '../../../../../API/OpeningQueryHooks';
 
 const useRetrieveAllLayerData = () => {
   const {
@@ -41,10 +42,10 @@ const useRetrieveAllLayerData = () => {
   //   storeyId: currentStorey?.storeyId,
   // });
 
-  // const { query: openingQuery } = useRetrieveOpeningItems({
-  //   enabled: Boolean(currentStorey),
-  //   storeyId: currentStorey?.storeyId,
-  // });
+  const {query: openingQuery, items: openingItems} = useRetrieveOpeningItems({
+    enabled: Boolean(currentStorey),
+    storeyId: currentStorey?.storeyId,
+  });
 
   // const { query: plumbingQuery } = useRetrievePlumbingItems({
   //   enabled: Boolean(currentStorey),
@@ -64,7 +65,8 @@ const useRetrieveAllLayerData = () => {
     wallTypeQuery.isLoading || wallQuery.isLoading || bgQuery.isLoading;
   // ||
   // flooringQuery.isLoading ||
-  // openingQuery.isLoading ||
+  openingQuery.isLoading;
+  // ||
   // plumbingQuery.isLoading ||
   // electricalQuery.isLoading ||
   // markUpQuery.isLoading;
@@ -74,7 +76,7 @@ const useRetrieveAllLayerData = () => {
     }
   }, [bgQuery.isLoading, wallQuery.isLoading]);
 
-  return {isRetrieveLayerData, walls, bgItems};
+  return {isRetrieveLayerData, walls, bgItems, openingItems};
 };
 
 export default useRetrieveAllLayerData;

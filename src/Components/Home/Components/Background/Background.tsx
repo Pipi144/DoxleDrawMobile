@@ -35,10 +35,6 @@ const Background = ({bgItem}: Props) => {
     };
   }, [bgItem]);
 
-  useEffect(() => {
-    console.log(bgItem);
-  }, [bgItem]);
-
   return (
     <>
       <Image
@@ -47,7 +43,6 @@ const Background = ({bgItem}: Props) => {
         height={height}
         x={bgItem.xPosition}
         y={bgItem.yPosition}
-        opacity={1}
       />
     </>
   );

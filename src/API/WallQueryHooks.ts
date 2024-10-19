@@ -30,14 +30,17 @@ export const useRetrieveWalls = ({
   const params = props.storeyId
     ? {storey_id: props.storeyId}
     : {project_id: props.projectId};
-  const query = useQuery<AxiosResponse<ServerWall[], any>>({
+  const query = useQuery<AxiosResponse<ServerWall[], AxiosBackendErrorReturn>>({
     queryKey: getWallListQKey(props),
     queryFn: async () => {
       try {
         const resp = await DrawAPI.get<ServerWall[]>(`/wall/`, {params});
 
-        if (resp) setWalls(parseServerWalls(resp.data));
-        return resp;
+        if (resp) {
+          setWalls(parseServerWalls(resp.data));
+
+          return resp;
+        } else throw new Error('No data received');
       } catch (error) {
         console.log('ERROR useRetrieveWalls:', error);
         throw error;

@@ -16,19 +16,39 @@ import {useShallow} from 'zustand/shallow';
 import {useBackgroundStore} from '../../../Stores/BackgroundStore';
 import useRetrieveAllLayerData from './useRetrieveAllLayerData';
 import useGetStageSize from './useGetStageSize';
+import {useKonvaStore} from '../../../Stores/useKonvaStore';
+import {useEffect, useRef} from 'react';
+import {ReactNativeZoomableView} from '@openspacelabs/react-native-zoomable-view';
 
 const useDrawStage = () => {
-  const {isRetrieveLayerData, walls} = useRetrieveAllLayerData();
+  const {isRetrieveLayerData, walls, openingItems} = useRetrieveAllLayerData();
   const {selectedBg} = useBackgroundStore(
     useShallow(state => ({selectedBg: state.selectedBg})),
   );
-
-  const {viewBox, isCalculatingSize} = useGetStageSize({
+  const {stageState} = useKonvaStore(
+    useShallow(state => ({stageState: state.stageState})),
+  );
+  const {isCalculatingSize} = useGetStageSize({
     walls,
     background: selectedBg,
     enableCalculating: !isRetrieveLayerData,
+    openings: openingItems,
   });
-  return {isRetrieveLayerData, walls, selectedBg, viewBox, isCalculatingSize};
+  const zoomRef = useRef<ReactNativeZoomableView>(null);
+  const resetZoom = () => {
+    zoomRef.current?.zoomTo(1);
+  };
+
+  return {
+    isRetrieveLayerData,
+    walls,
+    selectedBg,
+    stageState,
+    isCalculatingSize,
+    openingItems,
+    zoomRef,
+    resetZoom,
+  };
 };
 
 export default useDrawStage;

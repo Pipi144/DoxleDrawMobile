@@ -50,14 +50,15 @@ export const useRetrieveBackgrounds = ({
     : {project_id: props.projectId};
   params.predictions = 'true';
 
-  const query = useQuery<AxiosResponse<ServerBackground[], any>>({
+  const query = useQuery<
+    AxiosResponse<ServerBackground[], AxiosBackendErrorReturn>
+  >({
     queryKey: getBackgroundListQKey(props),
     queryFn: async () => {
       try {
-        const response = await DrawAPI.get<ServerBackground[], any>(
-          `/background/`,
-          {params},
-        );
+        const response = await DrawAPI.get<ServerBackground[]>(`/background/`, {
+          params,
+        });
         if (response) {
           if (response.data.length > 0) {
             const parseRes = parseServerBackgrounds(response.data);
@@ -65,11 +66,11 @@ export const useRetrieveBackgrounds = ({
           }
 
           if (!selectedBg) setSelectedBg(response.data[0].imageId);
-        }
-
-        return response;
+          return response;
+        } else throw new Error('No data received');
       } catch (error) {
         console.log('error in background query', error);
+        throw error; // Make sure to throw error for React Query to handle
       }
     },
     enabled: Boolean(props.storeyId || props.projectId) && enabled,

@@ -69,14 +69,14 @@ export const parseServerBackground = (bg: ServerBackground): IBackground => {
     thumbnailUrl: bg.thumbnailUrl,
     scaleX: Number(bg.scaleX),
     scaleY: Number(bg.scaleY),
-    rotation: Number(bg.rotation),
+    rotation: -Number(bg.rotation),
     transparency: Number(bg.transparency),
     xPosition: Number(bg.xPosition),
     yPosition: Number(bg.yPosition),
     storeyId: bg.storeyId,
     projectId: bg.projectId,
     width: bg.width,
-    height: bg.height,
+    height: -bg.height,
     predictions: bg.predictions ?? [],
   };
 };

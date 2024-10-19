@@ -15,9 +15,10 @@ type Props = {
 };
 
 const useWallComponent = ({wall}: Props) => {
-  const {currentLayer} = useKonvaStore(
+  const {currentLayer, stageState} = useKonvaStore(
     useShallow(state => ({
       currentLayer: state.currentLayer,
+      stageState: state.stageState,
     })),
   );
   const {walls} = useWallsStore(
@@ -29,7 +30,9 @@ const useWallComponent = ({wall}: Props) => {
     let points = '';
     let length = wall.wallPoints.length;
     for (let i = 0; i < length; i++) {
-      points += `${wall.wallPoints[i].x},${wall.wallPoints[i].y} `;
+      points += `${wall.wallPoints[i].x + wall.xPosition},${
+        wall.wallPoints[i].y + wall.yPosition
+      } `;
     }
     return points;
   }, [wall.wallPoints]);

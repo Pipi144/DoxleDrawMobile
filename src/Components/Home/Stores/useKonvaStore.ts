@@ -31,11 +31,11 @@ export const generateObjName = (
   else if (layer === 'Flooring') return `floor#${objId}`;
   else return `other#${objId}`;
 };
-export interface StageState {
-  stageScale: number;
-  stageX: number;
-  stageY: number;
-  initialScaleSet?: boolean;
+export interface IStageSize {
+  minX: number;
+  minY: number;
+  width: number;
+  height: number;
 }
 export interface Sheet {
   sheetId?: string;
@@ -61,8 +61,8 @@ export interface IEditKonvaComponentAnchor {
   left: number;
 }
 interface KonvaStore {
-  stageState: StageState;
-  setStageState: (stageState: StageState) => void;
+  stageState: IStageSize;
+  setStageState: (stageState: IStageSize) => void;
   currentLayer: TKonvaLayers | null;
   setCurrentLayer: (currentLayer: TKonvaLayers | null) => void;
   toggleCurrentLayer: (layer: TKonvaLayers) => void;
@@ -150,11 +150,12 @@ export const useKonvaStore = create(
         );
       }),
     stageState: {
-      stageScale: 0.1,
-      stageX: 0,
-      stageY: 0,
+      minX: -1000,
+      minY: -1000,
+      width: 1000,
+      height: 1000,
     },
-    setStageState: (stageState: StageState) =>
+    setStageState: (stageState: IStageSize) =>
       set(state => {
         state.stageState = stageState;
       }),

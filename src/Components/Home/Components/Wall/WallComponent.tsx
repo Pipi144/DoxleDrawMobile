@@ -19,6 +19,9 @@ const WallComponent = memo(({wall}: Props) => {
       strokeWidth={5}
       stroke={THEME_COLOR.primaryFontColor}
       fill={THEME_COLOR.doxleColor}
+      onPress={() => {
+        console.log('Wall pressed:', wall);
+      }}
     />
   );
 });
