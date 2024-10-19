@@ -1,6 +1,6 @@
-import {QA, QAMedia, QAList} from '../../Models/qa';
-import {Project} from '../../Models/project';
-import {TBgUploadStatus} from '../../GeneralStore/useBgUploadStore';
+import {TBgUploadStatus} from '../../../GeneralStore/useBgUploadStore';
+import {Project} from '../../../Models/project';
+import {QA, QAList, QAMedia} from '../../../Models/qa';
 
 export interface IStorageInfo {
   totalSpace: number;

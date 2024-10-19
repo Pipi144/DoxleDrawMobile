@@ -35,6 +35,7 @@ import ProjectFilesRoute from '../Components/ProjectFile/Routes/ProjectFilesRout
 import FileBgUploader from '../Components/ProjectFile/Provider/FileBgUploader';
 import {DocumentDirectoryPath, unlink} from 'react-native-fs';
 import BudgetRoutes from '../Components/ProjectBudget/Routes/BudgetRoutes';
+import CacheQAProvider from '../Components/ProjectQA/Provider/CacheQAProvider';
 const RootStack = createNativeStackNavigator<TDoxleRootStack>();
 type Props = {};
 declare module 'styled-components/native' {
@@ -76,79 +77,79 @@ const RootAppRouting = (props: Props) => {
       <PaperProvider theme={{...DefaultTheme}}>
         <OrientationProvider>
           {/* <DoxleUploadVideoBgProvider> */}
-          {/* <CacheQAProvider> */}
-          <FileBgUploader>
-            <NavigationContainer theme={navTheme}>
-              <StyledRootAppContainer>
-                <StatusBar barStyle={'light-content'} />
-                {deviceType === 'Smartphone' && (
-                  <OrientationLocker orientation={PORTRAIT} />
-                )}
-                {isCheckingLogInStatus && (
-                  <LoadingDoxleIconWithText
-                    message="Checking session...Please Wait!"
-                    containerStyle={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      zIndex: 10,
-                      backgroundColor: 'rgba(255,255,255,1)',
-                    }}
-                  />
-                )}
-
-                {loggedIn ? (
-                  <RootStack.Navigator
-                    initialRouteName="Home"
-                    screenOptions={{
-                      animationDuration: 50,
-                    }}>
-                    <RootStack.Screen
-                      name="Home"
-                      component={Home}
-                      options={{
-                        freezeOnBlur: true,
-                        header: HomeHeader,
+          <CacheQAProvider>
+            <FileBgUploader>
+              <NavigationContainer theme={navTheme}>
+                <StyledRootAppContainer>
+                  <StatusBar barStyle={'light-content'} />
+                  {deviceType === 'Smartphone' && (
+                    <OrientationLocker orientation={PORTRAIT} />
+                  )}
+                  {isCheckingLogInStatus && (
+                    <LoadingDoxleIconWithText
+                      message="Checking session...Please Wait!"
+                      containerStyle={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        zIndex: 10,
+                        backgroundColor: 'rgba(255,255,255,1)',
                       }}
                     />
+                  )}
 
-                    <RootStack.Group
+                  {loggedIn ? (
+                    <RootStack.Navigator
+                      initialRouteName="Home"
                       screenOptions={{
-                        presentation: 'containedModal',
-                        header: AppModalHeader,
+                        animationDuration: 50,
                       }}>
                       <RootStack.Screen
-                        name="BudgetRoute"
-                        component={BudgetRoutes}
+                        name="Home"
+                        component={Home}
+                        options={{
+                          freezeOnBlur: true,
+                          header: HomeHeader,
+                        }}
                       />
-                      <RootStack.Screen
-                        name="FileRoute"
-                        component={ProjectFilesRoute}
-                      />
-                      {/* <RootStack.Screen name="ActionRoute" component={QARouteStack} /> */}
-                    </RootStack.Group>
-                  </RootStack.Navigator>
-                ) : (
-                  <RootStack.Navigator
-                    screenOptions={{
-                      headerShown: false,
-                      contentStyle: {
-                        backgroundColor: THEME_COLOR.primaryBackgroundColor,
-                      },
-                    }}>
-                    <RootStack.Screen name="Login">
-                      {props => <LoginRoutes {...props} />}
-                    </RootStack.Screen>
-                  </RootStack.Navigator>
-                )}
 
-                <NotifierRoot ref={notifierRootAppRef} />
-              </StyledRootAppContainer>
-            </NavigationContainer>
-          </FileBgUploader>
-          {/* </CacheQAProvider> */}
+                      <RootStack.Group
+                        screenOptions={{
+                          presentation: 'containedModal',
+                          header: AppModalHeader,
+                        }}>
+                        <RootStack.Screen
+                          name="BudgetRoute"
+                          component={BudgetRoutes}
+                        />
+                        <RootStack.Screen
+                          name="FileRoute"
+                          component={ProjectFilesRoute}
+                        />
+                        {/* <RootStack.Screen name="ActionRoute" component={QARouteStack} /> */}
+                      </RootStack.Group>
+                    </RootStack.Navigator>
+                  ) : (
+                    <RootStack.Navigator
+                      screenOptions={{
+                        headerShown: false,
+                        contentStyle: {
+                          backgroundColor: THEME_COLOR.primaryBackgroundColor,
+                        },
+                      }}>
+                      <RootStack.Screen name="Login">
+                        {props => <LoginRoutes {...props} />}
+                      </RootStack.Screen>
+                    </RootStack.Navigator>
+                  )}
+
+                  <NotifierRoot ref={notifierRootAppRef} />
+                </StyledRootAppContainer>
+              </NavigationContainer>
+            </FileBgUploader>
+          </CacheQAProvider>
           {/* </DoxleUploadVideoBgProvider> */}
         </OrientationProvider>
       </PaperProvider>

@@ -1,6 +1,19 @@
 import {Platform} from 'react-native';
 
-import {Project} from '../../Models/project';
+import {
+  ReadDirItem,
+  copyFile,
+  downloadFile,
+  mkdir,
+  readDir,
+  readFile,
+  writeFile,
+  DocumentDirectoryPath,
+} from 'react-native-fs';
+import {
+  checkPathExist,
+  deleteFileSystemWithPath,
+} from '../../../Utilities/FunctionUtilities';
 import {
   DeletedQaImageFile,
   ExpiredProjectFile,
@@ -13,21 +26,8 @@ import {
   LocalQAProject,
   QAPendingUploadImageFile,
 } from './CacheQAType';
-import {QA, QAMedia, QAList} from '../../Models/qa';
-import {
-  checkPathExist,
-  deleteFileSystemWithPath,
-} from '../../Utilities/FunctionUtilities';
-import {
-  ReadDirItem,
-  copyFile,
-  downloadFile,
-  mkdir,
-  readDir,
-  readFile,
-  writeFile,
-  DocumentDirectoryPath,
-} from 'react-native-fs';
+import {Project} from '../../../Models/project';
+import {QA, QAList, QAMedia} from '../../../Models/qa';
 
 //! -----> LOCAL CORE PATH <-----
 //!root path to summary folder
