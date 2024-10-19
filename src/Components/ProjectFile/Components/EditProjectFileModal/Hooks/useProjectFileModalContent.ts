@@ -9,9 +9,9 @@ import {useAuth} from '../../../../../Providers/AuthProvider';
 import {useCompany} from '../../../../../Providers/CompanyProvider';
 import {useNotification} from '../../../../../Providers/NotificationProvider';
 import {useProjectFileStore} from '../../../Store/useProjectFileStore';
-import useSetFileQueryData from '../../../../../QueryDataHooks/useSetFileQueryData';
-import useSetRootFolderQueryData from '../../../../../QueryDataHooks/useSetRootFolderQueryData';
 import FilesAPI from '../../../../../API/fileQueryAPI';
+import useSetFileQueryData from '../../../../../CustomHooks/QueryDataHooks/useSetFileQueryData';
+import useSetRootFolderQueryData from '../../../../../CustomHooks/QueryDataHooks/useSetRootFolderQueryData';
 
 type Props = {};
 

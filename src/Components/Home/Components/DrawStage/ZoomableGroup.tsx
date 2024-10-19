@@ -24,6 +24,7 @@ type Props = PropsWithChildren & {
   stageState: IStageSize;
 };
 const SVGGroup = Animated.createAnimatedComponent(G);
+const SVGWrapper = Animated.createAnimatedComponent(Svg);
 const SVGImage = Animated.createAnimatedComponent(Image);
 const ZoomableGroup = ({children, stageState, ...props}: Props) => {
   const {
@@ -31,16 +32,18 @@ const ZoomableGroup = ({children, stageState, ...props}: Props) => {
 
     animatedProps,
     imgBgAnimatedProps,
+    svgAnimatedProps,
   } = useZoomableGroup({
     stageState,
   });
   return (
     <GestureDetector gesture={composeGesture}>
-      <Svg
+      <SVGWrapper
         width={'100%'}
         height={'100%'}
         xmlns="http://www.w3.org/2000/svg"
-        viewBox={`${stageState.minX} ${stageState.minY} ${stageState.width} ${stageState.height}`}>
+        viewBox={`${stageState.minX} ${stageState.minY} ${stageState.width} ${stageState.height}`}
+        animatedProps={svgAnimatedProps}>
         <SVGImage
           href={require('../../../../assets/images/gridbg.png')}
           width={stageState.width}
@@ -55,7 +58,7 @@ const ZoomableGroup = ({children, stageState, ...props}: Props) => {
           animatedProps={animatedProps}>
           {children}
         </SVGGroup>
-      </Svg>
+      </SVGWrapper>
     </GestureDetector>
   );
 };

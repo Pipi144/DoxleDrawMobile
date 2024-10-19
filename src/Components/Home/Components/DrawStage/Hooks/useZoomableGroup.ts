@@ -20,7 +20,7 @@ import {
   useSharedValue,
 } from 'react-native-reanimated';
 import {IStageSize} from '../../../Stores/useKonvaStore';
-import {GProps, ImageProps} from 'react-native-svg';
+import {GProps, ImageProps, SvgProps} from 'react-native-svg';
 type Props = {
   stageState: IStageSize;
 };
@@ -32,8 +32,6 @@ const useZoomableGroup = ({stageState}: Props) => {
   const zoomLevel = useSharedValue(1);
   const startScale = useSharedValue(0);
   // Focal point of the pinch gesture
-  const focalX = useSharedValue(0);
-  const focalY = useSharedValue(0);
   const panGesture = Gesture.Pan()
     .onStart(() => {
       prevTranslationX.value = translateX.value;
@@ -71,11 +69,11 @@ const useZoomableGroup = ({stageState}: Props) => {
   const composeGesture = Gesture.Race(panGesture, zoomGesture);
   const animatedProps = useAnimatedProps<GProps>(() => ({
     scale: zoomLevel.value,
-    translateX: translateX.value,
-    translateY: translateY.value,
   }));
   const imgBgAnimatedProps = useAnimatedProps<ImageProps>(() => ({
     scale: zoomLevel.value,
+  }));
+  const svgAnimatedProps = useAnimatedProps<SvgProps>(() => ({
     translateX: translateX.value,
     translateY: translateY.value,
   }));
@@ -86,6 +84,7 @@ const useZoomableGroup = ({stageState}: Props) => {
     zoomLevel,
     animatedProps,
     imgBgAnimatedProps,
+    svgAnimatedProps,
   };
 };
 

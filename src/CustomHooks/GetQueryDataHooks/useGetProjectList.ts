@@ -1,12 +1,10 @@
 import {StyleSheet} from 'react-native';
-import {useCallback, useEffect, useMemo} from 'react';
-import {useAuth} from '../Providers/AuthProvider';
-import {useCompany} from '../Providers/CompanyProvider';
-
+import ProjectQueryAPI, {TProjectType} from '../../API/projectQueryAPI';
+import {IFullProject} from '../../Models/project';
+import {useAuth} from '../../Providers/AuthProvider';
+import {useCompany} from '../../Providers/CompanyProvider';
+import {useMemo} from 'react';
 import {groupBy} from 'lodash';
-import {useShallow} from 'zustand/react/shallow';
-import ProjectQueryAPI, {TProjectType} from '../API/projectQueryAPI';
-import {IFullProject, Project} from '../Models/project';
 
 type Props = {
   projectType?: TProjectType;

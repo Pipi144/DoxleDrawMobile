@@ -5,12 +5,13 @@ import {baseAddress} from './settings';
 import {BaseAPIProps} from '../Models/basedAPIProps';
 import {DoxleFile, DoxleFolder} from '../Models/files';
 import {AxiosInfiniteReturn} from '../Models/axiosReturn';
-import useSetRootFolderQueryData from '../QueryDataHooks/useSetRootFolderQueryData';
-import useSetFileQueryData from '../QueryDataHooks/useSetFileQueryData';
+
 import {useCallback, useRef} from 'react';
 import {TAPIServerFile} from '../Models/utilityType';
 import useUploadFileState from '../CustomHooks/useUploadFileState';
 import {checkPathExist} from '../Utilities/FunctionUtilities';
+import useSetRootFolderQueryData from '../CustomHooks/QueryDataHooks/useSetRootFolderQueryData';
+import useSetFileQueryData from '../CustomHooks/QueryDataHooks/useSetFileQueryData';
 
 export interface IFilterGetFolderQueryFilter {
   projectId?: string;

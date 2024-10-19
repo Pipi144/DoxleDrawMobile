@@ -12,9 +12,7 @@ import {NotifierRoot} from 'react-native-notifier';
 import {useShallow} from 'zustand/react/shallow';
 import Animated, {LinearTransition} from 'react-native-reanimated';
 import {IFullProject, Project} from '../../Models/project';
-import useGetProjectList, {
-  IProjectGroup,
-} from '../../GetQueryDataHooks/useGetProjectList';
+
 import {useDOXLETheme} from '../../Providers/DoxleThemeProvider/DoxleThemeProvider';
 import {useOrientation} from '../../Providers/OrientationContext';
 import ProjectListItem from './ProjectListItem';
@@ -35,6 +33,9 @@ import DoxleAnimatedButton from '../DesignPattern/DoxleButton/DoxleAnimatedButto
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import {editRgbaAlpha} from '../../Utilities/FunctionUtilities';
 import AddProjectSection from './AddProjectSection';
+import useGetProjectList, {
+  IProjectGroup,
+} from '../../CustomHooks/GetQueryDataHooks/useGetProjectList';
 
 type Props = {
   showModal: boolean;

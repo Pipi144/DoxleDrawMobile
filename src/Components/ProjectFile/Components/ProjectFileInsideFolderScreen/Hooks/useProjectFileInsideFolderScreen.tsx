@@ -17,7 +17,7 @@ import {useProjectFileStore} from '../../../Store/useProjectFileStore';
 import FileMenuFolderMode from '../../FilePopupMenu/FileMenuFolderMode';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useAppModalHeaderStore} from '../../../../../GeneralStore/useAppModalHeaderStore';
-import useSetFileQueryData from '../../../../../QueryDataHooks/useSetFileQueryData';
+import useSetFileQueryData from '../../../../../CustomHooks/QueryDataHooks/useSetFileQueryData';
 
 const useProjectFileInsideFolderScreen = () => {
   const [searchInput, setSearchInput] = useState('');

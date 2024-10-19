@@ -1,18 +1,12 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
 import {useQueryClient} from '@tanstack/react-query';
-import {
-  ICompanyProviderContextValue,
-  useCompany,
-} from '../Providers/CompanyProvider';
-import {IFullProject, Project} from '../Models/project';
-import {produce} from 'immer';
-import {formRetrieveSimpleProjectQKey} from '../API/projectQueryAPI';
+import {IFullProject, Project} from '../../Models/project';
+import {useCompany} from '../../Providers/CompanyProvider';
+import {formRetrieveSimpleProjectQKey} from '../../API/projectQueryAPI';
 import {
   AxiosInfiniteReturn,
   DefiniteAxiosQueryData,
-  InfiniteAxiosQueryData,
-} from '../Models/axiosReturn';
+} from '../../Models/axiosReturn';
+import {produce} from 'immer';
 
 type Props = {
   addPos?: 'start' | 'end';
@@ -26,7 +20,7 @@ const useSetProjectQueryData = ({
   addPos = 'end',
 }: Props): SetProjectQueryData => {
   const queryClient = useQueryClient();
-  const {company} = useCompany() as ICompanyProviderContextValue;
+  const {company} = useCompany();
   const qKey = formRetrieveSimpleProjectQKey(company);
   const dataActive = queryClient.getQueryCache().findAll({
     predicate: query =>
@@ -104,6 +98,7 @@ const useSetProjectQueryData = ({
       queryClient.removeQueries({queryKey: query.queryKey});
     });
   };
+
   return {
     handleAddProjectQueryData,
     handleDeleteProjectQueryData,
@@ -112,5 +107,3 @@ const useSetProjectQueryData = ({
 };
 
 export default useSetProjectQueryData;
-
-const styles = StyleSheet.create({});

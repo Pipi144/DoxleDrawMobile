@@ -8,12 +8,12 @@ import {useAuth} from '../../../Providers/AuthProvider';
 import Notification, {
   getContainerStyleWithTranslateY,
 } from '../../DesignPattern/Notification/Notification';
-import useGetProjectList from '../../../GetQueryDataHooks/useGetProjectList';
 import ProjectQueryAPI, {
   getProjectMutationKey,
   IUpdateProjectQueryProps,
 } from '../../../API/projectQueryAPI';
 import {useIsMutating} from '@tanstack/react-query';
+import useGetProjectList from '../../../CustomHooks/GetQueryDataHooks/useGetProjectList';
 
 type Props = {
   project: Project;

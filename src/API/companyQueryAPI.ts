@@ -5,7 +5,7 @@ import {AddCompanyInputValue, Company} from '../Models/company';
 import {baseAddress} from './settings';
 import {AxiosInfiniteReturn} from '../Models/axiosReturn';
 import {BaseAPIProps} from '../Models/basedAPIProps';
-import useSetCompanyListData from '../QueryDataHooks/useSetCompanyListData';
+import useSetCompanyListData from '../CustomHooks/QueryDataHooks/useSetCompanyListData';
 
 interface IRetrieveCompanyListQueryProp {
   onSuccessCb?: (companyList: Company[]) => void;

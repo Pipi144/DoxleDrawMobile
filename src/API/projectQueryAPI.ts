@@ -13,8 +13,8 @@ import {BaseAPIProps} from '../Models/basedAPIProps';
 import {IFullProject, NewProject, Project} from '../Models/project';
 import {baseAddress} from './settings';
 import {AxiosInfiniteReturn} from '../Models/axiosReturn';
-import useSetProjectQueryData from '../QueryDataHooks/useSetProjectQueryData';
 import {Company} from '../Models/company';
+import useSetProjectQueryData from '../CustomHooks/QueryDataHooks/useSetProjectQueryData';
 
 export type TProjectType = 'noticeboard' | 'budget';
 export interface FilterGetProjectQuery {

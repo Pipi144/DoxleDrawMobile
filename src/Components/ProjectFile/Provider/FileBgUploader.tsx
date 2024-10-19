@@ -11,14 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import {StyleSheet, Text, View} from 'react-native';
-import React, {
-  createContext,
-  PropsWithChildren,
-  useCallback,
-  useEffect,
-  useRef,
-} from 'react';
+import {StyleSheet} from 'react-native';
+import React, {createContext, PropsWithChildren, useEffect} from 'react';
 import {useAuth} from '../../../Providers/AuthProvider';
 import {useCompany} from '../../../Providers/CompanyProvider';
 import {useConnection} from '../../../Providers/InternetConnectionProvider';
@@ -26,9 +20,8 @@ import {NetInfoStateType} from '@react-native-community/netinfo';
 import {useFileBgUploadStore} from '../Store/useFileBgUploadStore';
 import {useShallow} from 'zustand/shallow';
 import FilesAPI, {getFileMutationKey} from '../../../API/fileQueryAPI';
-import useSetFileQueryData from '../../../QueryDataHooks/useSetFileQueryData';
-import {isAxiosError} from 'axios';
 import {useQueryClient} from '@tanstack/react-query';
+import useSetFileQueryData from '../../../CustomHooks/QueryDataHooks/useSetFileQueryData';
 
 type Props = PropsWithChildren & {};
 

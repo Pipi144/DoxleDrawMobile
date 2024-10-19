@@ -1,11 +1,11 @@
 import {useQueryClient} from '@tanstack/react-query';
-import {getCompanyListQKey} from '../API/companyQueryAPI';
-import {Company} from '../Models/company';
-import {produce} from 'immer';
+import {getCompanyListQKey} from '../../API/companyQueryAPI';
+import {Company} from '../../Models/company';
 import {
   AxiosInfiniteReturn,
   DefiniteAxiosQueryData,
-} from '../Models/axiosReturn';
+} from '../../Models/axiosReturn';
+import {produce} from 'immer';
 
 type Props = {
   addPos?: 'start' | 'end';

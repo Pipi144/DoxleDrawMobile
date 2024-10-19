@@ -1,11 +1,9 @@
-import React from 'react';
-
 import {useQueryClient} from '@tanstack/react-query';
 import {produce} from 'immer';
-import {useCompany} from '../Providers/CompanyProvider';
-import {DoxleFolder} from '../Models/files';
-import {getFolderQKey} from '../API/fileQueryAPI';
-import {DefiniteAxiosQueryData} from '../Models/axiosReturn';
+import {useCompany} from '../../Providers/CompanyProvider';
+import {DoxleFolder} from '../../Models/files';
+import {getFolderQKey} from '../../API/fileQueryAPI';
+import {DefiniteAxiosQueryData} from '../../Models/axiosReturn';
 
 type Props = {
   appendPos?: 'start' | 'end';

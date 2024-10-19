@@ -1,10 +1,9 @@
 import {StyleSheet} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {StyledHomeHeader, StyledProjectAddressText} from './StyledDoxleTopMenu';
 import {useDOXLETheme} from '../../Providers/DoxleThemeProvider/DoxleThemeProvider';
 import {useCompany} from '../../Providers/CompanyProvider';
 import {useOrientation} from '../../Providers/OrientationContext';
-import useGetProjectList from '../../GetQueryDataHooks/useGetProjectList';
 import DoxleAnimatedButton from '../DesignPattern/DoxleButton/DoxleAnimatedButton';
 import {FadeInUp, FadeOutUp} from 'react-native-reanimated';
 import {useIsFetching} from '@tanstack/react-query';

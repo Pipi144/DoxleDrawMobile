@@ -6,8 +6,8 @@ import {useShallow} from 'zustand/shallow';
 import {useAppModalHeaderStore} from '../../../../../GeneralStore/useAppModalHeaderStore';
 import {useFocusEffect} from '@react-navigation/native';
 import FileMenuRootMode from '../../FilePopupMenu/FileMenuRootMode';
-import useSetFileQueryData from '../../../../../QueryDataHooks/useSetFileQueryData';
-import useSetRootFolderQueryData from '../../../../../QueryDataHooks/useSetRootFolderQueryData';
+import useSetFileQueryData from '../../../../../CustomHooks/QueryDataHooks/useSetFileQueryData';
+import useSetRootFolderQueryData from '../../../../../CustomHooks/QueryDataHooks/useSetRootFolderQueryData';
 
 type Props = {};
 

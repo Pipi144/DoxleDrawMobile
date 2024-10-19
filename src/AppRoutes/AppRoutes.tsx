@@ -34,6 +34,7 @@ import AppModalHeader from '../Components/AppModalHeader/AppModalHeader';
 import ProjectFilesRoute from '../Components/ProjectFile/Routes/ProjectFilesRoute';
 import FileBgUploader from '../Components/ProjectFile/Provider/FileBgUploader';
 import {DocumentDirectoryPath, unlink} from 'react-native-fs';
+import BudgetRoutes from '../Components/ProjectBudget/Routes/BudgetRoutes';
 const RootStack = createNativeStackNavigator<TDoxleRootStack>();
 type Props = {};
 declare module 'styled-components/native' {
@@ -118,7 +119,10 @@ const RootAppRouting = (props: Props) => {
                         presentation: 'containedModal',
                         header: AppModalHeader,
                       }}>
-                      {/* <RootStack.Screen name="BudgetRoute" component={BudgetRoutes} /> */}
+                      <RootStack.Screen
+                        name="BudgetRoute"
+                        component={BudgetRoutes}
+                      />
                       <RootStack.Screen
                         name="FileRoute"
                         component={ProjectFilesRoute}

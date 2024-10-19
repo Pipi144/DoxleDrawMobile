@@ -122,10 +122,10 @@ const useGetStageSize = (props: Props) => {
       return;
     } else
       setStageState({
-        minX: Math.floor(xMin - xMax) * 10,
-        minY: Math.floor(yMin - yMax) * 10,
-        width: Math.ceil(xMax - xMin) * 20,
-        height: Math.ceil(yMax - yMin) * 20,
+        minX: Math.floor(xMin - xMax) * 0.5,
+        minY: Math.floor(yMin - yMax) * 0.5,
+        width: Math.ceil(xMax - xMin) * 2,
+        height: Math.ceil(yMax - yMin) * 2,
       });
     setIsCalculatingSize(false);
   }, [walls, background]);
