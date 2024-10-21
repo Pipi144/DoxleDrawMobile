@@ -28,6 +28,7 @@ import {QAList} from '../../../../Models/qa';
 import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
 import {useOrientation} from '../../../../Providers/OrientationContext';
 import {DoxlePDFIcon} from '../../../DesignPattern/DoxleIcons';
+import useQAListMenuModal from './Hooks/useQAListMenuModal';
 
 type Props = {
   editedQAList: QAList | undefined;
@@ -37,7 +38,11 @@ type Props = {
 const QAListMenuModal = ({editedQAList, setEditedQAList}: Props) => {
   const {staticMenuColor, THEME_COLOR} = useDOXLETheme();
   const {deviceSize} = useOrientation();
-
+  const {
+    handlePressSignatureMenu,
+    handlePressEditQAListMenu,
+    handlePressViewPdfMenu,
+  } = useQAListMenuModal({editedQAList, setEditedQAList});
   return (
     <Modal
       isVisible={editedQAList !== undefined}
@@ -70,7 +75,7 @@ const QAListMenuModal = ({editedQAList, setEditedQAList}: Props) => {
           </StyledQAListMenuTitleText>
         </StyledQAListMenuTopSection>
 
-        <StyledQAListMenuBtn>
+        <StyledQAListMenuBtn onPress={handlePressEditQAListMenu}>
           <FeatherIcon
             name="edit"
             color={staticMenuColor.staticWhiteFontColor}
@@ -79,7 +84,7 @@ const QAListMenuModal = ({editedQAList, setEditedQAList}: Props) => {
           <StyledQAListMenuBtnText>Edit</StyledQAListMenuBtnText>
         </StyledQAListMenuBtn>
 
-        <StyledQAListMenuBtn>
+        <StyledQAListMenuBtn onPress={handlePressSignatureMenu}>
           <FA5Icon
             name="signature"
             color={staticMenuColor.staticWhiteFontColor}
@@ -88,7 +93,7 @@ const QAListMenuModal = ({editedQAList, setEditedQAList}: Props) => {
           <StyledQAListMenuBtnText>Add Signature</StyledQAListMenuBtnText>
         </StyledQAListMenuBtn>
 
-        <StyledQAListMenuBtn>
+        <StyledQAListMenuBtn onPress={handlePressViewPdfMenu}>
           <DoxlePDFIcon containerStyle={{width: 25}} />
           <StyledQAListMenuBtnText>Add Signature</StyledQAListMenuBtnText>
         </StyledQAListMenuBtn>

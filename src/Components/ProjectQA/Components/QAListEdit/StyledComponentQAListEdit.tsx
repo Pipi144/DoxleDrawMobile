@@ -6,7 +6,7 @@ import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
 
 export const StyledQAListEditPage = styled(Animated.ScrollView)<{}>`
   flex: 1;
-  width: 100%;
+
   background-color: ${p => p.theme.THEME_COLOR.primaryContainerColor};
   display: flex;
 `;

@@ -201,9 +201,7 @@ const ProjectQAListItem: React.FC<Props> = ({
     <ScaleDecorator activeScale={1.04}>
       <StyledQAListItemContainer
         disabled={isActiveDragged}
-        onLongPress={() => setEditedQAList(qaListItem)}
-        delayLongPress={200}
-        unstable_pressDelay={50}
+
         //   sharedTransitionStyle={qaListRowSharedTransition}
         //   sharedTransitionTag={`qaListRow#${qaListItem.defectListId}`}
       >
@@ -276,7 +274,10 @@ const ProjectQAListItem: React.FC<Props> = ({
             />
             <Pressable
               style={styles.titleQaListWrapper}
-              onPress={handlePressQAListItemRow}>
+              onPress={handlePressQAListItemRow}
+              onLongPress={() => setEditedQAList(qaListItem)}
+              delayLongPress={200}
+              unstable_pressDelay={50}>
               <StyledQAListItemTitleText
                 style={{flex: 1}}
                 $completed={qaListItem.completed}
