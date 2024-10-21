@@ -32,7 +32,7 @@ const SearchSection = ({placeholder, onSearch, containerStyle}: Props) => {
   const {THEME_COLOR, theme} = useDOXLETheme();
   const {searchThrottleValue} = useThrottlingSearch({
     controlledValue: searchVal,
-    delayTime: 200,
+    delayTime: 300,
     onThrottleChange: onSearch,
   });
   const inputRef = useRef<TextInput>(null);

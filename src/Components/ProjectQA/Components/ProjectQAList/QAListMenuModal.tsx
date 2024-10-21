@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import Modal from 'react-native-modal/dist/modal';
 import {LinearTransition} from 'react-native-reanimated';
 import {

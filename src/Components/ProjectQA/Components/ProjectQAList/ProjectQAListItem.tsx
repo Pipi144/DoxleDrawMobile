@@ -19,7 +19,11 @@ import {
 import {ScaleDecorator} from 'react-native-draggable-flatlist';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import {LinearTransition} from 'react-native-reanimated';
+import {
+  LightSpeedInLeft,
+  LightSpeedOutRight,
+  LinearTransition,
+} from 'react-native-reanimated';
 import {QAListDeleteSwipeIcon} from '../QAIcons';
 type Props = {
   qaListItem: QAList;
@@ -41,6 +45,7 @@ const ProjectQAListItem: React.FC<Props> = ({
     handlePressQAListItemRow,
     handleDeleteQaList,
     handleUpdateCompleteQAList,
+    enableAnimation,
   } = useProjectQAListItem({qaListItem});
   const {shortVibrateTrigger} = useVibration();
   const swipeRef = useRef<Swipeable>(null);
@@ -289,8 +294,8 @@ const ProjectQAListItem: React.FC<Props> = ({
             </Pressable>
             {qaListItem.completed && (
               <StyledCompleteCross
-              // entering={enableAnimation ? LightSpeedInLeft : undefined}
-              // exiting={enableAnimation ? LightSpeedOutRight : undefined}
+                entering={enableAnimation ? LightSpeedInLeft : undefined}
+                exiting={enableAnimation ? LightSpeedOutRight : undefined}
               />
             )}
           </StyledQAListItemTopSection>

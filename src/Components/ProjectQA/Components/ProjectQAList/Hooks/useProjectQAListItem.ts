@@ -8,12 +8,13 @@ import {useCompany} from '../../../../../Providers/CompanyProvider';
 import {useAuth} from '../../../../../Providers/AuthProvider';
 import useSetQAListQueryData from '../../../../../CustomHooks/QueryDataHooks/useSetQAListQueryData';
 import QAQueryAPI from '../../../../../API/qaQueryAPI';
+import {useState} from 'react';
 
 type Props = {qaListItem: QAList};
 
 const useProjectQAListItem = ({qaListItem}: Props) => {
   const navigation = useNavigation<StackNavigationProp<TQATabStack>>();
-
+  const [enableAnimation, setEnableAnimation] = useState(false);
   const {company} = useCompany();
   const {accessToken} = useAuth();
 
@@ -25,6 +26,8 @@ const useProjectQAListItem = ({qaListItem}: Props) => {
   });
 
   const handleUpdateCompleteQAList = (value: boolean) => {
+    setEnableAnimation(true);
+    handleEditQAList({...qaListItem, completed: !qaListItem.completed});
     updateQAListQuery.mutate({
       qaList: qaListItem,
       updateParams: {
@@ -33,8 +36,8 @@ const useProjectQAListItem = ({qaListItem}: Props) => {
     });
 
     setTimeout(() => {
-      handleEditQAList({...qaListItem, completed: !qaListItem.completed});
-    }, 300);
+      setEnableAnimation(false);
+    }, 500);
   };
   const deleteQaListQuery = QAQueryAPI.useDeleteQAListQuery({
     company,
@@ -53,6 +56,7 @@ const useProjectQAListItem = ({qaListItem}: Props) => {
     handlePressQAListItemRow,
     handleDeleteQaList,
     handleUpdateCompleteQAList,
+    enableAnimation,
   };
 };
 
