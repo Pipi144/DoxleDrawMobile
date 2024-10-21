@@ -3,16 +3,9 @@ import styled from 'styled-components/native';
 import Animated from 'react-native-reanimated';
 
 import {Pressable} from 'react-native';
-import {
-  IDoxleFont,
-  IDOXLEThemeColor,
-} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {
-  editRgbaAlpha,
-  getFontSizeScale,
-  TRgbaFormat,
-} from '../../../../../../../Utilities/FunctionUtilities';
+
 import {TextInput} from 'react-native';
+import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
 
 export const StyledEditAssigneeModalContainer = styled.View<{
   $insetTop: number;
@@ -127,15 +120,13 @@ export const StyledAssigneeNameListItemText = styled.Text<{
   text-transform: capitalize;
   width: 100%;
 `;
-export const StyledAssigneeListContainer = styled(Animated.View)<{
-  $themeColor: IDOXLEThemeColor;
-}>`
+export const StyledAssigneeListContainer = styled(Animated.View)<{}>`
   min-width: 250px;
   width: 100%;
 
   flex: 1;
   display: flex;
-  background-color: ${p => p.$themeColor.primaryContainerColor};
+  background-color: ${p => p.theme.THEME_COLOR.primaryContainerColor};
   margin-top: 14px;
   border-radius: 9px;
   overflow: hidden;
@@ -183,7 +174,7 @@ export const StyledAddNewContactTextInput = styled(TextInput)`
   border-bottom-width: 1px;
   border-bottom-color: ${p =>
     editRgbaAlpha({
-      rgbaColor: p.theme.THEME_COLOR.primaryFontColor as TRgbaFormat,
+      rgbaColor: p.theme.THEME_COLOR.primaryFontColor,
       alpha: '0.4',
     })};
   padding-bottom: 4px;

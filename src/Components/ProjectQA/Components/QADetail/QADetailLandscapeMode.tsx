@@ -4,20 +4,20 @@ import {
   StyledQACommentColumn,
   StyledQALandscapeViewWrapper,
 } from './StyledComponentQADetail';
-import {QA, QAComment} from '../../../../../../../Models/qa';
-import useQAImageList from '../../Hooks/useQAImageList';
-import useQADetailEditComment from '../../Hooks/useQADetailEditComment';
+import useQAImageList from './Hooks/useQAImageList';
+import useQADetailEditComment from './Hooks/useQADetailEditComment';
 import CommentInputSection from './CommentInputSection';
-import Animated, {Layout, LinearTransition} from 'react-native-reanimated';
+import Animated, {LinearTransition} from 'react-native-reanimated';
 import QACommentItem from './QACommentItem';
 import QADetailHeader from './QADetailHeader';
 import {useProjectQAStore} from '../../Store/useProjectQAStore';
-import {shallow} from 'zustand/shallow';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {LocalQAImage} from '../../../../../../../Providers/CacheQAProvider/CacheQAType';
-import QAImageItem from '../QAImage/QAImageItem';
+
+import QAImageItem from './QAImageItem';
 import {useQADetailContext} from './QADetail';
 import {useShallow} from 'zustand/react/shallow';
+import {QA, QAComment} from '../../../../Models/qa';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {LocalQAImage} from '../../Provider/CacheQAType';
 
 type Props = {qaItem: QA};
 

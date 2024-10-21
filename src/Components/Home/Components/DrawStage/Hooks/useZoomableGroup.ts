@@ -40,10 +40,14 @@ const useZoomableGroup = ({stageState}: Props) => {
     .onUpdate(event => {
       translateX.value = prevTranslationX.value + event.translationX;
       translateY.value = prevTranslationY.value + event.translationY;
+
+      console.log('translateX', translateX.value);
+      console.log('translateY', translateY.value);
     })
     .minPointers(1)
     .maxPointers(1)
-    .minDistance(1);
+    .minDistance(1)
+    .runOnJS(true);
 
   const zoomGesture = Gesture.Pinch()
     .onStart(event => {
@@ -52,7 +56,6 @@ const useZoomableGroup = ({stageState}: Props) => {
       prevTranslationY.value = translateY.value;
     })
     .onUpdate(event => {
-      console.log('event', event);
       const scale = startScale.value * event.scale;
       zoomLevel.value = clamp(
         scale,
@@ -68,7 +71,14 @@ const useZoomableGroup = ({stageState}: Props) => {
 
   const composeGesture = Gesture.Race(panGesture, zoomGesture);
   const animatedProps = useAnimatedProps<GProps>(() => ({
-    scale: zoomLevel.value,
+    transform: [
+      {scale: zoomLevel.value},
+      {translateX: translateX.value},
+      {translateY: translateY.value},
+    ],
+    // scale: zoomLevel.value,
+    // translateX: translateX.value,
+    // translateY: translateY.value,
   }));
   const imgBgAnimatedProps = useAnimatedProps<ImageProps>(() => ({
     scale: zoomLevel.value,

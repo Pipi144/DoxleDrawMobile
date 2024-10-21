@@ -11,21 +11,19 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import {View, Text} from 'react-native';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {useProjectQAStore} from '../../../Store/useProjectQAStore';
 import {useShallow} from 'zustand/react/shallow';
-import {TFilterQAItemsQuery} from '../../../../../../../../service/DoxleAPI/QueryHookAPI/qaQueryAPI';
-import {TQAStatus} from '../../../../../../../../Models/qa';
+import {TFilterQAItemsQuery} from '../../../../../API/qaQueryAPI';
+import {useCompany} from '../../../../../Providers/CompanyProvider';
+import {useAuth} from '../../../../../Providers/AuthProvider';
+import useThrottlingSearch from '../../../../../CustomHooks/useThrottlingSearch';
+import ContactQueryAPI from '../../../../../API/contactQueryAPI';
+import {Contact} from '../../../../../Models/contacts';
+import useGetFloorList from '../../../../../CustomHooks/GetQueryDataHooks/useGetFloorList';
+import {TQAStatus} from '../../../../../Models/qa';
 import {produce} from 'immer';
-import {useCompany} from '../../../../../../../../Providers/CompanyProvider';
-import {useAuth} from '../../../../../../../../Providers/AuthProvider';
-import {useProjectStore} from '../../../../../Store/useProjectStore';
-import useThrottlingSearch from '../../../../../../../../CustomHooks/useThrottlingSearch';
-import ContactQueryAPI from '../../../../../../../../service/DoxleAPI/QueryHookAPI/contactQueryAPI';
-import {Contact} from '../../../../../../../../Models/contacts';
-import useGetFloorList from '../../../../../../../../CustomHooks/GetQueryDataHooks/useGetFloorList';
-import {IProjectFloor} from '../../../../../../../../Models/location';
+import {IProjectFloor} from '../../../../../Models/location';
 
 type Props = {showModal: boolean; closeModal: () => void};
 
@@ -37,11 +35,8 @@ const useFilterQAModal = ({showModal, closeModal}: Props) => {
   const [expandFloor, setExpandFloor] = useState(false);
   const [searchContactText, setSearchContactText] = useState('');
   const [searchFloorText, setSearchFloorText] = useState('');
-  const {company} = useCompany();
+  const {company, selectedProject} = useCompany();
   const {accessToken} = useAuth();
-  const selectedProject = useProjectStore(
-    useShallow(state => state.selectedProject),
-  );
   const {filterGetQAItems, setFilterGetQAItems} = useProjectQAStore(
     useShallow(state => ({
       filterGetQAItems: state.filterGetQAItems,

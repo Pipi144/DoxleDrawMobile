@@ -4,7 +4,7 @@ import {useCallback, useMemo, useState} from 'react';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import QAListDetailPopupMenu from '../../QAPopupMenu/QAListDetailPopupMenu';
 
-import {QASelectedAssignee} from '../../../Hooks/useEditAssigneeModal';
+import {QASelectedAssignee} from '../../EditAssigneeModal/Hooks/useEditAssigneeModal';
 import {QA, QAList} from '../../../../../Models/qa';
 import {useCompany} from '../../../../../Providers/CompanyProvider';
 import {useAuth} from '../../../../../Providers/AuthProvider';

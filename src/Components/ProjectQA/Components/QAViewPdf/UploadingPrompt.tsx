@@ -16,11 +16,9 @@ import Animated, {
   SlideOutDown,
 } from 'react-native-reanimated';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
-
 import AntIcon from 'react-native-vector-icons/AntDesign';
-import {getFontSizeScale} from '../../../../../../../Utilities/FunctionUtilities';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {useOrientation} from '../../../../Providers/OrientationContext';
 
 type Props = {
   initialCountUploadItemsInProgress: number;
@@ -32,7 +30,7 @@ const UploadingPrompt = ({
   setShowPromtPendingUpload,
 }: Props) => {
   const [showCloseIcon, setShowCloseIcon] = useState<boolean>(false);
-  const {THEME_COLOR, DOXLE_FONT} = useDOXLETheme();
+  const {THEME_COLOR} = useDOXLETheme();
   const {deviceType} = useOrientation();
   const circularRef = useRef<AnimatedCircularProgress>(null);
   useEffect(() => {
@@ -42,14 +40,12 @@ const UploadingPrompt = ({
   const circularThickness = deviceType === 'Smartphone' ? 3 : 5;
   return (
     <StyledUploadingPrompt
-      $themeColor={THEME_COLOR}
       entering={FadeIn.duration(200)}
       exiting={FadeOut.delay(300)}>
       <StyledPromtBanner
-        $themeColor={THEME_COLOR}
         entering={SlideInDown.delay(400)}
         exiting={SlideOutDown.duration(200)}>
-        <StyledTitlePromptSection $themeColor={THEME_COLOR}>
+        <StyledTitlePromptSection>
           <StyledTitlePrompt>Uploading In Progress!</StyledTitlePrompt>
           {!showCloseIcon ? (
             <AnimatedCircularProgress

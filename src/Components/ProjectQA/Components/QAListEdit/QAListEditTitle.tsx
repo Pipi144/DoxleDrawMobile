@@ -9,10 +9,8 @@ import {
 } from './StyledComponentQAListEdit';
 
 import Animated, {Layout, LinearTransition} from 'react-native-reanimated';
-import {QAList} from '../../../../../../../Models/qa';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import useQAListEditTitle from '../../Hooks/useQAListEditTitle';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
+import useQAListEditTitle from './Hooks/useQAListEditTitle';
+import {QAList} from '../../../../Models/qa';
 
 type Props = {
   handleQAListTitleChange: (value: string) => void;
@@ -20,8 +18,6 @@ type Props = {
 };
 
 const QAListEditTitle = ({handleQAListTitleChange, edittedQAList}: Props) => {
-  const {THEME_COLOR, DOXLE_FONT, theme} = useDOXLETheme();
-  const {deviceType} = useOrientation();
   const {
     newTitleText,
     handleNewTitleTextChange,

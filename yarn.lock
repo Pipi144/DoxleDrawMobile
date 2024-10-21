@@ -3175,6 +3175,7 @@ __metadata:
     prettier: 2.8.8
     react: 18.3.1
     react-native: 0.75.4
+    react-native-autolink: ^4.2.0
     react-native-blob-util: ^0.19.11
     react-native-bouncy-checkbox: ^4.1.2
     react-native-circular-progress: ^1.4.0
@@ -3197,20 +3198,27 @@ __metadata:
     react-native-paper: ^5.12.5
     react-native-paper-dates: ^0.22.26
     react-native-pdf: ^6.7.5
+    react-native-pdf-thumbnail: ^1.3.1
     react-native-popover-view: ^5.1.9
     react-native-reanimated: ^3.15.4
     react-native-reanimated-skeleton: ^1.5.1
     react-native-safe-area-context: ^4.11.0
     react-native-screens: ^3.34.0
+    react-native-share: ^11.0.4
+    react-native-signature-canvas: ^4.7.2
     react-native-splash-screen: ^3.3.0
     react-native-svg: ^15.7.1
+    react-native-switch: ^1.5.1
     react-native-threads: ^0.0.19
     react-native-uuid: ^2.0.2
     react-native-vector-icons: ^10.2.0
     react-native-video: ^6.6.4
+    react-native-view-shot: ^3.8.0
+    react-native-webview: ^13.12.3
     react-test-renderer: 18.3.1
     reactotron-react-native: ^5.1.8
     reactotron-react-query: ^1.0.4
+    reanimated-color-picker: ^3.0.4
     styled-components: ^6.1.13
     typescript: 5.0.4
     zustand: ^5.0.0-rc.2
@@ -3540,6 +3548,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"autolinker@npm:^3.16.2":
+  version: 3.16.2
+  resolution: "autolinker@npm:3.16.2"
+  dependencies:
+    tslib: ^2.3.0
+  checksum: 1d5d20ef23586629ec3c341052e6bb6250399cf5e66db21540c17b2f5b1137066435fb274a2115b57464d05e75b85afad61ef7cdf6ea693ef2920a3748b7249d
+  languageName: node
+  linkType: hard
+
 "available-typed-arrays@npm:^1.0.7":
   version: 1.0.7
   resolution: "available-typed-arrays@npm:1.0.7"
@@ -3704,6 +3721,13 @@ __metadata:
   version: 0.1.0
   resolution: "base-64@npm:0.1.0"
   checksum: 5a42938f82372ab5392cbacc85a5a78115cbbd9dbef9f7540fa47d78763a3a8bd7d598475f0d92341f66285afd377509851a9bb5c67bbecb89686e9255d5b3eb
+  languageName: node
+  linkType: hard
+
+"base64-arraybuffer@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "base64-arraybuffer@npm:1.0.2"
+  checksum: 15e6400d2d028bf18be4ed97702b11418f8f8779fb8c743251c863b726638d52f69571d4cc1843224da7838abef0949c670bde46936663c45ad078e89fee5c62
   languageName: node
   linkType: hard
 
@@ -4312,6 +4336,15 @@ __metadata:
   version: 1.0.0
   resolution: "css-color-keywords@npm:1.0.0"
   checksum: 8f125e3ad477bd03c77b533044bd9e8a6f7c0da52d49bbc0bbe38327b3829d6ba04d368ca49dd9ff3b667d2fc8f1698d891c198bbf8feade1a5501bf5a296408
+  languageName: node
+  linkType: hard
+
+"css-line-break@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "css-line-break@npm:2.1.0"
+  dependencies:
+    utrie: ^1.0.2
+  checksum: 37b1fe632b03be7a287cd394cef8b5285666343443125c510df9cfb6a4734a2c71e154ec8f7bbff72d7c339e1e5872989b1c52d86162aed27d6cc114725bb4d0
   languageName: node
   linkType: hard
 
@@ -5795,6 +5828,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"html2canvas@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "html2canvas@npm:1.4.1"
+  dependencies:
+    css-line-break: ^2.1.0
+    text-segmentation: ^1.0.3
+  checksum: c134324af57f3262eecf982e436a4843fded3c6cf61954440ffd682527e4dd350e0c2fafd217c0b6f9a455fe345d0c67b4505689796ab160d4ca7c91c3766739
+  languageName: node
+  linkType: hard
+
 "http-cache-semantics@npm:^4.1.1":
   version: 4.1.1
   resolution: "http-cache-semantics@npm:4.1.1"
@@ -5957,7 +6000,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"invariant@npm:*, invariant@npm:^2.2.4":
+"invariant@npm:*, invariant@npm:2.2.4, invariant@npm:^2.2.4":
   version: 2.2.4
   resolution: "invariant@npm:2.2.4"
   dependencies:
@@ -8406,7 +8449,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:*, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
+"prop-types@npm:*, prop-types@npm:^15.6.0, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -8519,6 +8562,18 @@ __metadata:
   dependencies:
     prop-types: ^15.7.2
   checksum: eb35821de36ae4eb00f97d99fc22ed79bd017248092ff1299f9d46a7ab946de16d2e6d6bfbf4cab5ef77d0d3bf47684aec761a7670ec7d36aae8d77ab8ddd171
+  languageName: node
+  linkType: hard
+
+"react-native-autolink@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "react-native-autolink@npm:4.2.0"
+  dependencies:
+    autolinker: ^3.16.2
+  peerDependencies:
+    react: ">16.8.0"
+    react-native: ">=0.25.0"
+  checksum: 64eeefe2556b75e6d3676a42a65fd5de01769e2eba9c5ee31184a9c07b82233409779009620f4130413f77d6aa89f4e767455d4b60f934342d0c87b725eb87a1
   languageName: node
   linkType: hard
 
@@ -8780,6 +8835,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-pdf-thumbnail@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "react-native-pdf-thumbnail@npm:1.3.1"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: c147435d74a677add6cfcad6590f76e9af044291a5a9582ffd82d544cf8147fea8337fb8a97824b84acba3d8b029ec610259dbbee8df32e3898923a99fc205f6
+  languageName: node
+  linkType: hard
+
 "react-native-pdf@npm:^6.7.5":
   version: 6.7.5
   resolution: "react-native-pdf@npm:6.7.5"
@@ -8862,6 +8927,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-share@npm:^11.0.4":
+  version: 11.0.4
+  resolution: "react-native-share@npm:11.0.4"
+  checksum: ac8d7c54d813c7d6688bfb8075de9eb1aac430dc20b16eeb14f511a5cd651609f03390f35c332a63403ce6e66eb7f5e9d53da61f01d115d079b85340a6f39e2c
+  languageName: node
+  linkType: hard
+
+"react-native-signature-canvas@npm:^4.7.2":
+  version: 4.7.2
+  resolution: "react-native-signature-canvas@npm:4.7.2"
+  peerDependencies:
+    react-native-webview: ">=13"
+  checksum: abc7259ccc7eccd4f140bc2ab8bcb894696b0d5bc0e278bfa8afe7eb0bc69b748abd8b4c81e6ea8e8265069954b8b4b2c81ca1abebd3d1e2801b7e4caa0b2587
+  languageName: node
+  linkType: hard
+
 "react-native-splash-screen@npm:^3.3.0":
   version: 3.3.0
   resolution: "react-native-splash-screen@npm:3.3.0"
@@ -8882,6 +8963,17 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: ad7f711883ee45673486fe6bedadf8490bb06fd36e6de5d2f00898e6ac6c61ed34a5a8f7e6b25684c93e44ab51f9ea76642abfcca6a29462bc525f97204e6f41
+  languageName: node
+  linkType: hard
+
+"react-native-switch@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "react-native-switch@npm:1.5.1"
+  dependencies:
+    prop-types: ^15.6.0
+  peerDependencies:
+    react-native: ">=0.29"
+  checksum: 0ee7af977fac9fce5a5eac1981be9db80c527d0499c2149a40d848811bfd489048864a7bcc34f537f1dc011ef778e5495bd5f96d678c71cd8215616f0403fc29
   languageName: node
   linkType: hard
 
@@ -8923,6 +9015,31 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: cf68bc6099b5f2a8e51a761ef35f35e0c05e158fc45154c1e6af9c2fd0a70b88be708f88438938c35a48e967041bbaa8b64bd71a1e2c9f379ec9f1031e72cc9e
+  languageName: node
+  linkType: hard
+
+"react-native-view-shot@npm:^3.8.0":
+  version: 3.8.0
+  resolution: "react-native-view-shot@npm:3.8.0"
+  dependencies:
+    html2canvas: ^1.4.1
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 9e3044da325b44c90238d1eac54ab0a0a9bdab9b7b93f05409e402890c982ee854ae93ff3b6f0d7befe8f2c53df7cf0c708782c007c4c3c4a007a4844b658fde
+  languageName: node
+  linkType: hard
+
+"react-native-webview@npm:^13.12.3":
+  version: 13.12.3
+  resolution: "react-native-webview@npm:13.12.3"
+  dependencies:
+    escape-string-regexp: ^4.0.0
+    invariant: 2.2.4
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 94d824fedc6b5c0402926b99a96f71f4752416e4f038be827552015c0bf6d595d71ba656079618402662aec5e2c539018b0bff2906b6f95261f70893e5dd5d80
   languageName: node
   linkType: hard
 
@@ -9094,6 +9211,22 @@ __metadata:
   version: 1.3.0
   resolution: "readline@npm:1.3.0"
   checksum: dfaf8e6ac20408ea00d650e95f7bb47f77c4c62dd12ed7fb51731ee84532a2f3675fcdc4cab4923dc1eef227520a2e082a093215190907758bea9f585b19438e
+  languageName: node
+  linkType: hard
+
+"reanimated-color-picker@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "reanimated-color-picker@npm:3.0.4"
+  peerDependencies:
+    expo: ">=44.0.0"
+    react: "*"
+    react-native: "*"
+    react-native-gesture-handler: ">=2.0.0"
+    react-native-reanimated: ^2.0.0 || ^3.0.0
+  peerDependenciesMeta:
+    expo:
+      optional: true
+  checksum: c402ac803311810f97b48418270cd0a1a912f44cf856b8d84836cdb9c653f5c47d9e711a4c0208eacf9d391a4947d8d0756311e779dbd5d28eac5efa7649ddba
   languageName: node
   linkType: hard
 
@@ -10080,6 +10213,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"text-segmentation@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "text-segmentation@npm:1.0.3"
+  dependencies:
+    utrie: ^1.0.2
+  checksum: 2e24632d59567c55ab49ac324815e2f7a8043e63e26b109636322ac3e30692cee8679a448fd5d0f0598a345f407afd0e34ba612e22524cf576d382d84058c013
+  languageName: node
+  linkType: hard
+
 "text-table@npm:^0.2.0":
   version: 0.2.0
   resolution: "text-table@npm:0.2.0"
@@ -10164,7 +10306,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.1":
+"tslib@npm:^2.0.1, tslib@npm:^2.3.0":
   version: 2.8.0
   resolution: "tslib@npm:2.8.0"
   checksum: de852ecd81adfdb4870927e250763345f07dc13fe7f395ce261424966bb122a0992ad844c3ec875c9e63e72afe2220a150712984e44dfd1a8a7e538a064e3d46
@@ -10432,6 +10574,15 @@ __metadata:
   version: 1.0.1
   resolution: "utils-merge@npm:1.0.1"
   checksum: c81095493225ecfc28add49c106ca4f09cdf56bc66731aa8dabc2edbbccb1e1bfe2de6a115e5c6a380d3ea166d1636410b62ef216bb07b3feb1cfde1d95d5080
+  languageName: node
+  linkType: hard
+
+"utrie@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "utrie@npm:1.0.2"
+  dependencies:
+    base64-arraybuffer: ^1.0.2
+  checksum: c96fbb7d4d8855a154327da0b18e39b7511cc70a7e4bcc3658e24f424bb884312d72b5ba777500b8858e34d365dc6b1a921dc5ca2f0d341182519c6b78e280a5
   languageName: node
   linkType: hard
 

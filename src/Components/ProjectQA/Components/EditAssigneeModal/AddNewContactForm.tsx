@@ -17,20 +17,14 @@ import {
   StretchInY,
   StretchOutY,
 } from 'react-native-reanimated';
-
-import MIcon from 'react-native-vector-icons/MaterialIcons';
-
-import {ScrollView} from 'native-base';
-import {FilterRetrieveContactQuery} from '../../../../../../../service/DoxleAPI/QueryHookAPI/contactQueryAPI';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import useAddNewContactForm from '../../Hooks/useAddNewContactForm';
-import DoxleAnimatedButton from '../../../../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
-import ProcessingScreen from '../../../../../../../Utilities/AnimationScreens/ProcessingAnimation/ProcessingScreen';
-import {
-  editRgbaAlpha,
-  TRgbaFormat,
-} from '../../../../../../../Utilities/FunctionUtilities';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
+import {FilterRetrieveContactQuery} from '../../../../API/contactQueryAPI';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {useOrientation} from '../../../../Providers/OrientationContext';
+import useAddNewContactForm from './Hooks/useAddNewContactForm';
+import DoxleAnimatedButton from '../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
+import {ScrollView} from 'react-native-gesture-handler';
+import ProcessingScreen from '../../../../Utilities/AnimationScreens/ProcessingAnimation/ProcessingScreen';
+import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
 type Props = {
   initialSearchText: string;
   filterRetrieveContactListQuery: FilterRetrieveContactQuery;
@@ -180,7 +174,7 @@ const AddNewContactForm = ({
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: editRgbaAlpha({
-              rgbaColor: THEME_COLOR.primaryContainerColor as TRgbaFormat,
+              rgbaColor: THEME_COLOR.primaryContainerColor,
               alpha: '0.8',
             }),
           }}

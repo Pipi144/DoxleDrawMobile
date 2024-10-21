@@ -4,14 +4,13 @@ import React from 'react';
 import {ActivityIndicator} from 'react-native-paper';
 
 import QAItemEmptyImagePlaceHolder from './QAItemEmptyImagePlaceHolder';
-
-import FastImage from 'react-native-fast-image';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {QAWithFirstImg} from '../../../../../../../Models/qa';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import useQAItemImageSection from '../../Hooks/useQAItemImageSection';
+import useQAItemImageSection from './Hooks/useQAItemImageSection';
 import {StyledQAItemImageSectionContainer} from './StyledComponentsQAListDetail';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
+import {QAWithFirstImg} from '../../../../Models/qa';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {useOrientation} from '../../../../Providers/OrientationContext';
+import {FasterImageView} from '@candlefinance/faster-image';
 type Props = {
   qaDetail: QAWithFirstImg;
   viewMode: 'list' | 'grid';
@@ -22,8 +21,6 @@ const QAItemImageSection = ({qaDetail, viewMode}: Props) => {
   const {isPortraitMode} = useOrientation();
   const {
     isLoadingImg,
-
-    onLoadImgStart,
     onLoadImgEnd,
     onErrorLoadImg,
     isImageFailed,
@@ -37,18 +34,17 @@ const QAItemImageSection = ({qaDetail, viewMode}: Props) => {
       <>
         {displayedImgUrl ? (
           <>
-            <FastImage
+            <FasterImageView
               source={{
-                uri: displayedImgUrl,
+                url: displayedImgUrl,
+                resizeMode: 'cover',
               }}
-              resizeMode="cover"
               style={{
                 width: '100%',
                 height: '100%',
                 borderRadius: 2,
               }}
-              onLoadStart={onLoadImgStart}
-              onLoadEnd={onLoadImgEnd}
+              onSuccess={onLoadImgEnd}
               onError={onErrorLoadImg}
             />
 

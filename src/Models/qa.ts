@@ -1,7 +1,6 @@
 import {formatTDateISODate} from '../Utilities/FunctionUtilities';
 import {Company} from './company';
 import {TDateISODate} from './dateFormat';
-import 'react-native-get-random-values';
 
 import {User} from './user';
 import {Contact} from './contacts';

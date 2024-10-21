@@ -7,15 +7,11 @@ import {
   StyledQADetailLabelText,
 } from './StyledComponentQADetail';
 import {LinearTransition} from 'react-native-reanimated';
-
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
-
-import useQADetailEditAssignee from '../../Hooks/useQADetailEditAssignee';
-
+import useQADetailEditAssignee from './Hooks/useQADetailEditAssignee';
 import {ActivityIndicator} from 'react-native-paper';
-import {QA} from '../../../../../../../Models/qa';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
+import {QA} from '../../../../Models/qa';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
 type Props = {
   qaItem: QA;
   handleAssigneeChange: (props: {

@@ -9,11 +9,8 @@ import {
 } from './StyledComponentQADetail';
 
 import {FadeInLeft, FadeOutLeft} from 'react-native-reanimated';
-
-import {QA} from '../../../../../../../Models/qa';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import useQADetailEditDescription from '../../Hooks/useQADetailEditDescription';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
+import useQADetailEditDescription from './Hooks/useQADetailEditDescription';
+import {QA} from '../../../../Models/qa';
 
 type Props = {
   qaItem: QA;
@@ -28,7 +25,6 @@ const QADetailEditDescription = ({
     newDescriptionText,
     handleNewDescriptionTextChange,
     handleUpdateDescription,
-    isUpdatingDescription,
   } = useQADetailEditDescription({
     qaItem,
     handleQADescriptionChange,

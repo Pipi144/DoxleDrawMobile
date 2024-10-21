@@ -1,12 +1,11 @@
 import {StyleSheet} from 'react-native';
 import React from 'react';
-import {Contact} from '../../../../../../../Models/contacts';
-import {useProjectQAStore} from '../../Store/useProjectQAStore';
+
 import {
   StyledAssigneeItemContainer,
   StyledAssigneeNameText,
 } from './StyledComponentsQAListDetail';
-import {useShallow} from 'zustand/react/shallow';
+import {Contact} from '../../../../Models/contacts';
 
 type Props = {
   contactItem: Contact;

@@ -1,7 +1,6 @@
 import {StyleSheet, Text, TextStyle, View} from 'react-native';
 import React, {useEffect, useRef} from 'react';
 import LottieView from 'lottie-react-native';
-import {MENU_TITLE_FONT_REG} from '../../constants';
 import {
   IDOXLEThemeProviderContext,
   useDOXLETheme,
@@ -41,8 +40,7 @@ const ProcessingScreen = ({
   animationSize,
   loadingTextStyle,
 }: Props) => {
-  const {THEME_COLOR, DOXLE_FONT, theme} =
-    useDOXLETheme() as IDOXLEThemeProviderContext;
+  const {THEME_COLOR, DOXLE_FONT, doxleFontSize} = useDOXLETheme();
   const lottieType =
     processingType === 'update'
       ? require('../../LottieJSONFiles/updating.json')
@@ -93,10 +91,13 @@ const ProcessingScreen = ({
         <View style={{marginTop: 8}}>
           <Animated.Text
             style={[
-              styles.textInfoStyle,
               {
                 color:
                   processingType === 'delete' ? 'red' : THEME_COLOR.doxleColor,
+                fontFamily: DOXLE_FONT.lexendRegular,
+                fontSize: doxleFontSize.subContentTextSize,
+
+                textAlign: 'center',
               },
               loadingTextStyle,
               textStyle,
@@ -121,11 +122,5 @@ const styles = StyleSheet.create({
 
     display: 'flex',
     flexDirection: 'column',
-  },
-  textInfoStyle: {
-    fontFamily: MENU_TITLE_FONT_REG,
-    fontSize: getFontSizeScale(14),
-
-    textAlign: 'center',
   },
 });

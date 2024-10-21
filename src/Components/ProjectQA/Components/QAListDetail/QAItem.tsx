@@ -10,14 +10,7 @@ import FTIcon from 'react-native-vector-icons/Feather';
 import FontisIcon from 'react-native-vector-icons/Fontisto';
 import AntIcons from 'react-native-vector-icons/AntDesign';
 import {ActivityIndicator} from 'react-native-paper';
-import {QA, QAWithFirstImg} from '../../../../../../../Models/qa';
-import {
-  editRgbaAlpha,
-  getFontSizeScale,
-  TRgbaFormat,
-} from '../../../../../../../Utilities/FunctionUtilities';
-import {useVibration} from '../../../../../../../Providers/VibrationProvider';
-import useQAItem from '../../Hooks/useQAItem';
+import useQAItem from './Hooks/useQAItem';
 import {
   StyledQAItemAuthorNameText,
   StyledQAItemContainer,
@@ -31,13 +24,17 @@ import {
   StyledQAItemWrapper,
   StyledQALatestCommentText,
 } from './StyledComponentsQAListDetail';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+
 import dayjs from 'dayjs';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
-import {DoxleDeleteIcon} from '../../../../../../../RootAppIcons';
-import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import AssigneeDisplayer from './CommonComponents/AssigneeDisplayer';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
+import {QA, QAWithFirstImg} from '../../../../Models/qa';
+import {getFontSizeScale} from '../../../../Utilities/FunctionUtilities';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {useOrientation} from '../../../../Providers/OrientationContext';
+import {useVibration} from '../../../../Providers/VibrationProvider';
+import {QADeleteIcon} from '../QAIcons';
 var advancedFormat = require('dayjs/plugin/advancedFormat');
 dayjs.extend(advancedFormat);
 type Props = {
@@ -54,7 +51,7 @@ const QAItem: React.FC<Props> = ({
   setSelectedQAForAssignee,
 }: Props) => {
   const {THEME_COLOR, doxleFontSize} = useDOXLETheme();
-  const {deviceType, isPortraitMode} = useOrientation();
+  const {deviceType} = useOrientation();
   const {shortVibrateTrigger} = useVibration();
   const {
     handlePressItem,
@@ -101,7 +98,6 @@ const QAItem: React.FC<Props> = ({
       return (
         <StyledQAItemSwipeView
           $viewWidth={DELETE_SWIPE_WIDTH}
-          $themeColor={THEME_COLOR}
           style={{
             transform: [{translateX}],
           }}>
@@ -109,10 +105,10 @@ const QAItem: React.FC<Props> = ({
             style={{
               transform: [{scale: scaleIcon}],
             }}>
-            <DoxleDeleteIcon
+            <QADeleteIcon
               themeColor={THEME_COLOR}
               containerStyle={{width: deviceType === 'Smartphone' ? 30 : 40}}
-              iconColor={THEME_COLOR.errorColor as TRgbaFormat}
+              iconColor={THEME_COLOR.errorColor}
             />
           </StyledQAItemDeleteIconContainer>
         </StyledQAItemSwipeView>
@@ -158,7 +154,6 @@ const QAItem: React.FC<Props> = ({
       return (
         <StyledQAItemLeftSwipeView
           $viewWidth={DELETE_SWIPE_WIDTH}
-          $themeColor={THEME_COLOR}
           style={{
             transform: [{translateX}],
             backgroundColor:
@@ -262,7 +257,7 @@ const QAItem: React.FC<Props> = ({
                 borderWidth: 0,
               }}
               fillColor={'#00B112'}
-              unfillColor={THEME_COLOR.primaryFontColor}
+              unFillColor={THEME_COLOR.primaryFontColor}
               iconStyle={{
                 width: deviceType === 'Smartphone' ? 24 : 27,
                 height: deviceType === 'Smartphone' ? 24 : 27,
@@ -277,7 +272,6 @@ const QAItem: React.FC<Props> = ({
                   />
                 ) : null
               }
-              disableBuiltInState
               onPress={event => {}}
             />
           )}

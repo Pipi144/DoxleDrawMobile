@@ -14,16 +14,29 @@ import {
   QAMarkupRectangle,
   QAMarkupStraightLine,
 } from '../../../Models/qa';
-import {IBgVideoUploadData} from '../../../GeneralStore/useBgUploadStore';
-import {IProgressCompressState} from '../../../Models/utilityType';
-import {LocalQAImage} from '../Provider/CacheQAType';
+
+import {
+  IQAVideoUploadData,
+  LocalQAImage,
+  TQAVideoUploadStatus,
+} from '../Provider/CacheQAType';
+import {
+  getQACacheVideoListFile,
+  getQAPendingVideoListFile,
+  saveQACacheVideoListFile,
+  saveQAPendingVideoListDetail,
+} from '../Provider/CacheQAHelperFunctions';
+import {
+  checkPathExist,
+  deleteFileSystemWithPath,
+} from '../../../Utilities/FunctionUtilities';
 interface QANavItem<T> {
   routeName: string;
   routeKey: string;
   routeParams: T;
 }
 type TQAListViewMode = 'list' | 'grid';
-interface QAGeneralStoreValue {
+export interface QAGeneralStoreValue {
   filterQAListQuery: FilterGetQAListQuery;
   setFilterQAListQuery: (filter: FilterGetQAListQuery) => void;
 
@@ -51,7 +64,7 @@ interface QAGeneralStoreValue {
   resetGeneralQAStore: () => void;
 }
 
-interface ProjectQAImageStore {
+export interface ProjectQAImageStore {
   qaImageList: LocalQAImage[];
   setQAImageList: (list: LocalQAImage[]) => void;
   addQAImage: (imageList: LocalQAImage[]) => void;
@@ -78,15 +91,288 @@ interface ProjectQAImageStore {
   }) => void;
   clearQAImageStoreData: () => void;
 
-  retryVideo: IBgVideoUploadData | undefined;
-  setRetryVideo: (item: IBgVideoUploadData | undefined) => void;
-  //* to show progress compress
-  compressState: IProgressCompressState | undefined;
-  setCompressState: (state: IProgressCompressState | undefined) => void;
   resetQAImgStore: () => void;
 }
+export interface IQAUploadVideoStore {
+  localPendingVideoList: IQAVideoUploadData[];
+  getInitialPendingVideoList: () => Promise<void>;
+  addPendingVideoList: (item: IQAVideoUploadData) => void;
+  clearPendingVideoList: () => void;
+
+  deletePendingVideo: (videoId: string) => void;
+
+  popPendingVideo: () => void;
+
+  cachedVideoList: IQAVideoUploadData[];
+  getInitialCachedVideoList: () => Promise<void>;
+
+  addCachedVideoList: (item: IQAVideoUploadData) => void;
+  addMultiCachedVideoList: (data: IQAVideoUploadData[]) => void;
+  updateStatusMultiCachedVideo: (
+    videoIds: string[],
+    status: TQAVideoUploadStatus,
+  ) => void;
+  deleteCachedVideo: (videoId: string) => void;
+  deleteMultiCachedVideo: (videoId: string[]) => void;
+  deleteMultiCachedVideoWithHostId: (hostId: string) => void;
+  movePendingToCacheVideoList: (
+    fileId: string,
+    status: TQAVideoUploadStatus,
+    errorMessage?: string,
+  ) => void;
+
+  isConnectionPromptShown: boolean;
+  setIsConnectionPromptShow: (show: boolean) => void;
+
+  shouldUploadInWeakConnection: boolean;
+  setShouldUploadInWeakConnection: (show: boolean) => void;
+
+  retryVideo: IQAVideoUploadData | undefined;
+  setRetryVideo: (item: IQAVideoUploadData | undefined) => void;
+}
+
+const createQAUploadVideoStore: StateCreator<
+  QAGeneralStoreValue & ProjectQAImageStore & IQAUploadVideoStore,
+  [['zustand/immer', never], never],
+  [],
+  IQAUploadVideoStore
+> = (set, get) => ({
+  localPendingVideoList: [],
+
+  getInitialPendingVideoList: async () => {
+    const result = await getQAPendingVideoListFile();
+    const notPendingFiles = result.filter(item => item.status === 'success');
+
+    set(state =>
+      produce(state, draft => {
+        draft.localPendingVideoList = result.filter(
+          item => item.status === 'pending',
+        );
+      }),
+    );
+
+    if (notPendingFiles.length > 0) {
+      for (const item of notPendingFiles) {
+        get().movePendingToCacheVideoList(item.videoId, item.status);
+      }
+    }
+  },
+  addPendingVideoList: (item: IQAVideoUploadData) => {
+    set(state =>
+      produce(state, draft => {
+        draft.localPendingVideoList.push(item);
+      }),
+    );
+
+    saveQAPendingVideoListDetail(get().localPendingVideoList);
+  },
+  addMultiCachedVideoList: data => {
+    set(state =>
+      produce(state, draft => {
+        draft.localPendingVideoList.push(...data);
+      }),
+    );
+
+    saveQAPendingVideoListDetail(get().localPendingVideoList);
+  },
+  clearPendingVideoList: () => {
+    set(state =>
+      produce(state, draft => {
+        draft.localPendingVideoList = [];
+      }),
+    );
+
+    saveQAPendingVideoListDetail([]);
+  },
+
+  deletePendingVideo: (videoId: string) => {
+    set(state =>
+      produce(state, draft => {
+        const idx = draft.localPendingVideoList.findIndex(
+          item => item.videoId === videoId,
+        );
+        if (idx !== -1) draft.localPendingVideoList.splice(idx, 1);
+      }),
+    );
+
+    saveQAPendingVideoListDetail(get().localPendingVideoList);
+  },
+
+  popPendingVideo: () => {
+    set(state =>
+      produce(state, draft => {
+        state.localPendingVideoList.splice(0, 1);
+      }),
+    );
+
+    saveQAPendingVideoListDetail(get().localPendingVideoList);
+  },
+
+  cachedVideoList: [],
+
+  getInitialCachedVideoList: async () => {
+    const result = await getQACacheVideoListFile();
+
+    set(state =>
+      produce(state, draft => {
+        draft.cachedVideoList = result;
+      }),
+    );
+
+    //! clear the expired items to handle memory efficiency
+    if (result.length > 0) {
+      // console.log('CACHE LIST BEFORE DELETE:', result);
+      const currentTime = Math.floor(new Date().getTime() / 1000); //in seconds
+      for (const video of result) {
+        //item expire
+        if (video.expired && currentTime > video.expired) {
+          // if local video path exist =>delete but still leave the thumbnail
+          if (await checkPathExist(video.videoFile.uri)) {
+            await deleteFileSystemWithPath(video.videoFile.uri);
+
+            // console.log('ITEM EXPIRED =>DELETE');
+            //update the store value after delete
+          }
+          set(state =>
+            produce(state, draft => {
+              const item = draft.cachedVideoList.find(
+                item => item.videoId === video.videoId,
+              );
+              if (item) item.expired = null;
+            }),
+          );
+        } else continue;
+        // console.log('CACHE LIST AFTER DELETE:', get().cachedVideoList);
+        saveQACacheVideoListFile(get().cachedVideoList); // save the most updated cached list
+      }
+    }
+  },
+
+  addCachedVideoList: (item: IQAVideoUploadData) => {
+    set(state =>
+      produce(state, draft => {
+        draft.cachedVideoList.push(item);
+      }),
+    );
+    // console.log('VIDEO LIST SAVE AFTER ADD:', get().cachedVideoList);
+    // console.log('VIDEO LIST LENGTH AFTER ADD:', get().cachedVideoList.length);
+    saveQACacheVideoListFile(get().cachedVideoList);
+  },
+  deleteCachedVideo: (videoId: string) => {
+    set(state =>
+      produce(state, draft => {
+        const idx = draft.cachedVideoList.findIndex(
+          item => item.videoId === videoId,
+        );
+        if (idx !== -1) draft.cachedVideoList.splice(idx, 1);
+      }),
+    );
+    saveQACacheVideoListFile(get().cachedVideoList);
+  },
+  deleteMultiCachedVideo: (videoId: string[]) => {
+    set(state =>
+      produce(state, draft => {
+        draft.cachedVideoList = draft.cachedVideoList.filter(
+          item => !videoId.some(deletedId => deletedId === item.videoId),
+        );
+      }),
+    );
+    // console.log(
+    //   'VIDEO LIST SAVE AFTER UPDATE DELELTE:',
+    //   get().cachedVideoList,
+    // );
+    // console.log(
+    //   'VIDEO LIST LENGTH AFTER UPDATE DELELTE:',
+    //   get().cachedVideoList.length,
+    // );
+    saveQAPendingVideoListDetail(get().cachedVideoList);
+  },
+
+  deleteMultiCachedVideoWithHostId: (hostId: string) => {
+    set(state =>
+      produce(state, draft => {
+        draft.cachedVideoList = draft.cachedVideoList.filter(
+          item => item.hostId === hostId,
+        );
+      }),
+    );
+    // console.log(
+    //   'VIDEO LIST SAVE AFTER UPDATE DELELTE:',
+    //   get().cachedVideoList,
+    // );
+    // console.log(
+    //   'VIDEO LIST LENGTH AFTER UPDATE DELELTE:',
+    //   get().cachedVideoList.length,
+    // );
+    saveQAPendingVideoListDetail(get().cachedVideoList);
+  },
+  updateStatusMultiCachedVideo: (
+    videoIds: string[],
+    status: TQAVideoUploadStatus,
+  ) => {
+    set(state =>
+      produce(state, draft => {
+        for (const id of videoIds) {
+          const item = draft.cachedVideoList.find(item => item.videoId === id);
+          if (item) item.status = status;
+        }
+      }),
+    );
+
+    saveQACacheVideoListFile(get().cachedVideoList);
+  },
+
+  movePendingToCacheVideoList: (
+    fileId: string,
+    status: TQAVideoUploadStatus,
+    errorMessage?: string,
+  ) => {
+    set(state =>
+      produce(state, draft => {
+        const item = draft.localPendingVideoList.find(
+          item => item.videoId === fileId,
+        );
+        if (item) {
+          item.status = status;
+          if (errorMessage) item.errorMessage = errorMessage;
+          draft.cachedVideoList.push(item);
+          draft.localPendingVideoList = draft.localPendingVideoList.filter(
+            item => item.videoId !== fileId,
+          );
+        }
+      }),
+    );
+    saveQAPendingVideoListDetail(get().localPendingVideoList);
+    saveQACacheVideoListFile(get().cachedVideoList);
+  },
+
+  isConnectionPromptShown: false,
+  setIsConnectionPromptShow: (show: boolean) => {
+    set(state =>
+      produce(state, draft => {
+        draft.isConnectionPromptShown = show;
+      }),
+    );
+  },
+
+  shouldUploadInWeakConnection: false,
+  setShouldUploadInWeakConnection: (show: boolean) => {
+    set(state =>
+      produce(state, draft => {
+        draft.shouldUploadInWeakConnection = show;
+      }),
+    );
+  },
+  retryVideo: undefined,
+  setRetryVideo: (item: IQAVideoUploadData | undefined) =>
+    set(state =>
+      produce(state, draft => {
+        draft.retryVideo = item;
+      }),
+    ),
+});
 const createQAStoreGeneralValue: StateCreator<
-  QAGeneralStoreValue & ProjectQAImageStore,
+  QAGeneralStoreValue & ProjectQAImageStore & IQAUploadVideoStore,
   [['zustand/immer', never], never],
   [],
   QAGeneralStoreValue
@@ -199,7 +485,7 @@ const createQAStoreGeneralValue: StateCreator<
 });
 
 const createProjectQAImageStore: StateCreator<
-  QAGeneralStoreValue & ProjectQAImageStore,
+  QAGeneralStoreValue & ProjectQAImageStore & IQAUploadVideoStore,
   [['zustand/immer', never], never],
   [],
   ProjectQAImageStore
@@ -310,24 +596,6 @@ const createProjectQAImageStore: StateCreator<
       }),
     ),
 
-  retryVideo: undefined,
-  setRetryVideo: (item: IBgVideoUploadData | undefined) =>
-    set(state =>
-      produce(state, draft => {
-        draft.retryVideo = item;
-
-        return draft;
-      }),
-    ),
-  compressState: undefined as IProgressCompressState | undefined,
-  setCompressState: (compressState: IProgressCompressState | undefined) =>
-    set(state =>
-      produce(state, draft => {
-        draft.compressState = compressState;
-
-        return draft;
-      }),
-    ),
   resetQAImgStore: () => {
     set(state =>
       produce(state, draft => {
@@ -339,8 +607,9 @@ const createProjectQAImageStore: StateCreator<
 });
 
 export const useProjectQAStore = create<
-  QAGeneralStoreValue & ProjectQAImageStore
+  QAGeneralStoreValue & ProjectQAImageStore & IQAUploadVideoStore
 >()((...a) => ({
   ...createQAStoreGeneralValue(...a),
   ...createProjectQAImageStore(...a),
+  ...createQAUploadVideoStore(...a),
 }));

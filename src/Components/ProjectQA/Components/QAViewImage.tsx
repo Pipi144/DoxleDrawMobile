@@ -3,9 +3,9 @@ import React, {useEffect} from 'react';
 import {StyledQAViewImage} from './StyledComponentProjectQA';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {TQATabStack} from '../Routes/QARouteType';
-import FastImage from 'react-native-fast-image';
 import {ReactNativeZoomableView} from '@openspacelabs/react-native-zoomable-view';
-import {useOrientation} from '../../../../../../Providers/OrientationContext';
+import {useOrientation} from '../../../Providers/OrientationContext';
+import {FasterImageView} from '@candlefinance/faster-image';
 
 type Props = {};
 
@@ -41,10 +41,9 @@ const QAViewImage = (props: Props) => {
           onPress={() => {
             if (navigation.canGoBack()) navigation.goBack();
           }}>
-          <FastImage
+          <FasterImageView
             style={{height: '100%', width: '100%'}}
-            resizeMode="contain"
-            source={{uri: imageURL}}
+            source={{url: imageURL, resizeMode: 'contain'}}
           />
         </Pressable>
       </ReactNativeZoomableView>

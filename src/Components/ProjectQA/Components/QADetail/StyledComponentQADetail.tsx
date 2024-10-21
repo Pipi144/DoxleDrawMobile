@@ -1,19 +1,63 @@
 import styled from 'styled-components/native';
 
 import Animated from 'react-native-reanimated';
-import {
-  IDoxleFont,
-  IDOXLEThemeColor,
-  TDOXLETheme,
-} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {Pressable} from 'native-base';
-import {
-  editRgbaAlpha,
-  getFontSizeScale,
-  TRgbaFormat,
-} from '../../../../../../../Utilities/FunctionUtilities';
-import {KeyboardAvoidingView, TextInput} from 'react-native';
+import {Image, KeyboardAvoidingView, Pressable, TextInput} from 'react-native';
+import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
 
+export const StyledQAVideoItemContainer = styled(
+  Animated.createAnimatedComponent(Pressable),
+)<{
+  $numOfCol: number;
+}>`
+  width: ${p => 100 / p.$numOfCol}%;
+  aspect-ratio: 1;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  padding: 2px;
+  position: relative;
+`;
+export const StyledQAPendingVideoContainer = styled(
+  Animated.createAnimatedComponent(Pressable),
+)<{
+  $numOfCol: number;
+}>`
+  width: ${p => 100 / p.$numOfCol}%;
+  aspect-ratio: 1;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  padding: 2px;
+  position: relative;
+`;
+export const StyledQAImageItemMenu = styled.View`
+  position: absolute;
+  bottom: 14px;
+  right: 4px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  z-index: 3;
+`;
+export const StyledQAImageHolder = styled(Image)`
+  width: 100%;
+  height: 100%;
+
+  z-index: 0;
+`;
+export const StyledQAImageItemContainer = styled(
+  Animated.createAnimatedComponent(Pressable),
+)<{
+  $numOfCol: number;
+}>`
+  width: ${p => 100 / p.$numOfCol}%;
+  aspect-ratio: 1;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  padding: 2px;
+  position: relative;
+`;
 export const StyledQADetailPageContainer = styled(Animated.View)`
   width: 100%;
   height: 100%;
@@ -46,7 +90,7 @@ export const StyledQADetailEditDescriptionContainer = styled.View`
 `;
 export const StyledQADescriptionTextInput = styled(TextInput)<{}>`
   color: ${p => p.theme.THEME_COLOR.primaryFontColor};
-  font-family: ${p => p.theme.DOXLE_FONT.titleFont};
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-size: ${p => p.theme.doxleFontSize.contentTextSize}px;
   font-style: normal;
   font-weight: 500;
@@ -79,11 +123,11 @@ export const StyledQADetailDueDateText = styled.Text<{
   color: ${p =>
     p.$null
       ? editRgbaAlpha({
-          rgbaColor: p.theme.THEME_COLOR.primaryFontColor as TRgbaFormat,
+          rgbaColor: p.theme.THEME_COLOR.primaryFontColor,
           alpha: '0.4',
         })
       : p.theme.THEME_COLOR.primaryFontColor};
-  font-family: ${p => p.theme.DOXLE_FONT.titleFont};
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-size: ${p => p.theme.doxleFontSize.contentTextSize}px;
   font-style: normal;
   font-weight: 500;
@@ -111,11 +155,11 @@ export const StyledQADetailAssigneeText = styled.Text<{
   color: ${p =>
     p.$null
       ? editRgbaAlpha({
-          rgbaColor: p.theme.THEME_COLOR.primaryFontColor as TRgbaFormat,
+          rgbaColor: p.theme.THEME_COLOR.primaryFontColor,
           alpha: '0.4',
         })
       : p.theme.THEME_COLOR.primaryFontColor};
-  font-family: ${p => p.theme.DOXLE_FONT.titleFont};
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-size: ${p => p.theme.doxleFontSize.contentTextSize}px;
   font-style: normal;
   font-weight: 500;
@@ -123,7 +167,7 @@ export const StyledQADetailAssigneeText = styled.Text<{
 `;
 export const StyledErrorDescriptionText = styled(Animated.Text)<{}>`
   color: ${p => p.theme.THEME_COLOR.errorColor};
-  font-family: ${p => p.theme.DOXLE_FONT.titleFont};
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-size: ${p => p.theme.doxleFontSize.subContentTextSize}px;
   font-style: normal;
   font-weight: 500;
@@ -177,7 +221,7 @@ export const StyledCommentInputSectionContainer = styled(Animated.View)<{}>`
 export const StyledCommentTextInput = styled(TextInput)<{
   $fontSize: number;
 }>`
-  font-family: ${p => p.theme.DOXLE_FONT.titleFont};
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-style: normal;
   font-weight: 500;
   font-size: ${p => p.$fontSize}px;
@@ -196,13 +240,13 @@ export const StyledQACommentItemContainer = styled(
   display: flex;
 `;
 export const StyledQACommentTimestampText = styled.Text<{}>`
-  font-family: ${p => p.theme.DOXLE_FONT.secondaryTitleFont};
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-style: normal;
   font-weight: 400;
   font-size: ${p => p.theme.doxleFontSize.errorToggleTextSize}px;
   color: ${p =>
     editRgbaAlpha({
-      rgbaColor: p.theme.THEME_COLOR.doxleColor as TRgbaFormat,
+      rgbaColor: p.theme.THEME_COLOR.doxleColor,
       alpha: '0.7',
     })};
   margin-left: 14px;
@@ -219,7 +263,7 @@ export const StyledQACommentTextWrapper = styled.View<{
   background-color: ${p =>
     p.$isOfficial
       ? editRgbaAlpha({
-          rgbaColor: p.theme.THEME_COLOR.doxleColor as TRgbaFormat,
+          rgbaColor: p.theme.THEME_COLOR.doxleColor,
           alpha: '0.4',
         })
       : 'transparent'};
@@ -234,7 +278,7 @@ export const StyledQACommentTextWrapper = styled.View<{
   `}
 `;
 export const StyledQACommentText = styled.Text<{}>`
-  font-family: ${p => p.theme.DOXLE_FONT.titleFont};
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-style: normal;
   font-weight: 500;
   font-size: ${p => p.theme.doxleFontSize.contentTextSize}px;
@@ -393,11 +437,11 @@ export const StyledQARoomFloorDisplayerText = styled.Text<{
   color: ${p =>
     p.$null
       ? editRgbaAlpha({
-          rgbaColor: p.theme.THEME_COLOR.primaryFontColor as TRgbaFormat,
+          rgbaColor: p.theme.THEME_COLOR.primaryFontColor,
           alpha: '0.4',
         })
       : p.theme.THEME_COLOR.primaryFontColor};
-  font-family: ${p => p.theme.DOXLE_FONT.titleFont};
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-size: ${p => p.theme.doxleFontSize.contentTextSize}px;
   font-style: normal;
   font-weight: 500;
@@ -413,8 +457,8 @@ export const StyledQAEditPopoverListItem = styled.Pressable`
 export const StyledRoomListPopoverWrapper = styled(Animated.View)<{
   $height?: number;
 }>`
-  height: ${p => (p.$height ? `${p.$height}px` : '100%')};
-  width: 100%;
+  height: ${p => (p.$height ? `${p.$height}px` : '300px')};
+  width: ${p => (p.theme.deviceType === 'Smartphone' ? 300 : 350)}px;
   background-color: ${p => p.theme.THEME_COLOR.primaryContainerColor};
   border-radius: 14px;
   display: flex;
@@ -423,8 +467,7 @@ export const StyledRoomListPopoverWrapper = styled(Animated.View)<{
   position: relative;
   overflow: hidden;
   border-width: 1px;
-  border-color: ${p => p.theme.THEME_COLOR.primaryDividerColor};
-  margin-left: 4px;
+  border-color: ${p => p.theme.THEME_COLOR.rowBorderColor};
 `;
 export const StyledPopoverSearchTextInput = styled.TextInput`
   color: ${p => p.theme.THEME_COLOR.primaryFontColor};
@@ -449,10 +492,10 @@ export const StyledQAEditPopoverListItemText = styled.Text<{
 }>`
   color: ${p =>
     editRgbaAlpha({
-      rgbaColor: p.theme.THEME_COLOR.primaryFontColor as TRgbaFormat,
+      rgbaColor: p.theme.THEME_COLOR.primaryFontColor,
       alpha: p.$type === 'main' ? '1' : '0.4',
     })};
-  font-family: ${p => p.theme.DOXLE_FONT.titleFont};
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-size: ${p => p.theme.doxleFontSize.contentTextSize}px;
   font-style: normal;
   font-weight: 500;

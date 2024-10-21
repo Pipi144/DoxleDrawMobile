@@ -34,9 +34,10 @@ import {Platform} from 'react-native';
 import {Contact} from '../Models/contacts';
 import {IProjectFloor} from '../Models/location';
 import useSetQAQueryData from '../CustomHooks/QueryDataHooks/useSetQAQueryData';
-import {IBgVideoUploadData} from '../GeneralStore/useBgUploadStore';
+
 import {TAPIServerFile} from '../Models/utilityType';
 import {
+  IQAVideoUploadData,
   LocalQAImage,
   QABatchPendingUpload,
 } from '../Components/ProjectQA/Provider/CacheQAType';
@@ -803,7 +804,6 @@ const useRetrieveQACommentList = ({
 };
 
 export interface AddQAComment extends BaseAPIProps {
-  qaItem: QA;
   onSuccessCB?: (newComment?: QAComment) => void;
 }
 const useAddQACommentQuery = ({
@@ -811,7 +811,6 @@ const useAddQACommentQuery = ({
   accessToken,
   company,
   onSuccessCB,
-  qaItem,
 }: AddQAComment) => {
   const {handleAddQAList} = useSetQaCommentQueryData({});
   const addCommentURL = `${baseAddress}/defect/defect_comment/`;
@@ -847,7 +846,6 @@ const useAddQACommentQuery = ({
 };
 
 interface IMutateQAComment extends BaseAPIProps {
-  qaItem: QA;
   onSuccessCB?: Function;
 }
 
@@ -861,7 +859,6 @@ const useMutateQACommentQuery = ({
   showNotification,
   company,
   onSuccessCB,
-  qaItem,
   accessToken,
 }: IMutateQAComment) => {
   const {handlePatchQAComment} = useSetQaCommentQueryData({});
@@ -1186,10 +1183,10 @@ const useRetrieveQAVideoList = ({
 };
 
 export interface IBgUploadQAVideoParams {
-  uploadData: IBgVideoUploadData;
+  uploadData: IQAVideoUploadData;
   postSuccessHandler?: (serverReturned: QAVideo) => void;
   postErrorHandler?: (
-    uploadData: IBgVideoUploadData,
+    uploadData: IQAVideoUploadData,
     errorMessage?: string,
   ) => void;
 }

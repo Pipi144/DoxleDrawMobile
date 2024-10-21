@@ -33,9 +33,10 @@ import HomeHeader from '../Components/HomeHeader/HomeHeader';
 import AppModalHeader from '../Components/AppModalHeader/AppModalHeader';
 import ProjectFilesRoute from '../Components/ProjectFile/Routes/ProjectFilesRoute';
 import FileBgUploader from '../Components/ProjectFile/Provider/FileBgUploader';
-import {DocumentDirectoryPath, unlink} from 'react-native-fs';
 import BudgetRoutes from '../Components/ProjectBudget/Routes/BudgetRoutes';
 import CacheQAProvider from '../Components/ProjectQA/Provider/CacheQAProvider';
+import QARoutes from '../Components/ProjectQA/Routes/QARoutes';
+
 const RootStack = createNativeStackNavigator<TDoxleRootStack>();
 type Props = {};
 declare module 'styled-components/native' {
@@ -128,7 +129,10 @@ const RootAppRouting = (props: Props) => {
                           name="FileRoute"
                           component={ProjectFilesRoute}
                         />
-                        {/* <RootStack.Screen name="ActionRoute" component={QARouteStack} /> */}
+                        <RootStack.Screen
+                          name="ActionRoute"
+                          component={QARoutes}
+                        />
                       </RootStack.Group>
                     </RootStack.Navigator>
                   ) : (

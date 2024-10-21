@@ -12,10 +12,10 @@ import {LinearTransition} from 'react-native-reanimated';
 import {ActivityIndicator} from 'react-native-paper';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
 import EditAssigneeModal from '../EditAssigneeModal/EditAssigneeModal';
-import {QAList} from '../../../../../../../Models/qa';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import useQAListEditAssignee from '../../Hooks/useQAListEditAssignee';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
+import useQAListEditAssignee from './Hooks/useQAListEditAssignee';
+import {QAList} from '../../../../Models/qa';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+
 type Props = {
   edittedQAList: QAList;
   handleQAListAssigneeChange: (props: {
@@ -29,7 +29,6 @@ const QAListEditAssignee = ({
   handleQAListAssigneeChange,
 }: Props) => {
   const {THEME_COLOR, doxleFontSize} = useDOXLETheme();
-  const {deviceType} = useOrientation();
   const {
     showAddAssigneeModal,
     handleShowAddAssigneeModal,

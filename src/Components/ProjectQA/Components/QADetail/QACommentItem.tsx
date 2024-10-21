@@ -9,17 +9,15 @@ import {
   StyledQACommentTextWrapper,
   StyledQACommentTimestampText,
 } from './StyledComponentQADetail';
-import {QAComment} from '../../../../../../../Models/qa';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import useQACommentItem from './Hooks/useQACommentItem';
+import {QAComment} from '../../../../Models/qa';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
 import {
-  TRgbaFormat,
   editRgbaAlpha,
   formatDate,
-} from '../../../../../../../Utilities/FunctionUtilities';
-import DoxleUserInitialTag from '../../../../../../DesignPattern/DoxleUserInitialTag/DoxleUserInitialTag';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
-import useQACommentItem from '../../Hooks/useQACommentItem';
+} from '../../../../Utilities/FunctionUtilities';
 import Autolink from 'react-native-autolink';
+import DoxleUserInitialTag from '../../../DesignPattern/DoxleUserInitialTag';
 
 type Props = {
   commentItem: QAComment;
@@ -27,7 +25,6 @@ type Props = {
 
 const QACommentItem = ({commentItem}: Props) => {
   const {THEME_COLOR, DOXLE_FONT, doxleFontSize} = useDOXLETheme();
-  const {deviceType} = useOrientation();
 
   const {handleLongPressComment} = useQACommentItem({commentItem});
   return (
@@ -55,7 +52,7 @@ const QACommentItem = ({commentItem}: Props) => {
           text={commentItem.commentText}
           linkStyle={{
             color: editRgbaAlpha({
-              rgbaColor: THEME_COLOR.doxleColor as TRgbaFormat,
+              rgbaColor: THEME_COLOR.doxleColor,
               alpha: '0.5',
             }),
             textDecorationLine: 'underline',

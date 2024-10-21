@@ -1,7 +1,6 @@
 import {Image, Pressable} from 'react-native';
 import Animated from 'react-native-reanimated';
 import styled from 'styled-components/native';
-import {getFontSizeScale} from '../../../../../../../Utilities/FunctionUtilities';
 
 export const StyledQAImageContainer = styled(Animated.View)`
   width: 100%;
@@ -52,25 +51,7 @@ export const StyledQAImageItemMenu = styled.View`
   align-items: center;
   z-index: 3;
 `;
-export const StyledRectangeMarkupUnder = styled.View<{$strokeColor: string}>`
-  width: ${getFontSizeScale(80)}px;
-  height: ${getFontSizeScale(80)}px;
-  z-index: 0;
-  border: 4px solid ${p => p.$strokeColor};
-`;
 
-export const StyledRectangeMarkupUpper = styled.View<{
-  $strokeColor: string;
-  $round?: boolean;
-}>`
-  width: ${getFontSizeScale(80)}px;
-  height: ${getFontSizeScale(80)}px;
-  z-index: 1;
-  border: 4px solid ${p => p.$strokeColor};
-  margin-left: ${getFontSizeScale(40)}px;
-  margin-top: ${getFontSizeScale(-40)}px;
-  border-radius: ${p => (p.$round ? getFontSizeScale(40) : 0)}px;
-`;
 export const StyledQAVideoItemContainer = styled(
   Animated.createAnimatedComponent(Pressable),
 )<{

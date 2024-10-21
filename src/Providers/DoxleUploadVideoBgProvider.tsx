@@ -1,11 +1,4 @@
-import {Alert, StyleSheet} from 'react-native';
-import React, {
-  createContext,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, {createContext, useEffect, useMemo, useState} from 'react';
 import {useBgUploadStore} from '../GeneralStore/useBgUploadStore';
 import {useAuth} from './AuthProvider';
 import {useCompany} from './CompanyProvider';

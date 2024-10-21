@@ -1,16 +1,16 @@
-import {StyleSheet} from 'react-native';
-import React, {useState} from 'react';
+import React from 'react';
 import {
   StyledQADetailEditStatusContainer,
   StyledQADetailLabelText,
   StyledQADetailStatusDisplay,
   StyledQAStatusText,
 } from './StyledComponentQADetail';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
-import {QA} from '../../../../../../../Models/qa';
+
 import {Switch} from 'react-native-switch';
-import useQADetailEditStatus from '../../Hooks/useQADetailEditStatus';
+import useQADetailEditStatus from './Hooks/useQADetailEditStatus';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {useOrientation} from '../../../../Providers/OrientationContext';
+import {QA} from '../../../../Models/qa';
 
 type Props = {qaItem: QA};
 

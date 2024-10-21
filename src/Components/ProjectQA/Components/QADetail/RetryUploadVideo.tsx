@@ -1,9 +1,8 @@
 import {StyleSheet, View} from 'react-native';
 import React from 'react';
 import Modal from 'react-native-modal/dist/modal';
-import useRetryUploadVideo from '../../Hooks/useRetryUploadVideo';
+import useRetryUploadVideo from './Hooks/useRetryUploadVideo';
 import {useProjectQAStore} from '../../Store/useProjectQAStore';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
 
 import {
   StyledCloseRetryVideoBtn,
@@ -14,10 +13,10 @@ import {
 } from './StyledComponentQADetail';
 import MateIcon from 'react-native-vector-icons/MaterialIcons';
 import IonIcon from 'react-native-vector-icons/Ionicons';
-import {DoxleDeleteIcon} from '../../../../../../../RootAppIcons';
-import {TRgbaFormat} from '../../../../../../../Utilities/FunctionUtilities';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
 import {useShallow} from 'zustand/react/shallow';
+import {useOrientation} from '../../../../Providers/OrientationContext';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {QADeleteIcon} from '../QAIcons';
 
 type Props = {};
 
@@ -84,12 +83,12 @@ const RetryUploadVideo = (props: Props) => {
             Delete Video
           </StyledRetryVideoActionBtnText>
 
-          <DoxleDeleteIcon
+          <QADeleteIcon
             themeColor={THEME_COLOR}
             containerStyle={{
               width: deviceType === 'Smartphone' ? 24 : 28,
             }}
-            iconColor={THEME_COLOR.errorColor as TRgbaFormat}
+            iconColor={THEME_COLOR.errorColor}
           />
         </StyledRetryVideoActionBtn>
       </StyledRetryUploadVideoContainer>

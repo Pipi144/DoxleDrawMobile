@@ -17,14 +17,14 @@ import {
   StyledQAPopupMenuText,
   StyledQAPopupMenuWrapper,
 } from './StyledComponents';
-import DoxleAnimatedButton from '../../../../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import AntIcon from 'react-native-vector-icons/AntDesign';
-import OctIcon from 'react-native-vector-icons/Octicons';
-import {DoxlePDFIcon} from '../../../../../../DesignPattern/GeneralSVG/FileTypes';
-import {QAList, TQAStatus} from '../../../../../../../Models/qa';
 import useQAListDetailPopupMenu from './Hooks/useQAListDetailPopupMenu';
 import IonIcon from 'react-native-vector-icons/Ionicons';
+import {QAList} from '../../../../Models/qa';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import DoxleAnimatedButton from '../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
+import {DoxlePDFIcon} from '../../../DesignPattern/DoxleIcons';
+import AntIcon from 'react-native-vector-icons/AntDesign';
+import OctIcon from 'react-native-vector-icons/Octicons';
 type Props = {
   qaList: QAList;
   setShowFilter: React.Dispatch<React.SetStateAction<boolean>>;
@@ -121,10 +121,7 @@ const QAListDetailPopupMenu = ({qaList, setShowFilter}: Props) => {
             borderBottomColor: staticMenuColor.staticDivider,
           },
         ]}>
-        <DoxlePDFIcon
-          themeColor={THEME_COLOR}
-          containerStyle={{width: 25, marginRight: 15}}
-        />
+        <DoxlePDFIcon containerStyle={{width: 25, marginRight: 15}} />
         <StyledQAPopupMenuText>Export PDF</StyledQAPopupMenuText>
       </DoxleAnimatedButton>
     </StyledQAPopupMenuWrapper>

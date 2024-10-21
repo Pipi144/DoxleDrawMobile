@@ -1,10 +1,6 @@
 import styled from 'styled-components/native';
 
 import Animated from 'react-native-reanimated';
-import {
-  IDoxleFont,
-  IDOXLEThemeColor,
-} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
 
 export const StyledQAEditSignaturePageContainer = styled.View<{}>`
   flex: 1;
@@ -45,7 +41,6 @@ export const StyledSignatureBtnText = styled.Text<{}>`
   font-size: ${p => p.theme.doxleFontSize.contentTextSize}px;
 `;
 export const StyledSignaturePreviewSection = styled.View<{
-  $themeColor: IDOXLEThemeColor;
   $height: number;
 }>`
   width: 100%;
@@ -53,10 +48,10 @@ export const StyledSignaturePreviewSection = styled.View<{
   margin-top: 10px;
   display: flex;
   height: 120px;
-  background-color: ${p => p.$themeColor.primaryContainerColor};
+  background-color: ${p => p.theme.THEME_COLOR.primaryContainerColor};
   position: relative;
   border-width: 1px;
-  border-color: ${p => p.$themeColor.primaryDividerColor};
+  border-color: ${p => p.theme.THEME_COLOR.primaryDividerColor};
 `;
 export const StyledSignaturePreviewText = styled.Text<{}>`
   font-family: ${p => p.theme.DOXLE_FONT.primaryFont};

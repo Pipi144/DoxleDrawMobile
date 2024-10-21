@@ -2,6 +2,7 @@ import {Easing, StyleSheet, View} from 'react-native';
 import React, {useEffect, useRef} from 'react';
 import {
   StyledConstributorDisplay,
+  StyledModalPdfAssignee,
   StyledPdfTopSectionContainer,
   StyledProgressCountText,
   StyledQAContributorText,
@@ -20,24 +21,18 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import FTIcon from 'react-native-vector-icons/Feather';
-import {Popover, useDisclose} from 'native-base';
-
 import {ActivityIndicator} from 'react-native-paper';
 
 import SelectAssigneePdfView from './SelectAssigneePdfView';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
-import {QAList, TQAStatus} from '../../../../../../../Models/qa';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import usePdfTopSection from '../../Hooks/usePdfTopSection';
-import {
-  editRgbaAlpha,
-  getFontSizeScale,
-  TRgbaFormat,
-} from '../../../../../../../Utilities/FunctionUtilities';
-import DoxleAnimatedButton from '../../../../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
-import {Contact} from '../../../../../../../Models/contacts';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
+import usePdfTopSection from './Hooks/usePdfTopSection';
 import {useQAViewPDFContext} from './QAViewPDF';
+import {QAList, TQAStatus} from '../../../../Models/qa';
+import {Contact} from '../../../../Models/contacts';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import Modal from 'react-native-modal/dist/modal';
+import {useOrientation} from '../../../../Providers/OrientationContext';
+import DoxleAnimatedButton from '../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
 
 type Props = {
   qaListItem: QAList;
@@ -58,168 +53,75 @@ const PdfTopSection = ({
   initialAssignee,
   initialStatus,
 }: Props) => {
-  const {THEME_COLOR, DOXLE_FONT, doxleFontSize} = useDOXLETheme();
-  const {deviceType} = useOrientation();
+  const {THEME_COLOR, DOXLE_FONT, doxleFontSize, staticMenuColor} =
+    useDOXLETheme();
+  const {deviceSize} = useOrientation();
   const {
     selectedAssignee,
     handleGenerateQAReportForAssignee,
     isCreatingPdf,
     handleShareFile,
+    openAssigneeModal,
+    setOpenAssigneeModal,
+    dropdownIconAnimatedStyle,
+    displayedPdfPath,
+    circularSize,
+    circularThickness,
+    circularRef,
   } = usePdfTopSection({
     qaListItem,
     setDisplayedPdfPath,
 
     initialAssignee,
     initialStatus,
+    countUploadItemsInProgress,
+    initialCountUploadItemsInProgress,
   });
-  const {isOpen, onClose, onOpen} = useDisclose();
-  const {displayedPdfPath} = useQAViewPDFContext();
-  //* animation
-  const dropdownIconAnimatedValue = useRef<SharedValue<number>>(
-    useSharedValue(0),
-  ).current;
-  const dropdownIconAnimatedStyle = useAnimatedStyle(() => {
-    const rotateZ = interpolate(
-      dropdownIconAnimatedValue.value,
-      [0, 1],
-      [0, 180],
-      {
-        extrapolateLeft: Extrapolation.CLAMP,
-        extrapolateRight: Extrapolation.CLAMP,
-      },
-    );
-    return {
-      transform: [
-        {
-          rotateZ: `${rotateZ}deg`,
-        },
-      ],
-    };
-  }, []);
-  useEffect(() => {
-    if (isOpen) dropdownIconAnimatedValue.value = withSpring(1, {damping: 16});
-    else dropdownIconAnimatedValue.value = withSpring(0, {damping: 16});
-  }, [isOpen]);
-  const circularSize = getFontSizeScale(30);
-  const circularThickness = getFontSizeScale(3);
-  const circularRef = useRef<AnimatedCircularProgress>(null);
-  useEffect(() => {
-    circularRef.current?.animate(
-      Math.floor(
-        ((initialCountUploadItemsInProgress - countUploadItemsInProgress) /
-          initialCountUploadItemsInProgress) *
-          100,
-      ),
-      500,
-      Easing.quad,
-    );
-  }, [countUploadItemsInProgress, initialCountUploadItemsInProgress]);
 
+  const layout = LinearTransition.springify()
+    .damping(16)
+    .mass(0.5)
+    .stiffness(120);
   return (
-    <StyledPdfTopSectionContainer
-      layout={LinearTransition.springify().damping(16)}>
-      <Popover
-        isOpen={isOpen}
-        onClose={onClose}
-        trigger={triggerProps => {
-          return (
-            <StyledConstributorDisplay
-              style={{display: 'flex', flexDirection: 'row'}}
-              {...triggerProps}
-              flexDirection="row"
-              onPress={onOpen}
-              hitSlop={20}
-              $doxleFont={DOXLE_FONT}>
-              <Animated.View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  paddingVertical: 4,
-                  paddingHorizontal: 14,
-                  borderRadius: 13,
-                  backgroundColor: THEME_COLOR.primaryContainerColor,
-                  overflow: 'hidden',
-                  borderWidth: 1,
-                  borderColor: THEME_COLOR.primaryDividerColor,
-                }}
-                layout={LinearTransition.springify().damping(16)}>
-                <StyledQAContributorText
-                  $null={Boolean(!selectedAssignee || isCreatingPdf)}>
-                  {/* {!selectedAssignee
+    <StyledPdfTopSectionContainer layout={layout}>
+      <StyledConstributorDisplay
+        style={{display: 'flex', flexDirection: 'row'}}
+        onPress={() => setOpenAssigneeModal(true)}
+        hitSlop={20}
+        layout={layout}>
+        <StyledQAContributorText
+          $null={Boolean(!selectedAssignee || isCreatingPdf)}>
+          {/* {!selectedAssignee
                     ? 'Select Assignee to share'
                     : `${isCreatingPdf ? 'Generating Pdf for ' : ''}${
                         selectedAssignee.firstName
                       } ${selectedAssignee.lastName}`} */}
 
-                  {!isCreatingPdf
-                    ? selectedAssignee
-                      ? `${selectedAssignee.firstName} ${selectedAssignee.lastName}`
-                      : 'Select Assignee to share'
-                    : selectedAssignee
-                    ? `Generating Report For ${selectedAssignee.firstName} ${selectedAssignee.lastName}`
-                    : 'Generating Overall Report'}
-                </StyledQAContributorText>
-                {isCreatingPdf ? (
-                  <ActivityIndicator
-                    color={THEME_COLOR.primaryFontColor}
-                    size={14}
-                    style={{marginLeft: 8}}
-                  />
-                ) : (
-                  <AnimatedFIcon
-                    exiting={FadeOutDown}
-                    entering={FadeInDown}
-                    name="chevron-down"
-                    color={THEME_COLOR.primaryFontColor}
-                    style={[dropdownIconAnimatedStyle, {marginLeft: 8}]}
-                    size={20}
-                  />
-                )}
-              </Animated.View>
-            </StyledConstributorDisplay>
-          );
-        }}>
-        <Popover.Content
-          accessibilityLabel="Doxle Dropdown Menu"
-          w={`${getFontSizeScale(240)}px`}
-          h={`${getFontSizeScale(400)}px`}
-          maxH={'500px'}
-          maxW={'300px'}
-          ml="2"
-          backgroundColor={THEME_COLOR.primaryContainerColor}
-          borderColor={'transparent'}
-          style={{overflow: 'visible'}}>
-          <Popover.Arrow
-            bgColor={THEME_COLOR.primaryContainerColor}
-            borderColor={THEME_COLOR.primaryContainerColor}
+          {!isCreatingPdf
+            ? selectedAssignee
+              ? `${selectedAssignee.firstName} ${selectedAssignee.lastName}`
+              : 'Select Assignee to share'
+            : selectedAssignee
+            ? `Generating Report For ${selectedAssignee.firstName} ${selectedAssignee.lastName}`
+            : 'Generating Overall Report'}
+        </StyledQAContributorText>
+        {isCreatingPdf ? (
+          <ActivityIndicator
+            color={THEME_COLOR.primaryFontColor}
+            size={14}
+            style={{marginLeft: 8}}
           />
-
-          <Popover.Body
-            h="100%"
-            w="100%"
-            p={0}
-            backgroundColor={THEME_COLOR.primaryContainerColor}
-            style={{
-              shadowColor: editRgbaAlpha({
-                rgbaColor: THEME_COLOR.primaryFontColor as TRgbaFormat,
-                alpha: '0.4',
-              }),
-              elevation: 4,
-              shadowOffset: {width: 0.5, height: 0.5},
-              shadowRadius: 12,
-              shadowOpacity: 0.4,
-            }}>
-            <SelectAssigneePdfView
-              handleGenerateQAReportForAssignee={
-                handleGenerateQAReportForAssignee
-              }
-              onClose={onClose}
-              selectedAssignee={selectedAssignee}
-            />
-          </Popover.Body>
-        </Popover.Content>
-      </Popover>
+        ) : (
+          <AnimatedFIcon
+            exiting={FadeOutDown}
+            entering={FadeInDown}
+            name="chevron-down"
+            color={THEME_COLOR.primaryFontColor}
+            style={[dropdownIconAnimatedStyle, {marginLeft: 8}]}
+            size={20}
+          />
+        )}
+      </StyledConstributorDisplay>
       <View style={styles.btnMenuSection}>
         {displayedPdfPath && (
           <DoxleAnimatedButton
@@ -228,7 +130,7 @@ const PdfTopSection = ({
               styles.shareBtn,
               {
                 borderWidth: 1,
-                borderColor: THEME_COLOR.primaryDividerColor,
+                borderColor: THEME_COLOR.rowBorderColor,
               },
             ]}
             hitSlop={20}
@@ -263,13 +165,42 @@ const PdfTopSection = ({
               backgroundColor: 'transparent',
               padding: 2,
             }}
-            prefill={0}
-            // renderCap={({ center }) => <Circle cx={center.x} cy={center.y} r="10" fill="blue" />}
-          >
+            prefill={0}>
             {fill => <StyledProgressCountText>{fill}</StyledProgressCountText>}
           </AnimatedCircularProgress>
         )}
       </View>
+
+      <Modal
+        isVisible={openAssigneeModal}
+        hasBackdrop={true}
+        backdropColor={staticMenuColor.staticBackdrop}
+        backdropTransitionOutTiming={0}
+        hideModalContentWhileAnimating
+        onBackdropPress={() => setOpenAssigneeModal(false)}
+        animationIn="slideInUp"
+        animationOut="fadeOutDownBig"
+        deviceHeight={deviceSize.deviceHeight}
+        deviceWidth={deviceSize.deviceWidth}
+        animationInTiming={200}
+        animationOutTiming={300}
+        style={{
+          position: 'relative',
+          margin: 0,
+          padding: 0,
+          width: '100%',
+          height: '100%',
+        }}>
+        <StyledModalPdfAssignee layout={layout}>
+          <SelectAssigneePdfView
+            handleGenerateQAReportForAssignee={
+              handleGenerateQAReportForAssignee
+            }
+            onClose={() => setOpenAssigneeModal(false)}
+            selectedAssignee={selectedAssignee}
+          />
+        </StyledModalPdfAssignee>
+      </Modal>
     </StyledPdfTopSectionContainer>
   );
 };
@@ -281,7 +212,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 4,
+    borderRadius: 500,
     padding: 4,
   },
   sendBtn: {

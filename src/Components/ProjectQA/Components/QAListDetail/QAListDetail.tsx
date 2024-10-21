@@ -1,4 +1,4 @@
-import {StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
 import React from 'react';
 import {useRoute} from '@react-navigation/native';
 import useQAListDetailPage from './Hooks/useQAListDetailPage';

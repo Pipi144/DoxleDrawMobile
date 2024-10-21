@@ -5,7 +5,6 @@ import Animated, {
   Extrapolation,
   FadeInDown,
   FadeOutDown,
-  Layout,
   LinearTransition,
   interpolate,
   useAnimatedStyle,
@@ -21,17 +20,14 @@ import {
   StyledAssigneeSearchSectionContainer,
   StyledSearchAssigneeTextInputWrapper,
 } from './StyledComponentEditAssigneeModal';
+import useAssigneeSearchSection from './Hooks/useAssigneeSearchSection';
 import {
   IDOXLEThemeColor,
   useDOXLETheme,
-} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import useAssigneeSearchSection from '../../Hooks/useAssigneeSearchSection';
-import {
-  editRgbaAlpha,
-  TRgbaFormat,
-} from '../../../../../../../Utilities/FunctionUtilities';
-import DoxleAnimatedButton from '../../../../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
+} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {useOrientation} from '../../../../Providers/OrientationContext';
+import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
+import DoxleAnimatedButton from '../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
 
 type Props = {
   handleSearchTextChange: (text: string) => void;
@@ -44,7 +40,7 @@ const AssigneeSearchSection = ({
   showAddAssigneeForm,
   handleToggleAssigneeForm,
 }: Props) => {
-  const {THEME_COLOR, DOXLE_FONT, doxleFontSize} = useDOXLETheme();
+  const {THEME_COLOR, doxleFontSize} = useDOXLETheme();
   const {deviceType} = useOrientation();
   const {
     searchInput,
@@ -94,7 +90,7 @@ const AssigneeSearchSection = ({
             value={searchInput}
             placeholder="Search Assignee..."
             placeholderTextColor={editRgbaAlpha({
-              rgbaColor: THEME_COLOR.primaryFontColor as TRgbaFormat,
+              rgbaColor: THEME_COLOR.primaryFontColor,
               alpha: '0.4',
             })}
           />

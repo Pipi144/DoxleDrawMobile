@@ -42,20 +42,18 @@ const ZoomableGroup = ({children, stageState, ...props}: Props) => {
         width={'100%'}
         height={'100%'}
         xmlns="http://www.w3.org/2000/svg"
-        viewBox={`${stageState.minX} ${stageState.minY} ${stageState.width} ${stageState.height}`}
-        animatedProps={svgAnimatedProps}>
-        <SVGImage
-          href={require('../../../../assets/images/gridbg.png')}
-          width={stageState.width}
-          height={stageState.height}
-          x={stageState.minX}
-          y={stageState.minY}
-          animatedProps={imgBgAnimatedProps}
-        />
+        viewBox={`${stageState.minX} ${stageState.minY} ${stageState.width} ${stageState.height}`}>
         <SVGGroup
           stroke={'black'}
           strokeWidth={10}
           animatedProps={animatedProps}>
+          <SVGImage
+            href={require('../../../../assets/images/gridbg.png')}
+            x={stageState.minX}
+            y={stageState.minY}
+            width={stageState.width}
+            height={stageState.height}
+          />
           {children}
         </SVGGroup>
       </SVGWrapper>

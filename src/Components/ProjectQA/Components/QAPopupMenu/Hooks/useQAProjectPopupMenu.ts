@@ -14,7 +14,7 @@
 
 import {useShallow} from 'zustand/react/shallow';
 import {useProjectQAStore} from '../../../Store/useProjectQAStore';
-import {useAppModalHeaderStore} from '../../../../../../../../GeneralStore/useAppModalHeaderStore';
+import {useAppModalHeaderStore} from '../../../../../GeneralStore/useAppModalHeaderStore';
 
 const useQAProjectPopupMenu = () => {
   const {setShowAddQAListHeader} = useProjectQAStore(

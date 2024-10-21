@@ -2,12 +2,11 @@ import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 
 import {StyledPdfPageSkeleton} from './StyledComponentQAViewPdf';
-import {Skeleton} from 'native-base';
 
 import {FadeIn, FadeOut} from 'react-native-reanimated';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
-import {getFontSizeScale} from '../../../../../../../Utilities/FunctionUtilities';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {useOrientation} from '../../../../Providers/OrientationContext';
+import Skeleton from 'react-native-reanimated-skeleton';
 
 type Props = {};
 
@@ -16,80 +15,106 @@ const PdfPageSkeleton = (props: Props) => {
 
   const {deviceSize, deviceType} = useOrientation();
   return (
-    <StyledPdfPageSkeleton
-      $themeColor={THEME_COLOR}
-      entering={FadeIn}
-      exiting={FadeOut}
-      style={{marginBottom: deviceSize.insetBottom}}>
-      <Skeleton
-        borderRadius={8}
-        width="30%"
-        height={deviceType === 'Smartphone' ? 44 : 48}
-        startColor={THEME_COLOR.skeletonColor}
-        style={{marginBottom: 60}}
+    <Skeleton
+      containerStyle={{
+        marginBottom: deviceSize.insetBottom,
+        flex: 1,
+        display: 'flex',
+        width: '95%',
+        borderRadius: 8,
+        backgroundColor: THEME_COLOR.primaryContainerColor,
+        padding: 14,
+        overflow: 'hidden',
+      }}
+      isLoading={true}>
+      <Text
+        style={{
+          borderRadius: 8,
+          width: '30%',
+          height: deviceType === 'Smartphone' ? 44 : 48,
+          backgroundColor: THEME_COLOR.skeletonColor,
+          marginBottom: 60,
+        }}
+      />
+      <Text
+        style={{
+          borderRadius: 8,
+          width: '40%',
+          height: deviceType === 'Smartphone' ? 14 : 16,
+          backgroundColor: THEME_COLOR.skeletonColor,
+          marginBottom: 15,
+        }}
       />
 
-      <Skeleton
-        borderRadius={8}
-        width="40%"
-        height={deviceType === 'Smartphone' ? 14 : 16}
-        startColor={THEME_COLOR.skeletonColor}
-        mb="1.5"
-      />
-      <Skeleton
-        borderRadius={8}
-        width="50%"
-        height={deviceType === 'Smartphone' ? 14 : 16}
-        startColor={THEME_COLOR.skeletonColor}
-        mb="1.5"
-      />
-      <Skeleton
-        borderRadius={8}
-        width="60%"
-        height={deviceType === 'Smartphone' ? 14 : 16}
-        startColor={THEME_COLOR.skeletonColor}
-        marginBottom="32"
+      <Text
+        style={{
+          borderRadius: 8,
+          width: '50%',
+          height: deviceType === 'Smartphone' ? 14 : 16,
+          backgroundColor: THEME_COLOR.skeletonColor,
+          marginBottom: 15,
+        }}
       />
 
-      <Skeleton
-        borderRadius={8}
-        width="30%"
-        height={deviceType === 'Smartphone' ? 20 : 23}
-        startColor={THEME_COLOR.skeletonColor}
-        mb={2}
-      />
-      <Skeleton
-        borderRadius={8}
-        width="100%"
-        height={deviceType === 'Smartphone' ? 14 : 16}
-        alignSelf="center"
-        startColor={THEME_COLOR.skeletonColor}
-        mb="10"
+      <Text
+        style={{
+          borderRadius: 8,
+          width: '60%',
+          height: deviceType === 'Smartphone' ? 14 : 16,
+          backgroundColor: THEME_COLOR.skeletonColor,
+          marginBottom: 15,
+        }}
       />
 
-      <Skeleton
-        borderRadius={8}
-        width="100%"
-        height={deviceType === 'Smartphone' ? 14 : 16}
-        startColor={THEME_COLOR.skeletonColor}
-        mb={2}
+      <Text
+        style={{
+          borderRadius: 8,
+          width: '30%',
+          height: deviceType === 'Smartphone' ? 20 : 23,
+          backgroundColor: THEME_COLOR.skeletonColor,
+          marginBottom: 20,
+        }}
       />
 
-      <Skeleton
-        borderRadius={8}
-        width="90%"
-        height={deviceType === 'Smartphone' ? 14 : 16}
-        startColor={THEME_COLOR.skeletonColor}
-        mb={14}
+      <Text
+        style={{
+          borderRadius: 8,
+          width: '100%',
+          height: deviceType === 'Smartphone' ? 14 : 16,
+          backgroundColor: THEME_COLOR.skeletonColor,
+          marginBottom: 100,
+          alignSelf: 'center',
+        }}
       />
 
-      <Skeleton
-        borderRadius={8}
-        width="100%"
-        style={{flex: 1}}
-        startColor={THEME_COLOR.skeletonColor}
+      <Text
+        style={{
+          borderRadius: 8,
+          width: '100%',
+          height: deviceType === 'Smartphone' ? 14 : 16,
+          backgroundColor: THEME_COLOR.skeletonColor,
+          marginBottom: 20,
+        }}
       />
-    </StyledPdfPageSkeleton>
+
+      <Text
+        style={{
+          borderRadius: 8,
+          width: '90%',
+          height: deviceType === 'Smartphone' ? 14 : 16,
+          backgroundColor: THEME_COLOR.skeletonColor,
+          marginBottom: 140,
+        }}
+      />
+
+      <Text
+        style={{
+          borderRadius: 8,
+          width: '100%',
+          flex: 1,
+        }}
+      />
+    </Skeleton>
   );
 };
 

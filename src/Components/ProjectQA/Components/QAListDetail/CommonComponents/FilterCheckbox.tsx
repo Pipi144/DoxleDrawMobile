@@ -13,21 +13,21 @@
 // limitations under the License.
 import {View, Text} from 'react-native';
 import React from 'react';
-import BouncyCheckbox, {
-  IBouncyCheckboxProps,
-} from 'react-native-bouncy-checkbox';
-import {useDOXLETheme} from '../../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+
 import FeatherIcon from 'react-native-vector-icons/Feather';
-type Props = IBouncyCheckboxProps & {};
+import BouncyCheckbox, {
+  BouncyCheckboxProps,
+} from 'react-native-bouncy-checkbox';
+import {useDOXLETheme} from '../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+type Props = BouncyCheckboxProps & {};
 
 const FilterCheckbox = ({...props}: Props) => {
   const {staticMenuColor, DOXLE_FONT, doxleFontSize} = useDOXLETheme();
   return (
     <BouncyCheckbox
       {...props}
-      disableBuiltInState
       size={20}
-      unfillColor="transparent"
+      unFillColor="transparent"
       fillColor={staticMenuColor.staticWhiteFontColor}
       iconStyle={{
         borderWidth: 0,

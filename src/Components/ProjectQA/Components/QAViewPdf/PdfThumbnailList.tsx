@@ -1,68 +1,39 @@
-import {StyleSheet} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import PdfThumbnail from 'react-native-pdf-thumbnail';
 
 import Animated, {LinearTransition} from 'react-native-reanimated';
-
 import {StyledPdfThumbnailListContainer} from './StyledComponentQAViewPdf';
 import PDFThumbnailItem from './PDFThumbnailItem';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
-import {getFontSizeScale} from '../../../../../../../Utilities/FunctionUtilities';
 import {exists} from 'react-native-fs';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {useOrientation} from '../../../../Providers/OrientationContext';
+import usePdfThumbnailList, {
+  PDFThumbnailItemProp,
+} from './Hooks/usePdfThumbnailList';
 type Props = {
   pdfPath: string;
 
   currentViewedPage: number;
 };
-export interface PDFThumbnailItemProp {
-  uri: string;
-  width: number;
-  height: number;
-}
+
 const PdfThumbnailList: React.FC<Props> = ({
   pdfPath,
 
   currentViewedPage,
 }: Props) => {
-  const [thumnailList, setThumnailList] = useState<PDFThumbnailItemProp[]>([]);
-  const {THEME_COLOR} = useDOXLETheme();
+  const {isPortraitMode, deviceType} = useOrientation();
+  const {thumnailList, thumbListRef} = usePdfThumbnailList({
+    pdfPath,
 
-  const {deviceSize, isPortraitMode} = useOrientation();
-  const generateThumbnail = async () => {
-    try {
-      console.log('PDF PATH', pdfPath);
-      const resultCheck = await exists(pdfPath);
-      console.log('RESULT CHECK', resultCheck);
-      const result = await PdfThumbnail.generateAllPages(pdfPath);
-      if (result) {
-        setThumnailList([...result] as PDFThumbnailItemProp[]);
-      }
-    } catch (error) {
-      console.log('ERROR CREATE THUMBNAIL PDF', error);
-    }
-  };
-  useEffect(() => {
-    setThumnailList([]);
-    generateThumbnail();
-  }, [pdfPath]);
-  const thumbListRef = useRef<Animated.FlatList<PDFThumbnailItemProp>>(null);
-
-  useEffect(() => {
-    if (thumbListRef.current && thumnailList.length > 0) {
-      thumbListRef.current.scrollToIndex({
-        animated: true,
-        index: currentViewedPage,
-      });
-    }
-  }, [currentViewedPage, thumnailList]);
+    currentViewedPage,
+  });
   return (
     <Animated.View
       layout={LinearTransition.springify().damping(16)}
       style={
         isPortraitMode
           ? {
-              height: getFontSizeScale(120),
+              height: deviceType === 'Smartphone' ? 120 : 140,
               width: '100%',
               maxHeight: 160,
               display: 'flex',
@@ -70,7 +41,7 @@ const PdfThumbnailList: React.FC<Props> = ({
           : [
               {
                 height: '100%',
-                width: getFontSizeScale(120),
+                width: deviceType === 'Smartphone' ? 120 : 140,
                 maxWidth: 300,
                 display: 'flex',
                 position: 'relative',
@@ -84,7 +55,6 @@ const PdfThumbnailList: React.FC<Props> = ({
           height: '100%',
           width: '100%',
         }}
-        $themeColor={THEME_COLOR}
         horizontal={isPortraitMode ? true : false}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
@@ -115,16 +85,3 @@ const PdfThumbnailList: React.FC<Props> = ({
 };
 
 export default React.memo(PdfThumbnailList);
-const styles = StyleSheet.create({
-  expandBtn: {
-    position: 'absolute',
-    top: 14,
-    right: 4,
-
-    height: 60,
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
-  },
-});

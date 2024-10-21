@@ -9,9 +9,11 @@ import {
   readFile,
   writeFile,
   DocumentDirectoryPath,
+  read,
 } from 'react-native-fs';
 import {
   checkPathExist,
+  createLocalFolder,
   deleteFileSystemWithPath,
 } from '../../../Utilities/FunctionUtilities';
 import {
@@ -19,67 +21,45 @@ import {
   ExpiredProjectFile,
   ExpiredQAFile,
   ExpiredQAListFile,
+  IQAVideoUploadData,
   LocalQA,
   LocalQAImage,
   LocalQAImageStatus,
   LocalQAList,
   LocalQAProject,
   QAPendingUploadImageFile,
+  TQAVideoUploadStatus,
 } from './CacheQAType';
 import {Project} from '../../../Models/project';
 import {QA, QAList, QAMedia} from '../../../Models/qa';
-
-//! -----> LOCAL CORE PATH <-----
-//!root path to summary folder
-export const ROOT_LOCAL_QA_FOLDER_PATH = DocumentDirectoryPath + '/QA';
-
-export const EXPIRED_PROJECT_FILE_PATH =
-  ROOT_LOCAL_QA_FOLDER_PATH + '/expiredProject';
-
-export const EXPIRED_QA_LIST_FILE_PATH =
-  ROOT_LOCAL_QA_FOLDER_PATH + '/expiredQAList';
-
-export const EXPIRED_QA_FILE_PATH = ROOT_LOCAL_QA_FOLDER_PATH + '/expiredQA';
-
-export const DELETED_QA_IMAGE_FILE_PATH =
-  ROOT_LOCAL_QA_FOLDER_PATH + '/deletedQaImage';
-
-export const PATH_TO_TEMP_PDF_FOLDER = DocumentDirectoryPath + '/TempQA';
-
-export const PATH_TO_PENDING_UPLOAD_QA =
-  ROOT_LOCAL_QA_FOLDER_PATH + '/pendingUploadFile';
-
-export const PATH_TO_ERROR_UPLOAD_QA =
-  ROOT_LOCAL_QA_FOLDER_PATH + '/pendingErrorFile';
-
-export const PATH_TO_PENDING_DELETE_QA =
-  ROOT_LOCAL_QA_FOLDER_PATH + '/pendingDeleteFile';
-//!------>
-
-//*create a folder with a given path
-export const createFolder = async (dirPath: string) => {
-  try {
-    await mkdir(dirPath, {
-      NSURLIsExcludedFromBackupKey: Platform.OS === 'ios' ? false : undefined,
-    });
-    console.log('CREATED PATH:', dirPath);
-    return true;
-  } catch (error) {
-    console.error('FAILED in createFolder:', error);
-    return false;
-  }
-};
+import {
+  DELETED_QA_IMAGE_FILE_PATH,
+  EXPIRED_PROJECT_FILE_PATH,
+  EXPIRED_QA_FILE_PATH,
+  EXPIRED_QA_LIST_FILE_PATH,
+  PATH_TO_ERROR_UPLOAD_QA,
+  PATH_TO_PENDING_DELETE_QA,
+  PATH_TO_PENDING_UPLOAD_QA,
+  ROOT_LOCAL_QA_FOLDER_PATH,
+  ROOT_LOCAL_QA_IMAGE_FOLDER_PATH,
+  ROOT_QA_ALL_VIDEO_FOLDER,
+  ROOT_QA_CACHE_VIDEO_FOLDER_PATH,
+  ROOT_QA_PENDING_VIDEO_INFO_FILE,
+} from './QAFileDirPath';
 
 //* create root summary folder, get called when first initialize the provider
 export const createRootQAFolder = async () => {
   try {
     const isExistedDefectPhotoFolder: boolean = await checkPathExist(
-      ROOT_LOCAL_QA_FOLDER_PATH,
+      ROOT_LOCAL_QA_IMAGE_FOLDER_PATH,
     );
     if (!isExistedDefectPhotoFolder)
-      return await createFolder(ROOT_LOCAL_QA_FOLDER_PATH);
+      return await createLocalFolder(ROOT_LOCAL_QA_IMAGE_FOLDER_PATH);
     else
-      console.log('ALREADY CREATED ROOT QA FOLDER', ROOT_LOCAL_QA_FOLDER_PATH);
+      console.log(
+        'ALREADY CREATED ROOT QA FOLDER',
+        ROOT_LOCAL_QA_IMAGE_FOLDER_PATH,
+      );
     await createExpiredCollectorFiles();
   } catch (error) {
     console.error('FAILED createRootQAFolder:', error);
@@ -93,7 +73,7 @@ export const createExpiredCollectorFiles = async () => {
     const expiredProjectFile: ExpiredProjectFile = [];
     const expiredQaListFile: ExpiredQAListFile = [];
     // create project expired folder
-    if (!(await checkPathExist(ROOT_LOCAL_QA_FOLDER_PATH)))
+    if (!(await checkPathExist(ROOT_LOCAL_QA_IMAGE_FOLDER_PATH)))
       await createRootQAFolder();
     await writeFile(
       EXPIRED_PROJECT_FILE_PATH,
@@ -108,7 +88,7 @@ export const createExpiredCollectorFiles = async () => {
 //----> QA Project
 //* get path to project folder
 export const getPathToQAProjectFolder = (projectId: string) => {
-  return ROOT_LOCAL_QA_FOLDER_PATH + `/${projectId}`;
+  return ROOT_LOCAL_QA_IMAGE_FOLDER_PATH + `/${projectId}`;
 };
 
 //* handle create qa project folder
@@ -116,7 +96,9 @@ export const handleCreateQAProjectFolder = async (project: Project) => {
   try {
     const pathToProjectFolder = getPathToQAProjectFolder(project.projectId);
 
-    const resultCreateProjectFolder = await createFolder(pathToProjectFolder);
+    const resultCreateProjectFolder = await createLocalFolder(
+      pathToProjectFolder,
+    );
 
     //! only create projectInfo if create project folder is success
     if (resultCreateProjectFolder) {
@@ -195,9 +177,9 @@ export const getExpiredProjectFile = async (): Promise<ExpiredProjectFile> => {
 export const handleCollectExpiredProjectFolder = async () => {
   try {
     // only proceed further if the qa folder is exist
-    if (!(await checkPathExist(ROOT_LOCAL_QA_FOLDER_PATH))) return;
+    if (!(await checkPathExist(ROOT_LOCAL_QA_IMAGE_FOLDER_PATH))) return;
     const localQAFolderData: ReadDirItem[] = await readDir(
-      ROOT_LOCAL_QA_FOLDER_PATH,
+      ROOT_LOCAL_QA_IMAGE_FOLDER_PATH,
     );
     const currentTime = new Date().getTime() / 1000;
     let expiredProject: ExpiredProjectFile = [];
@@ -379,7 +361,9 @@ export const handleSaveQAListInfo = async (qaList: QAList) => {
 export const handleCreateQAListFolder = async (qaList: QAList) => {
   try {
     const pathToQaListFolder = getPathToQaListFolder(qaList); //form path to qa list folder
-    const resultCreateQAListFolder = await createFolder(pathToQaListFolder); //create qa list folder
+    const resultCreateQAListFolder = await createLocalFolder(
+      pathToQaListFolder,
+    ); //create qa list folder
 
     //save qa list info if create successfully
     if (resultCreateQAListFolder) handleSaveQAListInfo(qaList);
@@ -507,7 +491,7 @@ export const getExpiredQAFile = async (): Promise<ExpiredQAFile> => {
 export const handleCreateQAFolder = async (qa: QA) => {
   try {
     const pathToQaFolder = getPathToQaFolder(qa); //form path to qa folder
-    const resultCreateQAFolder = await createFolder(pathToQaFolder); //create qa folder
+    const resultCreateQAFolder = await createLocalFolder(pathToQaFolder); //create qa folder
 
     //save qa info if create successfully
     if (resultCreateQAFolder) handleSaveQAInfo(qa);
@@ -872,3 +856,79 @@ export const handleSaveDeletePendingQAImageFile = async (
     console.log('ERROR handleSaveDeletePendingQAImageFile:', error);
   }
 };
+
+export const getQAPendingVideoListFile = async (
+  status?: TQAVideoUploadStatus[],
+): Promise<IQAVideoUploadData[]> => {
+  try {
+    if (!(await checkPathExist(ROOT_QA_CACHE_VIDEO_FOLDER_PATH))) {
+      await createLocalFolder(ROOT_QA_CACHE_VIDEO_FOLDER_PATH);
+      return [];
+    }
+    if (!(await checkPathExist(ROOT_QA_PENDING_VIDEO_INFO_FILE))) return [];
+    const videoListFile = JSON.parse(
+      await readFile(ROOT_QA_PENDING_VIDEO_INFO_FILE),
+    ) as IQAVideoUploadData[];
+
+    return videoListFile.filter(item =>
+      status ? status.includes(item.status) : item,
+    );
+  } catch (error) {
+    console.log('ERROR getQAPendingVideoListFile:', error);
+
+    return [];
+  }
+};
+
+export const saveQAPendingVideoListDetail = async (
+  list: IQAVideoUploadData[],
+) => {
+  try {
+    if (!(await checkPathExist(ROOT_QA_CACHE_VIDEO_FOLDER_PATH)))
+      await createLocalFolder(ROOT_QA_CACHE_VIDEO_FOLDER_PATH);
+    await writeFile(ROOT_QA_PENDING_VIDEO_INFO_FILE, JSON.stringify(list));
+  } catch (error) {
+    console.log('FAILED saveQAPendingVideoListDetail:', error);
+    return false;
+  }
+};
+
+export const getQACacheVideoListFile = async (): Promise<
+  IQAVideoUploadData[]
+> => {
+  try {
+    if (!(await checkPathExist(ROOT_QA_CACHE_VIDEO_FOLDER_PATH))) {
+      await createLocalFolder(ROOT_QA_CACHE_VIDEO_FOLDER_PATH);
+      return [];
+    }
+    if (!(await checkPathExist(ROOT_QA_ALL_VIDEO_FOLDER))) return [];
+    const videoListFile = JSON.parse(
+      await readFile(ROOT_QA_ALL_VIDEO_FOLDER),
+    ) as IQAVideoUploadData[];
+    // console.log('EXPIRED PROJECT FILE:', expiredProjectFile);
+
+    return videoListFile;
+  } catch (error) {
+    console.log('ERROR getQACacheVideoListFile:', error);
+
+    return [];
+  }
+};
+
+export const saveQACacheVideoListFile = async (list: IQAVideoUploadData[]) => {
+  try {
+    if (!(await checkPathExist(ROOT_QA_CACHE_VIDEO_FOLDER_PATH)))
+      await createLocalFolder(ROOT_QA_CACHE_VIDEO_FOLDER_PATH);
+    await writeFile(ROOT_QA_ALL_VIDEO_FOLDER, JSON.stringify(list));
+  } catch (error) {
+    console.log('FAILED saveQACacheVideoListFile:', error);
+    return false;
+  }
+};
+
+export function extractVideoItemsWithType<T>(
+  data: IQAVideoUploadData<any>[],
+  typeChecker: (item: any) => item is T,
+): IQAVideoUploadData<T>[] {
+  return data.filter(item => item.hostItem && typeChecker(item.hostItem));
+}

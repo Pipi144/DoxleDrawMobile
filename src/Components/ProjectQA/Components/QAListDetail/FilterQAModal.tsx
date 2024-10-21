@@ -14,8 +14,6 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React, {useCallback, useMemo} from 'react';
 import Modal from 'react-native-modal/dist/modal';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
 import {
   StyledFilterQAFieldWrapper,
   StyledFilterQALabelText,
@@ -33,18 +31,24 @@ import Animated, {
 } from 'react-native-reanimated';
 import FilterCheckbox from './CommonComponents/FilterCheckbox';
 import useFilterQAModal from './Hooks/useFilterQAModal';
-import {QAList} from '../../../../../../../Models/qa';
 import FeatherIcon from 'react-native-vector-icons/Feather';
-import {editRgbaAlpha} from '../../../../../../../Utilities/FunctionUtilities';
+
 import {Pressable} from 'react-native';
-import DoxleEmptyPlaceholder from '../../../../../../DesignPattern/DoxleEmptyPlaceholder/DoxleEmptyPlaceholder';
-import {Contact} from '../../../../../../../Models/contacts';
+
 import AssigneeFilterItem from './AssigneeFilterItem';
-import ListLoadingMoreBottom from '../../../../../../../Utilities/AnimationScreens/ListLoadingMoreBottom/ListLoadingMoreBottom';
+
 import {FlatList} from 'react-native-gesture-handler';
-import DoxleAnimatedButton from '../../../../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
-import {IProjectFloor} from '../../../../../../../Models/location';
+
 import FloorFilterItem from './FloorFilterItem';
+import {QAList} from '../../../../Models/qa';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {useOrientation} from '../../../../Providers/OrientationContext';
+import DoxleEmptyPlaceholder from '../../../DesignPattern/DoxleEmptyPlaceholder/DoxleEmptyPlaceholder';
+import {Contact} from '../../../../Models/contacts';
+import {IProjectFloor} from '../../../../Models/location';
+import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
+import ListLoadingMoreBottom from '../../../../Utilities/AnimationScreens/ListLoadingMoreBottom/ListLoadingMoreBottom';
+import DoxleAnimatedButton from '../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
 type Props = {
   showModal: boolean;
   closeModal: () => void;

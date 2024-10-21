@@ -10,21 +10,18 @@ import Animated, {
   FadeOut,
   LinearTransition,
 } from 'react-native-reanimated';
-
 import QADetailEditDueDate from './QADetailEditDueDate';
 import QADetailEditAssignee from './QADetailEditAssignee';
 import QADetailEditComment from './QADetailEditComment';
-import QAImageMenuSection from '../QAImage/QAImageMenuSection';
-
+import QAImageMenuSection from './QAImageMenuSection';
 import {ActivityIndicator} from 'react-native-paper';
-import {QA, TQAStatus} from '../../../../../../../Models/qa';
-import {TDateISODate} from '../../../../../../../Models/dateFormat';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
 import QADetailEditStatus from './QADetailEditStatus';
 import QADetailEditDescription from './QADetailEditDescription';
 import QADetailEditRoom from './QADetailEditRoom';
 import QADetailEditFloor from './QADetailEditFloor';
+import {QA, TQAStatus} from '../../../../Models/qa';
+import {TDateISODate} from '../../../../Models/dateFormat';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
 
 type Props = {
   edittedQA: QA;
@@ -54,7 +51,6 @@ const QADetailHeader: React.FC<Props> = ({
   mode = 'full',
 }: Props) => {
   const {THEME_COLOR, doxleFontSize} = useDOXLETheme();
-  const {deviceType} = useOrientation();
   return (
     <StyledQADetailHeader>
       {mode === 'full' && (

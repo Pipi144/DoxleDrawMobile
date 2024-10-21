@@ -1,6 +1,7 @@
 import {Platform, StyleSheet} from 'react-native';
 import React, {
   createContext,
+  PropsWithChildren,
   useCallback,
   useContext,
   useEffect,
@@ -21,11 +22,6 @@ import {
 } from './CacheQAType';
 
 import {
-  DELETED_QA_IMAGE_FILE_PATH,
-  EXPIRED_QA_FILE_PATH,
-  EXPIRED_QA_LIST_FILE_PATH,
-  PATH_TO_TEMP_PDF_FOLDER,
-  createFolder,
   createRootQAFolder,
   getDeletedQAImageFolder,
   getExpiredProjectFile,
@@ -60,14 +56,10 @@ import {
   handleDownloadQAThumbImage,
   generatePathToQaItemThumbnailWithQAImg,
   generatePathToQaItemThumbnail,
-  ROOT_LOCAL_QA_FOLDER_PATH,
   generatePathToQaImageThumbnailFile,
 } from './CacheQAHelperFunctions';
 
-import {
-  PATH_TO_PENDING_UPLOAD_QA,
-  getLocalQAImageInfo,
-} from './CacheQAHelperFunctions';
+import {getLocalQAImageInfo} from './CacheQAHelperFunctions';
 
 import {
   copyFile,
@@ -101,9 +93,18 @@ import QAQueryAPI, {
 } from '../../../API/qaQueryAPI';
 import {
   checkPathExist,
+  createLocalFolder,
   deleteFileSystemWithPath,
 } from '../../../Utilities/FunctionUtilities';
 import {produce} from 'immer';
+import {
+  DELETED_QA_IMAGE_FILE_PATH,
+  EXPIRED_QA_FILE_PATH,
+  EXPIRED_QA_LIST_FILE_PATH,
+  PATH_TO_PENDING_UPLOAD_QA,
+  PATH_TO_TEMP_PDF_FOLDER,
+} from './QAFileDirPath';
+import CacheQAVideoProvider from './CacheQAVideoProvider';
 
 interface CacheQAContextValue {
   handleCachingQAProject: (project: Project) => Promise<void>;
@@ -220,7 +221,7 @@ interface CacheQAContextValue {
 
 const CacheQAContext = createContext<CacheQAContextValue | null>(null);
 
-const CacheQAProvider = (children: any) => {
+const CacheQAProvider = ({children, ...rest}: PropsWithChildren) => {
   const [storageInfo, setstorageInfo] = useState<IStorageInfo | undefined>(
     undefined,
   );
@@ -239,7 +240,7 @@ const CacheQAProvider = (children: any) => {
 
     // //!THIS ONE IS TO CLEAR CACHE THE FIRST TIME WHEN UPDATING TO THE NEW VERSION
     // checkCacheClearForNewUpdate();
-    // deleteFileSystemWithPath(ROOT_LOCAL_QA_FOLDER_PATH);
+    // deleteFileSystemWithPath(ROOT_LOCAL_QA_IMAGE_FOLDER_PATH);
   }, []);
 
   //### HELPER FUNCTIONS ###
@@ -501,7 +502,8 @@ const CacheQAProvider = (children: any) => {
     }) => {
       try {
         const pathToQAList = getPathToQaListFolder(props.qaList);
-        if (!(await checkPathExist(pathToQAList))) createFolder(pathToQAList);
+        if (!(await checkPathExist(pathToQAList)))
+          createLocalFolder(pathToQAList);
         const pathToQaListSignature = getPathToQaListSignatureFile(
           props.qaList,
         );
@@ -546,7 +548,7 @@ const CacheQAProvider = (children: any) => {
       try {
         const pathToQAListFolder = getPathToQaListFolder(qaList);
         if (!(await checkPathExist(pathToQAListFolder)))
-          createFolder(pathToQAListFolder);
+          createLocalFolder(pathToQAListFolder);
         const pathToQAListPdfFile = getBasePathToQaListPdfFile(qaList);
         const resultDownload = await downloadFile({
           fromUrl: pdfUrl,
@@ -824,7 +826,7 @@ const CacheQAProvider = (children: any) => {
         const pathToQaFolder = getPathToQaFolder(qa);
         // qa folder not existed return empty array
         if (!(await checkPathExist(pathToQaFolder))) {
-          await createFolder(pathToQaFolder);
+          await createLocalFolder(pathToQaFolder);
           return undefined;
         }
         // get the thumbnail path of qa item
@@ -904,7 +906,7 @@ const CacheQAProvider = (children: any) => {
       const pathToQaFolder = getPathToQaFolder(qa);
       // qa folder not existed return empty array
       if (!(await checkPathExist(pathToQaFolder))) {
-        await createFolder(pathToQaFolder);
+        await createLocalFolder(pathToQaFolder);
         return;
       }
       const pendingFiles = uploadPendingFiles.filter(
@@ -930,7 +932,7 @@ const CacheQAProvider = (children: any) => {
       if (qa.firstImage) {
         const pathToQaFolder = getPathToQaFolder(qa);
         if (!(await checkPathExist(pathToQaFolder))) {
-          await createFolder(pathToQaFolder);
+          await createLocalFolder(pathToQaFolder);
         }
         console.log(
           'QA THUMBNAIL NOT FOUND, TRIGGER DOWNLOAD THUMBNAIL FOR QA',
@@ -979,7 +981,7 @@ const CacheQAProvider = (children: any) => {
         const pathToQAImageInfo = getPathToQaImageInfoFile(qaImage);
         const pathToQAImageFile = getPathToQaImageFile(qaImage);
         if (!(await checkPathExist(pathToQAImageFolder)))
-          await createFolder(pathToQAImageFolder);
+          await createLocalFolder(pathToQAImageFolder);
 
         // if image info and image file exist => dont need to download and add to the final downloaded list
         if (
@@ -1042,7 +1044,7 @@ const CacheQAProvider = (children: any) => {
       const pathToQAImageFile = getPathToQaImageFile(qaImage);
       const pathToThumbImgFile = await getPathToQaImageThumbnailFile(qaImage);
       if (!(await checkPathExist(pathToQAImageFolder)))
-        await createFolder(pathToQAImageFolder);
+        await createLocalFolder(pathToQAImageFolder);
 
       // if image info and image file exist => dont need to download and add to the final downloaded list
       if (
@@ -1230,7 +1232,7 @@ const CacheQAProvider = (children: any) => {
             generatePathToQaImageThumbnailFile(newQaImage);
 
           // create qa image folder first
-          await createFolder(pathToQAImageFolder);
+          await createLocalFolder(pathToQAImageFolder);
 
           //*copy the file to thumbnail part
           await copyFile(newQaImage.imagePath, pathToQAImageThumbFile);
@@ -1303,7 +1305,7 @@ const CacheQAProvider = (children: any) => {
         const pathToQAImageFile = getPathToQaImageFile(newQaImage);
 
         // create qa image folder first
-        await createFolder(pathToQAImageFolder);
+        await createLocalFolder(pathToQAImageFolder);
         if (await checkPathExist(newQaImage.imagePath)) {
           await moveFile(newQaImage.imagePath, pathToQAImageFile);
           const savedQAImage: LocalQAImage = {
@@ -1676,7 +1678,7 @@ const CacheQAProvider = (children: any) => {
     console.log('NAME FILE PDF:', nameFile);
     try {
       if (!(await checkPathExist(PATH_TO_TEMP_PDF_FOLDER)))
-        await createFolder(PATH_TO_TEMP_PDF_FOLDER);
+        await createLocalFolder(PATH_TO_TEMP_PDF_FOLDER);
 
       const pathToTempQaPdf = PATH_TO_TEMP_PDF_FOLDER + `/${nameFile}`;
 
@@ -1843,7 +1845,11 @@ const CacheQAProvider = (children: any) => {
       handleSyncQAImageThumb,
     ],
   );
-  return <CacheQAContext.Provider {...children} value={cacheQAContext} />;
+  return (
+    <CacheQAContext.Provider value={cacheQAContext}>
+      <CacheQAVideoProvider>{children}</CacheQAVideoProvider>
+    </CacheQAContext.Provider>
+  );
 };
 export const useCacheQAContext = () =>
   useContext(CacheQAContext) as CacheQAContextValue;

@@ -7,18 +7,16 @@ import {
   StyledQAListEditDueDateContainer,
   StyledQAListEditLabelText,
 } from './StyledComponentQAListEdit';
-import {Layout, LinearTransition} from 'react-native-reanimated';
-
+import {LinearTransition} from 'react-native-reanimated';
 import {ActivityIndicator} from 'react-native-paper';
-
 import {DatePickerModal} from 'react-native-paper-dates';
-import {TDateISODate} from '../../../../../../../Models/dateFormat';
-import {QAList} from '../../../../../../../Models/qa';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import useQAListEditDueDate from '../../Hooks/useQAListEditDueDate';
-import {DatePickerButtonIcon} from '../../../../../../../RootAppIcons';
-import {formatDate} from '../../../../../../../Utilities/FunctionUtilities';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
+
+import useQAListEditDueDate from './Hooks/useQAListEditDueDate';
+import {TDateISODate} from '../../../../Models/dateFormat';
+import {QAList} from '../../../../Models/qa';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {formatDate} from '../../../../Utilities/FunctionUtilities';
+import {QADatePickerIcon} from '../QAIcons';
 
 type Props = {
   handleQAListDueDateChange: (newDate: TDateISODate | null) => void;
@@ -30,7 +28,6 @@ const QAListEditDueDate = ({
   edittedQAList,
 }: Props) => {
   const {THEME_COLOR, doxleFontSize} = useDOXLETheme();
-  const {deviceType} = useOrientation();
   const {
     handleShowDatePicker,
     handleCloseDatePicker,
@@ -61,7 +58,7 @@ const QAListEditDueDate = ({
             color={THEME_COLOR.primaryFontColor}
           />
         ) : (
-          <DatePickerButtonIcon {...THEME_COLOR} />
+          <QADatePickerIcon {...THEME_COLOR} />
         )}
       </StyledQAListDueDateDisplay>
 

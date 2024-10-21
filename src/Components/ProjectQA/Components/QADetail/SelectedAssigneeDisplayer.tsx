@@ -9,13 +9,11 @@ import {
 import {
   FadeInLeft,
   FadeOutLeft,
-  Layout,
   LinearTransition,
 } from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import DoxleAnimatedButton from '../../../../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import DoxleAnimatedButton from '../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
 
 type Props = {};
 

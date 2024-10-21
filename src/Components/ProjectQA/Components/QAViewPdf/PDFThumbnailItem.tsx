@@ -1,7 +1,5 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useRef} from 'react';
-
-import {PDFThumbnailItemProp} from './PdfThumbnailList';
 import {
   SharedValue,
   interpolate,
@@ -13,9 +11,10 @@ import {
   StyledImageThumnail,
   StyledThumbnailItemContainer,
 } from './StyledComponentQAViewPdf';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
 import {useQAViewPDFContext} from './QAViewPDF';
+import {PDFThumbnailItemProp} from './Hooks/usePdfThumbnailList';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {useOrientation} from '../../../../Providers/OrientationContext';
 
 type Props = {
   item: PDFThumbnailItemProp;
@@ -59,7 +58,6 @@ const PDFThumbnailItem: React.FC<Props> = ({
   return (
     <StyledThumbnailItemContainer
       $isPortraitMode={isPortraitMode}
-      $themeColor={THEME_COLOR}
       onPress={() => pdfViewerRef.current?.setPage(index + 1)}>
       <StyledImageThumnail
         style={[thumnailAnimatedStyle]}

@@ -1,6 +1,6 @@
-import {Contact} from '../../../../../../Models/contacts';
-import {QA, QAList, TQAStatus} from '../../../../../../Models/qa';
-import {AnnotationQAImage} from '../Hooks/useQAImageList';
+import {Contact} from '../../../Models/contacts';
+import {QA, QAList, TQAStatus} from '../../../Models/qa';
+import {AnnotationQAImage} from '../Components/QADetail/Hooks/useQAImageList';
 
 export type TQAStackName =
   | 'RootQA'

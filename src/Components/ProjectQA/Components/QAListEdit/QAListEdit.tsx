@@ -1,22 +1,18 @@
 import {StyleSheet, View} from 'react-native';
 import React from 'react';
-
 import {useRoute} from '@react-navigation/native';
-
 import {LinearTransition} from 'react-native-reanimated';
-import {
-  IDOXLEThemeColor,
-  useDOXLETheme,
-} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import useQAListEditPage from '../../Hooks/useQAListEditPage';
+import useQAListEditPage from './Hooks/useQAListEditPage';
 import {StyledQAListEditPage} from './StyledComponentQAListEdit';
 import QAListEditTitle from './QAListEditTitle';
 import QAListEditDueDate from './QAListEditDueDate';
 import QAListEditAssignee from './QAListEditAssignee';
-import QATopNavSection from '../QATopNavSection';
-import {QAEditListBanner} from '../../../../ProjectIcons';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
 import {TQATabStack} from '../../Routes/QARouteType';
+import {
+  IDOXLEThemeColor,
+  useDOXLETheme,
+} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {QAEditListBanner} from '../QAIcons';
 
 type Props = {
   navigation: any;
@@ -25,17 +21,16 @@ type Props = {
 const QAListEdit = ({navigation}: Props) => {
   const route = useRoute();
   const {qaList} = route.params as TQATabStack['QAListEdit'];
-  const {THEME_COLOR, DOXLE_FONT} = useDOXLETheme();
+  const {THEME_COLOR} = useDOXLETheme();
   const {
     handleQAListTitleChange,
     edittedQAList,
     handleQAListDueDateChange,
     handleQAListAssigneeChange,
   } = useQAListEditPage({qaList});
-  const {deviceType} = useOrientation();
+
   return (
     <View style={styles(THEME_COLOR).rootContainer}>
-      <QATopNavSection />
       <StyledQAListEditPage
         layout={LinearTransition.springify().damping(16)}
         automaticallyAdjustKeyboardInsets

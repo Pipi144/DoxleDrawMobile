@@ -5,16 +5,16 @@ import QAItemListSkeleton from './QAItemListSkeleton';
 import Animated, {LinearTransition} from 'react-native-reanimated';
 
 import QAItem from './QAItem';
-
-import {QA, QAList, QAWithFirstImg} from '../../../../../../../Models/qa';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import DoxleEmptyPlaceholder from '../../../../../../DesignPattern/DoxleEmptyPlaceholder/DoxleEmptyPlaceholder';
-import ListLoadingMoreBottom from '../../../../../../../Utilities/AnimationScreens/ListLoadingMoreBottom/ListLoadingMoreBottom';
 import {StyledQAItemListContainer} from './StyledComponentsQAListDetail';
-import {ErrorFetchingBanner} from '../../../../../../../RootAppIcons';
-import {EmptyQAItemListBanner} from '../../../../ProjectIcons';
+
 import QAGridItem from './QAGridItem';
-import useQAItemList from '../../Hooks/useQAItemList';
+import useQAItemList from './Hooks/useQAItemList';
+import {QA, QAList, QAWithFirstImg} from '../../../../Models/qa';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import DoxleEmptyPlaceholder from '../../../DesignPattern/DoxleEmptyPlaceholder/DoxleEmptyPlaceholder';
+import {ErrorFetchingBanner} from '../../../DesignPattern/DoxleBanners';
+import {EmptyQAItemListBanner} from '../QAIcons';
+import ListLoadingMoreBottom from '../../../../Utilities/AnimationScreens/ListLoadingMoreBottom/ListLoadingMoreBottom';
 
 type Props = {
   qaListItem: QAList;

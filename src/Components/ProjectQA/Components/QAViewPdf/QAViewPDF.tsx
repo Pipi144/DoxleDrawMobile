@@ -6,8 +6,7 @@ import {ActivityIndicator} from 'react-native-paper';
 import {useRoute} from '@react-navigation/native';
 
 import {LinearTransition} from 'react-native-reanimated';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import useQAViewPDFPage from '../../Hooks/useQAViewPDFPage';
+import useQAViewPDFPage from './Hooks/useQAViewPDFPage';
 import {
   StyledPDFContentWrapper,
   StyledPdfWrapper,
@@ -15,13 +14,14 @@ import {
 } from './StyledComponentQAViewPdf';
 import UploadingPrompt from './UploadingPrompt';
 import PdfTopSection from './PdfTopSection';
-import ListLoadingMoreBottom from '../../../../../../../Utilities/AnimationScreens/ListLoadingMoreBottom/ListLoadingMoreBottom';
 import PdfThumbnailList from './PdfThumbnailList';
 import PdfPageSkeleton from './PdfPageSkeleton';
-import QATopNavSection from '../QATopNavSection';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
-import DoxleEmptyPlaceholder from '../../../../../../DesignPattern/DoxleEmptyPlaceholder/DoxleEmptyPlaceholder';
+
 import {TQATabStack} from '../../Routes/QARouteType';
+import {useOrientation} from '../../../../Providers/OrientationContext';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import DoxleEmptyPlaceholder from '../../../DesignPattern/DoxleEmptyPlaceholder/DoxleEmptyPlaceholder';
+import ListLoadingMoreBottom from '../../../../Utilities/AnimationScreens/ListLoadingMoreBottom/ListLoadingMoreBottom';
 
 type Props = {
   navigation: any;
@@ -86,10 +86,6 @@ const QAViewPDF = (props: Props) => {
   return (
     <QAViewPDFContext.Provider value={contextValue}>
       <StyledQAViewPDFPageContainer>
-        <View style={styles.navWrapper}>
-          <QATopNavSection />
-        </View>
-
         {showPromtPendingUpload && (
           <UploadingPrompt
             initialCountUploadItemsInProgress={

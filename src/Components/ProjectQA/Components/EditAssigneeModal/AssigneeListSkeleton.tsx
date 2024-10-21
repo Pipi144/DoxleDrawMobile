@@ -1,14 +1,13 @@
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import {Skeleton} from 'native-base';
-import {getFontSizeScale} from '../../../../../../../Utilities/FunctionUtilities';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import Skeleton from 'react-native-reanimated-skeleton';
 
 type Props = {};
 
 const AssigneeListSkeleton = (props: Props) => {
   const array: string[] = Array(20).fill('skelAssignee');
-  const {theme, THEME_COLOR} = useDOXLETheme();
+  const {THEME_COLOR} = useDOXLETheme();
   return (
     <FlatList
       contentContainerStyle={{justifyContent: 'center', flexGrow: 1}}
@@ -17,13 +16,14 @@ const AssigneeListSkeleton = (props: Props) => {
       showsVerticalScrollIndicator={false}
       renderItem={({item, index}) => (
         <Skeleton
-          rounded="full"
-          width="90%"
-          height={getFontSizeScale(4)}
-          startColor={THEME_COLOR.skeletonColor}
-          marginY={2}
-          marginX={4}
-        />
+          containerStyle={{
+            width: '90%',
+            marginVertical: 2,
+            marginHorizontal: 4,
+          }}
+          isLoading={true}>
+          <Text style={{width: '100%', height: 14}} />
+        </Skeleton>
       )}
       keyExtractor={(item, index) => `${item}#${index}`}
     />

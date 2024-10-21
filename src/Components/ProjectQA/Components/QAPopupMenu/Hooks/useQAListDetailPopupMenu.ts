@@ -13,21 +13,16 @@
 // limitations under the License.
 import {useProjectQAStore} from '../../../Store/useProjectQAStore';
 import {useShallow} from 'zustand/react/shallow';
-import {useCompany} from '../../../../../../../../Providers/CompanyProvider';
-import {
-  NEW_QA_ITEM_TEMPLATE,
-  QA,
-  QAList,
-} from '../../../../../../../../Models/qa';
-import {useAppModalHeaderStore} from '../../../../../../../../GeneralStore/useAppModalHeaderStore';
-import {useCacheQAContext} from '../../../../../../../../Providers/CacheQAProvider/CacheQAProvider';
-import {useAuth} from '../../../../../../../../Providers/AuthProvider';
-import {useNotification} from '../../../../../../../../Providers/NotificationProvider';
-import useSetQAListDetailQueryData from '../../../../../../../../CustomHooks/SetQueryDataHooks/useSetQAListDetailQueryData';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {TQATabStack} from '../../../Routes/QARouteType';
-import QAQueryAPI from '../../../../../../../../service/DoxleAPI/QueryHookAPI/qaQueryAPI';
+import {useCompany} from '../../../../../Providers/CompanyProvider';
+import {useAuth} from '../../../../../Providers/AuthProvider';
+import {useNotification} from '../../../../../Providers/NotificationProvider';
+import {NEW_QA_ITEM_TEMPLATE, QA, QAList} from '../../../../../Models/qa';
+import {useAppModalHeaderStore} from '../../../../../GeneralStore/useAppModalHeaderStore';
+import useSetQAListDetailQueryData from '../../../../../CustomHooks/QueryDataHooks/useSetQAListDetailQueryData';
+import QAQueryAPI from '../../../../../API/qaQueryAPI';
 
 type Props = {qaList: QAList};
 
@@ -50,18 +45,20 @@ const useQAListDetailPopupMenu = ({qaList}: Props) => {
     );
   const {
     handleUpdateQAListDetailQueryData,
-    qaListDetailQueryData,
+    getQAListDetailQueryData,
     refetchQAListDetailQueryData,
   } = useSetQAListDetailQueryData({qaListId: qaList.defectListId});
   const navigation = useNavigation<StackNavigationProp<TQATabStack>>();
   const onAddSuccess = (newQA?: QA) => {
-    //update the count of qa list item
-    if (qaListDetailQueryData) {
-      handleUpdateQAListDetailQueryData({
-        unattendedCount: qaListDetailQueryData.unattendedCount + 1,
-      });
-    } else refetchQAListDetailQueryData();
     if (newQA) {
+      const qaListDetailQueryData = getQAListDetailQueryData(newQA.defectList);
+      //update the count of qa list item
+      if (qaListDetailQueryData) {
+        handleUpdateQAListDetailQueryData({
+          defectListId: newQA.defectList,
+          unattendedCount: qaListDetailQueryData.unattendedCount + 1,
+        });
+      } else refetchQAListDetailQueryData(newQA.defectList);
       setTimeout(() => {
         navigation.navigate('QAItemDetails', {
           qaItem: newQA,

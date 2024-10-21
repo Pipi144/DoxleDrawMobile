@@ -1,17 +1,38 @@
 import Animated from 'react-native-reanimated';
 import styled from 'styled-components/native';
-import {
-  editRgbaAlpha,
-  TRgbaFormat,
-} from '../../../../../../../Utilities/FunctionUtilities';
 import {Pressable, TextInput} from 'react-native';
-import {Button} from 'native-base';
-import {
-  IDoxleFont,
-  IDOXLEThemeColor,
-} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {getFontSizeScale} from '../../../../../../../Utilities/FunctionUtilities';
+import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
+export const StyledModalPdfAssignee = styled(Animated.View)`
+  position: absolute;
 
+  background-color: ${p => p.theme.staticMenuColor.staticBg};
+
+  padding: 10px 0px;
+  padding-bottom: ${p => p.theme.deviceSize.insetBottom}px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  border-width: 1px;
+  border-color: ${p => p.theme.staticMenuColor.staticDivider};
+  border-style: solid;
+  border-bottom-width: 0px;
+  min-height: 300px;
+
+  ${p =>
+    p.theme.deviceType === 'Smartphone'
+      ? `
+    bottom:0px;
+     width: 100%;
+     height: 70%;
+    `
+      : `
+    max-width: 700px;
+    width: 100%;
+    height: 70%;
+    max-height: 900px;
+    `}
+`;
 export const StyledQAViewPDFPageContainer = styled(Animated.View)`
   width: 100%;
   height: 100%;
@@ -23,20 +44,18 @@ export const StyledQAViewPDFPageContainer = styled(Animated.View)`
   padding-bottom: 14px;
   background-color: ${p => p.theme.THEME_COLOR.primaryContainerColor};
 `;
-export const StyledPdfThumbnailListContainer = styled(Animated.FlatList<any>)<{
-  $themeColor: IDOXLEThemeColor;
-}>`
+export const StyledPdfThumbnailListContainer = styled(
+  Animated.FlatList<any>,
+)<{}>`
   width: 100%;
   height: 100%;
   background-color: ${p =>
     editRgbaAlpha({
-      rgbaColor: p.$themeColor.doxleColor as TRgbaFormat,
+      rgbaColor: p.theme.THEME_COLOR.doxleColor,
       alpha: '0.8',
     })};
 `;
 export const StyledThumbnailItemContainer = styled.Pressable<{
-  $themeColor: IDOXLEThemeColor;
-
   $isPortraitMode: boolean;
 }>`
   display: flex;
@@ -76,26 +95,27 @@ export const StyledPdfTopSectionContainer = styled(Animated.View)`
   align-items: center;
   justify-content: space-between;
 `;
-export const StyledPdfPageSkeleton = styled(Animated.View)<{
-  $themeColor: IDOXLEThemeColor;
-}>`
+export const StyledPdfPageSkeleton = styled(Animated.View)<{}>`
   flex: 1;
   display: flex;
   width: 95%;
 
   border-radius: 8px;
-  background-color: ${p => p.$themeColor.primaryContainerColor};
+  background-color: ${p => p.theme.THEME_COLOR.primaryContainerColor};
   padding: 14px;
   overflow: hidden;
 `;
-export const StyledConstributorDisplay = styled(Button)<{}>`
+export const StyledConstributorDisplay = styled(
+  Animated.createAnimatedComponent(Pressable),
+)<{}>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  border-radius: 13px;
-  padding: 0px;
-  background-color: ${p => p.theme.THEME_COLOR.textInputBgColor};
+  border-radius: 12px;
+  padding: 4px 8px;
   align-self: flex-start;
+  border: 1px solid ${p => p.theme.THEME_COLOR.rowBorderColor};
+  overflow: hidden;
 `;
 export const StyledQAContributorText = styled.Text<{
   $null: boolean;
@@ -103,11 +123,11 @@ export const StyledQAContributorText = styled.Text<{
   color: ${p =>
     p.$null
       ? editRgbaAlpha({
-          rgbaColor: p.theme.THEME_COLOR.primaryFontColor as TRgbaFormat,
+          rgbaColor: p.theme.THEME_COLOR.primaryFontColor,
           alpha: '0.4',
         })
       : p.theme.THEME_COLOR.primaryFontColor};
-  font-family: ${p => p.theme.DOXLE_FONT.titleFont};
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-size: ${p => p.theme.doxleFontSize.contentTextSize}px;
   font-style: normal;
   font-weight: 500;
@@ -129,7 +149,7 @@ export const StyledQAContributorItemText = styled.Text<{
     p.$selected
       ? p.theme.THEME_COLOR.doxleColor
       : p.theme.THEME_COLOR.primaryFontColor};
-  font-family: ${p => p.theme.DOXLE_FONT.titleFont};
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-size: ${p => p.theme.doxleFontSize.contentTextSize}px;
   font-style: normal;
   font-weight: 500;
@@ -153,7 +173,7 @@ export const StyledSearchAssigneeSection = styled.View`
 `;
 export const StyledSearchAssigneeTextInput = styled(TextInput)<{}>`
   color: ${p => p.theme.THEME_COLOR.primaryFontColor};
-  font-family: ${p => p.theme.DOXLE_FONT.titleFont};
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-size: ${p => p.theme.doxleFontSize.contentTextSize}px;
   font-style: normal;
   font-weight: 500;
@@ -162,9 +182,7 @@ export const StyledSearchAssigneeTextInput = styled(TextInput)<{}>`
   border-bottom-width: 1px;
   border-bottom-color: ${p => p.theme.THEME_COLOR.primaryDividerColor};
 `;
-export const StyledUploadingPrompt = styled(Animated.View)<{
-  $themeColor: IDOXLEThemeColor;
-}>`
+export const StyledUploadingPrompt = styled(Animated.View)<{}>`
   position: absolute;
   top: 0;
   left: 0;
@@ -174,44 +192,40 @@ export const StyledUploadingPrompt = styled(Animated.View)<{
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: ${p => p.$themeColor.primaryBackdropColor};
+  background-color: ${p => p.theme.THEME_COLOR.primaryBackdropColor};
 `;
-export const StyledPromtBanner = styled(Animated.View)<{
-  $themeColor: IDOXLEThemeColor;
-}>`
+export const StyledPromtBanner = styled(Animated.View)<{}>`
   width: 80%;
   max-width: 680px;
   display: flex;
   flex-direction: column;
   shadow-color: ${p =>
     editRgbaAlpha({
-      rgbaColor: p.$themeColor.primaryFontColor as TRgbaFormat,
+      rgbaColor: p.theme.THEME_COLOR.primaryFontColor,
       alpha: '0.4',
     })};
   shadow-offset: 0px 0px;
   shadow-opacity: 0.4;
   shadow-radius: 14px;
-  border-radius: ${getFontSizeScale(9)}px;
-  background-color: ${p => p.$themeColor.primaryContainerColor};
-  margin-bottom: ${getFontSizeScale(100)}px;
+  border-radius: ${p => (p.theme.deviceType === 'Smartphone' ? 9 : 12)}px;
+  background-color: ${p => p.theme.THEME_COLOR.primaryContainerColor};
+  margin-bottom: ${p => (p.theme.deviceType === 'Smartphone' ? 100 : 120)}px;
 `;
 export const StyledTitlePrompt = styled.Text<{}>`
   color: ${p => p.theme.THEME_COLOR.primaryFontColor};
-  font-family: ${p => p.theme.DOXLE_FONT.titleFont};
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-size: ${p => p.theme.doxleFontSize.headTitleTextSize}px;
   font-style: normal;
   font-weight: 600;
 `;
 
-export const StyledTitlePromptSection = styled.View<{
-  $themeColor: IDOXLEThemeColor;
-}>`
+export const StyledTitlePromptSection = styled.View<{}>`
   width: 100%;
   padding: 14px;
   justify-content: center;
   border-bottom-width: 1px;
   border-bottom-style: solid;
-  border-bottom-color: ${p => p.$themeColor.primaryDividerColor};
+  border-bottom-color: ${p => p.theme.THEME_COLOR.primaryDividerColor};
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -225,14 +239,14 @@ export const StyledPromptMessageSection = styled.View`
 `;
 export const StyledMessagePromptText = styled.Text<{}>`
   color: ${p => p.theme.THEME_COLOR.primaryFontColor};
-  font-family: ${p => p.theme.DOXLE_FONT.titleFont};
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-size: ${p => p.theme.doxleFontSize.contentTextSize}px;
   font-style: normal;
   font-weight: 400;
 `;
 export const StyledProgressCountText = styled.Text<{}>`
   color: ${p => p.theme.THEME_COLOR.primaryFontColor};
-  font-family: ${p => p.theme.DOXLE_FONT.titleFont};
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-size: ${p => p.theme.doxleFontSize.subContentTextSize}px;
   font-style: normal;
   font-weight: 400;

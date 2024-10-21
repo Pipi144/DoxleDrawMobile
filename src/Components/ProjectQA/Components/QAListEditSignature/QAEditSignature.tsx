@@ -4,14 +4,7 @@ import React, {useRef} from 'react';
 import {useRoute} from '@react-navigation/native';
 import SignatureScreen, {SignatureViewRef} from 'react-native-signature-canvas';
 
-import {
-  FadeInLeft,
-  FadeOutRight,
-  LinearTransition,
-} from 'react-native-reanimated';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
-import useQAEditSignaturePage from '../../Hooks/useQAEditSignaturePage';
+import useQAEditSignaturePage from './Hooks/useQAEditSignaturePage';
 import {
   StyledDrawSignatureLabel,
   StyledQAEditSignaturePageContainer,
@@ -22,15 +15,22 @@ import {
   StyledSignatureReviewImage,
   StyledSignatureScreenWrapper,
 } from './StyledComponentQAListEditSignature';
-import DoxleAnimatedButton from '../../../../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
-import ProcessingScreen from '../../../../../../../Utilities/AnimationScreens/ProcessingAnimation/ProcessingScreen';
-import QATopNavSection from '../QATopNavSection';
+
 import {TQATabStack} from '../../Routes/QARouteType';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {useOrientation} from '../../../../Providers/OrientationContext';
+import {
+  FadeInLeft,
+  FadeOutRight,
+  LinearTransition,
+} from 'react-native-reanimated';
+import DoxleAnimatedButton from '../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
+import ProcessingScreen from '../../../../Utilities/AnimationScreens/ProcessingAnimation/ProcessingScreen';
 
 type Props = {navigation: any};
 
-const QAEditSignature = ({navigation}: Props) => {
-  const {THEME_COLOR, DOXLE_FONT} = useDOXLETheme();
+const QAEditSignature = () => {
+  const {THEME_COLOR} = useDOXLETheme();
   const {deviceSize, deviceType} = useOrientation();
   const route = useRoute();
   const {qaListItem} = route.params as TQATabStack['QAEditSignature'];
@@ -92,12 +92,9 @@ const QAEditSignature = ({navigation}: Props) => {
         paddingBottom: deviceSize.insetBottom,
         paddingHorizontal: 14,
       }}>
-      <QATopNavSection />
       <StyledDrawSignatureLabel>Draw Signature</StyledDrawSignatureLabel>
 
-      <StyledSignaturePreviewSection
-        $themeColor={THEME_COLOR}
-        $height={signatureScreenHeight}>
+      <StyledSignaturePreviewSection $height={signatureScreenHeight}>
         {finalSignaturePath && (
           <StyledSignatureReviewImage
             entering={FadeInLeft}

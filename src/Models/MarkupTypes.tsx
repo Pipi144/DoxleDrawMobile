@@ -1,5 +1,4 @@
 import {TRgbaFormat} from '../Utilities/FunctionUtilities';
-import usePhotoAnnotation from '../components/content/PhotoAnnotation/Hooks/usePhotoAnnotation';
 
 export type TAnnotationTools =
   | 'Arrow'
@@ -76,6 +75,3 @@ export interface IPhotoAnnotationBgImageProp {
   imageUri: string;
   imageId: string;
 }
-
-export interface IPhotoAnnotationContextValue
-  extends ReturnType<typeof usePhotoAnnotation> {}

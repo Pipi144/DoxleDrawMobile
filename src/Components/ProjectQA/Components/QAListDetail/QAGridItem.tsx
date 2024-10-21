@@ -11,9 +11,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import React from 'react';
-import {QA, QAWithFirstImg} from '../../../../../../../Models/qa';
 import {
   StyledQAGridItem,
   StyledQAGridItemInfoSection,
@@ -23,6 +22,7 @@ import {
 } from './StyledComponentsQAListDetail';
 import QAItemImageSection from './QAItemImageSection';
 import AssigneeDisplayer from './CommonComponents/AssigneeDisplayer';
+import {QA, QAWithFirstImg} from '../../../../Models/qa';
 
 type Props = {
   qaItem: QAWithFirstImg;

@@ -1,24 +1,20 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import React from 'react';
 import {
   StyledQADetailLabelText,
   StyledQaDetailEditComment,
 } from './StyledComponentQADetail';
 
-import Animated, {Layout, LinearTransition} from 'react-native-reanimated';
+import Animated, {LinearTransition} from 'react-native-reanimated';
 import CommentInputSection from './CommentInputSection';
 
-import useQADetailEditComment from '../../Hooks/useQADetailEditComment';
+import useQADetailEditComment from './Hooks/useQADetailEditComment';
 import QACommentItem from './QACommentItem';
-import {QA, QAComment} from '../../../../../../../Models/qa';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
+import {QA, QAComment} from '../../../../Models/qa';
 
 type Props = {qaItem: QA};
 
 const QADetailEditComment = ({qaItem}: Props) => {
-  const {DOXLE_FONT, theme} = useDOXLETheme();
-  const {deviceType} = useOrientation();
   const {commentList, onLayoutChange, layoutQACommentSectionYPos} =
     useQADetailEditComment({qaItem});
   return (

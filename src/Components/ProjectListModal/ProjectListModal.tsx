@@ -9,7 +9,6 @@ import React, {useCallback, useMemo, useRef} from 'react';
 import Modal from 'react-native-modal';
 
 import {NotifierRoot} from 'react-native-notifier';
-import {useShallow} from 'zustand/react/shallow';
 import Animated, {LinearTransition} from 'react-native-reanimated';
 import {IFullProject, Project} from '../../Models/project';
 

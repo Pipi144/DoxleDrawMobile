@@ -17,10 +17,10 @@ import {
   StyledQAPopupMenuText,
   StyledQAPopupMenuWrapper,
 } from './StyledComponents';
-import DoxleAnimatedButton from '../../../../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
 import {AddQAListIcon} from './Icons';
 import useQAProjectPopupMenu from './Hooks/useQAProjectPopupMenu';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import DoxleAnimatedButton from '../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
 
 const QAProjectPopupMenu = () => {
   const {staticMenuColor} = useDOXLETheme();

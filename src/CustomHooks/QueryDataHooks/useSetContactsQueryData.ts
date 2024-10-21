@@ -14,15 +14,10 @@ type Props = {
   overwrite?: boolean;
 };
 
-interface SetContactsQueryData {
-  handleAddNewContact: (addedContact: Contact) => void;
-  handleDeleteContactQueryData: (deletedContactId: string) => void;
-  handleEditContactQueryData: (edittedContact: Contact) => void;
-}
 const useSetContactsQueryData = ({
   addPos = 'start',
   overwrite = true,
-}: Props): SetContactsQueryData => {
+}: Props) => {
   const queryClient = useQueryClient();
   const {company} = useCompany() as ICompanyProviderContextValue;
 
@@ -150,10 +145,24 @@ const useSetContactsQueryData = ({
       queryClient.removeQueries({queryKey: query.queryKey});
     });
   };
+
+  const clearSearchContactQueryData = () => {
+    const qKey = formContactListQKey({}, company);
+    const dataActive = queryClient.getQueryCache().findAll({
+      predicate: query =>
+        qKey.every(key => query.queryKey.includes(key)) &&
+        query.queryKey.includes('search'),
+    });
+
+    for (let i = 0; i < dataActive.length; i++) {
+      queryClient.removeQueries({queryKey: dataActive[i].queryKey});
+    }
+  };
   return {
     handleAddNewContact,
     handleDeleteContactQueryData,
     handleEditContactQueryData,
+    clearSearchContactQueryData,
   };
 };
 

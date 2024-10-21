@@ -6,7 +6,6 @@ import {
   StyleSheet,
 } from 'react-native';
 import React, {useCallback, useMemo} from 'react';
-import {IProjectFloor} from '../../../../../../../Models/location';
 import {
   StyledPopoverSearchTextInput,
   StyledQADetailEditRoomFloorContainer,
@@ -18,18 +17,21 @@ import {
   StyledRoomListPopoverWrapper,
   StyledSearchPopoverWrapper,
 } from './StyledComponentQADetail';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import useQADetailEditFloor from '../../Hooks/useQADetailEditFloor';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
-import DoxleEmptyPlaceholder from '../../../../../../DesignPattern/DoxleEmptyPlaceholder/DoxleEmptyPlaceholder';
-import {ErrorFetchingBanner} from '../../../../../../../RootAppIcons';
-import {DoxleEmptyListBanner} from '../../../../../../DesignPattern/DoxleIcons';
+
 import {LinearTransition} from 'react-native-reanimated';
-import {Popover} from 'native-base';
 import FontIcon from 'react-native-vector-icons/FontAwesome5';
-import {editRgbaAlpha} from '../../../../../../../Utilities/FunctionUtilities';
-import ListLoadingMoreBottom from '../../../../../../../Utilities/AnimationScreens/ListLoadingMoreBottom/ListLoadingMoreBottom';
+
 import {ActivityIndicator} from 'react-native-paper';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {useOrientation} from '../../../../Providers/OrientationContext';
+import useQADetailEditFloor from './Hooks/useQADetailEditFloor';
+import DoxleEmptyPlaceholder from '../../../DesignPattern/DoxleEmptyPlaceholder/DoxleEmptyPlaceholder';
+import {ErrorFetchingBanner} from '../../../DesignPattern/DoxleBanners';
+import {DoxleEmptyListBanner} from '../../../DesignPattern/DoxleIcons';
+import {IProjectFloor} from '../../../../Models/location';
+import Popover from 'react-native-popover-view';
+import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
+import ListLoadingMoreBottom from '../../../../Utilities/AnimationScreens/ListLoadingMoreBottom/ListLoadingMoreBottom';
 
 type Props = {};
 
@@ -48,9 +50,8 @@ const QADetailEditFloor = (props: Props) => {
     refetchFloorList,
     fetchNextPageFloor,
     handleUpdateQAFloor,
-    isOpen,
-    onClose,
-    onOpen,
+    openFloorPopover,
+    setOpenFloorPopover,
   } = useQADetailEditFloor();
 
   //*render list
@@ -103,127 +104,113 @@ const QADetailEditFloor = (props: Props) => {
       <StyledQADetailLabelText>Floor</StyledQADetailLabelText>
 
       <Popover
-        isOpen={isOpen}
-        onClose={onClose}
-        trigger={triggerProps => {
-          return (
-            <StyledQARoomFloorDisplayer
-              {...triggerProps}
-              onPress={() => {
-                if (isOpen) onClose();
-                else onOpen();
-              }}
-              layout={LinearTransition.springify().damping(16)}
-              hitSlop={14}>
-              <StyledQARoomFloorDisplayerText $null={Boolean(!edittedQA.floor)}>
-                {edittedQA.floor ? edittedQA.floorName : 'Select floor'}
-              </StyledQARoomFloorDisplayerText>
+        isVisible={openFloorPopover}
+        onRequestClose={() => setOpenFloorPopover(false)}
+        popoverStyle={{
+          backgroundColor: 'transparent',
+        }}
+        animationConfig={{
+          duration: 50,
+        }}
+        from={
+          <StyledQARoomFloorDisplayer
+            onPress={() => {
+              setOpenFloorPopover(prev => !prev);
+            }}
+            layout={LinearTransition.springify().damping(16)}
+            hitSlop={14}>
+            <StyledQARoomFloorDisplayerText $null={Boolean(!edittedQA.floor)}>
+              {edittedQA.floor ? edittedQA.floorName : 'Select floor'}
+            </StyledQARoomFloorDisplayerText>
 
-              {isUpdatingFloor ? (
-                <ActivityIndicator
-                  size={doxleFontSize.contentTextSize}
-                  color={THEME_COLOR.primaryFontColor}
-                />
-              ) : (
-                <FontIcon
-                  name="arrow-circle-down"
-                  size={doxleFontSize.contentTextSize}
-                  color={THEME_COLOR.primaryFontColor}
-                />
-              )}
-            </StyledQARoomFloorDisplayer>
-          );
-        }}>
-        <Popover.Content
-          minW="200"
-          minH="250"
-          width={0.5 * deviceSize.deviceWidth}
-          mr="2"
-          backgroundColor={'transparent'}
-          borderColor={'transparent'}
-          style={{overflow: 'visible'}}>
-          <Popover.Arrow
-            bgColor={THEME_COLOR.primaryContainerColor}
-            borderColor={THEME_COLOR.primaryDividerColor}
+            {isUpdatingFloor ? (
+              <ActivityIndicator
+                size={doxleFontSize.contentTextSize}
+                color={THEME_COLOR.primaryFontColor}
+              />
+            ) : (
+              <FontIcon
+                name="arrow-circle-down"
+                size={doxleFontSize.contentTextSize}
+                color={THEME_COLOR.primaryFontColor}
+              />
+            )}
+          </StyledQARoomFloorDisplayer>
+        }>
+        <StyledRoomListPopoverWrapper $height={listWrapperHeight}>
+          <StyledSearchPopoverWrapper>
+            <StyledPopoverSearchTextInput
+              value={searchFloorInput}
+              onChangeText={setSearchFloorInput}
+              placeholder="Search floor..."
+              selectTextOnFocus={true}
+              selectionColor={editRgbaAlpha({
+                rgbaColor: THEME_COLOR.doxleColor,
+                alpha: '0.4',
+              })}
+              placeholderTextColor={editRgbaAlpha({
+                rgbaColor: THEME_COLOR.primaryFontColor,
+                alpha: '0.4',
+              })}
+            />
+
+            {isFetchingFloorList && (
+              <ActivityIndicator
+                color={THEME_COLOR.primaryFontColor}
+                size={deviceType === 'Smartphone' ? 12 : 14}
+              />
+            )}
+          </StyledSearchPopoverWrapper>
+
+          <FlatList<IProjectFloor>
+            data={floorList}
+            style={{flex: 1, width: '100%'}}
+            contentContainerStyle={{flexGrow: 1}}
+            ListEmptyComponent={lisEmptyComponent}
+            renderItem={renderItem}
+            keyExtractor={keyExtractor}
+            automaticallyAdjustsScrollIndicatorInsets
+            automaticallyAdjustContentInsets
+            keyboardDismissMode="on-drag"
+            onEndReached={fetchNextPageFloor}
+            onEndReachedThreshold={0.4}
+            refreshControl={
+              <RefreshControl
+                onRefresh={() => {
+                  refetchFloorList();
+                }}
+                tintColor={
+                  Platform.OS === 'ios'
+                    ? THEME_COLOR.primaryFontColor
+                    : undefined
+                }
+                refreshing={false}
+                colors={
+                  Platform.OS === 'android'
+                    ? [THEME_COLOR.primaryFontColor]
+                    : undefined
+                }
+                progressBackgroundColor={THEME_COLOR.primaryContainerColor}
+              />
+            }
           />
 
-          <Popover.Body h="100%" w="100%" p={0} backgroundColor={'transparent'}>
-            <StyledRoomListPopoverWrapper $height={listWrapperHeight}>
-              <StyledSearchPopoverWrapper>
-                <StyledPopoverSearchTextInput
-                  value={searchFloorInput}
-                  onChangeText={setSearchFloorInput}
-                  placeholder="Search floor..."
-                  selectTextOnFocus={true}
-                  selectionColor={editRgbaAlpha({
-                    rgbaColor: THEME_COLOR.doxleColor,
-                    alpha: '0.4',
-                  })}
-                  placeholderTextColor={editRgbaAlpha({
-                    rgbaColor: THEME_COLOR.primaryFontColor,
-                    alpha: '0.4',
-                  })}
-                />
-
-                {isFetchingFloorList && (
-                  <ActivityIndicator
-                    color={THEME_COLOR.primaryFontColor}
-                    size={deviceType === 'Smartphone' ? 12 : 14}
-                  />
-                )}
-              </StyledSearchPopoverWrapper>
-
-              <FlatList<IProjectFloor>
-                data={floorList}
-                style={{flex: 1, width: '100%'}}
-                contentContainerStyle={{flexGrow: 1}}
-                ListEmptyComponent={lisEmptyComponent}
-                renderItem={renderItem}
-                keyExtractor={keyExtractor}
-                automaticallyAdjustsScrollIndicatorInsets
-                automaticallyAdjustContentInsets
-                keyboardDismissMode="on-drag"
-                onEndReached={fetchNextPageFloor}
-                onEndReachedThreshold={0.4}
-                refreshControl={
-                  <RefreshControl
-                    onRefresh={() => {
-                      refetchFloorList();
-                    }}
-                    tintColor={
-                      Platform.OS === 'ios'
-                        ? THEME_COLOR.primaryFontColor
-                        : undefined
-                    }
-                    refreshing={false}
-                    colors={
-                      Platform.OS === 'android'
-                        ? [THEME_COLOR.primaryFontColor]
-                        : undefined
-                    }
-                    progressBackgroundColor={THEME_COLOR.primaryContainerColor}
-                  />
-                }
-              />
-
-              {(isFetchingFloorList || isFetchingNextPageFloor) && (
-                <ListLoadingMoreBottom
-                  containerStyle={{
-                    position: 'absolute',
-                    width: '100%',
-                    bottom: 0,
-                    left: 0,
-                    height: 50,
-                    zIndex: 2,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}
-                  size={40}
-                />
-              )}
-            </StyledRoomListPopoverWrapper>
-          </Popover.Body>
-        </Popover.Content>
+          {(isFetchingFloorList || isFetchingNextPageFloor) && (
+            <ListLoadingMoreBottom
+              containerStyle={{
+                position: 'absolute',
+                width: '100%',
+                bottom: 0,
+                left: 0,
+                height: 50,
+                zIndex: 2,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              size={40}
+            />
+          )}
+        </StyledRoomListPopoverWrapper>
       </Popover>
     </StyledQADetailEditRoomFloorContainer>
   );

@@ -1,10 +1,9 @@
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import React, {useMemo} from 'react';
 import Animated from 'react-native-reanimated';
-
-import {Skeleton} from 'native-base';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
+import {useOrientation} from '../../../../Providers/OrientationContext';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import Skeleton from 'react-native-reanimated-skeleton';
 
 type Props = {listWidth: number};
 
@@ -40,12 +39,12 @@ const QAItemSkeletonRow = (props: {
   numOfCol: number;
   listWidth: number;
 }) => {
-  const {numOfCol, listWidth} = props;
-  const {THEME_COLOR, theme} = useDOXLETheme();
+  const {numOfCol} = props;
+  const {THEME_COLOR} = useDOXLETheme();
   const {deviceType} = useOrientation();
   return (
-    <View
-      style={[
+    <Skeleton
+      containerStyle={[
         styles.skelRowContainer,
         {
           height: deviceType === 'Smartphone' || numOfCol > 2 ? 140 : 200,
@@ -61,7 +60,8 @@ const QAItemSkeletonRow = (props: {
               width: `${100 / numOfCol}%`,
               padding: 5,
             },
-      ]}>
+      ]}
+      isLoading={true}>
       <View
         style={[
           styles.skelRowContainer,
@@ -81,40 +81,26 @@ const QAItemSkeletonRow = (props: {
                 borderRadius: 4,
               },
         ]}>
-        <Skeleton
-          startColor={THEME_COLOR.skeletonColor}
-          rounded="full"
-          style={{height: '100%', width: '28%'}}
-          borderRadius={6}
-          marginRight={2}
+        <Text
+          style={{
+            height: '100%',
+            width: '28%',
+            borderRadius: 6,
+            marginRight: 2,
+          }}
         />
         <View style={styles.contentSkelContainer}>
-          <Skeleton
-            startColor={THEME_COLOR.skeletonColor}
-            rounded="full"
-            width="50%"
-            height={'16px'}
-            marginTop={2}
-          />
+          <Text style={{height: 16, width: '50%', borderRadius: 6}} />
           <View style={styles.subTitleSkelContainer}>
-            <Skeleton
-              startColor={THEME_COLOR.skeletonColor}
-              rounded="full"
-              width="40%"
-              height={'8px'}
-            />
+            <Text style={{height: 8, width: '40%', borderRadius: 2}} />
 
-            <Skeleton
-              startColor={THEME_COLOR.skeletonColor}
-              rounded="full"
-              width="30%"
-              height={'8px'}
-              marginTop={1}
+            <Text
+              style={{height: 8, width: '30%', borderRadius: 2, marginTop: 1}}
             />
           </View>
         </View>
       </View>
-    </View>
+    </Skeleton>
   );
 };
 

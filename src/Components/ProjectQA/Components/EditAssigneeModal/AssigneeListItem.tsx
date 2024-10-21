@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import React from 'react';
 
 import {useEditAssigneeModalContext} from './EditAssigneeModal';
@@ -6,9 +6,7 @@ import {
   StyledAsigneeListItemContainer,
   StyledAssigneeNameListItemText,
 } from './StyledComponentEditAssigneeModal';
-import {Contact} from '../../../../../../../Models/contacts';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
+import {Contact} from '../../../../Models/contacts';
 
 type Props = {
   assigneeItem: Contact;
@@ -16,8 +14,6 @@ type Props = {
 };
 
 const AssigneeListItem = ({assigneeItem, itemIndex}: Props) => {
-  const {THEME_COLOR, DOXLE_FONT} = useDOXLETheme();
-  const {deviceType} = useOrientation();
   const {selectedAssignee, handleSelectAssignee} =
     useEditAssigneeModalContext();
   const isSelected = Boolean(

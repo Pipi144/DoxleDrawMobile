@@ -1,14 +1,11 @@
-import {StyleSheet, Text, TextInput, View} from 'react-native';
+import {StyleSheet, TextInput} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {
   StyledSearchAssigneeSection,
   StyledSearchAssigneeTextInput,
 } from './StyledComponentQAViewPdf';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {
-  editRgbaAlpha,
-  TRgbaFormat,
-} from '../../../../../../../Utilities/FunctionUtilities';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
 
 type Props = {handleSearchAssigneeTextChange: (value: string) => void};
 
@@ -37,7 +34,7 @@ const SearchAssigneeSection = ({handleSearchAssigneeTextChange}: Props) => {
         onChangeText={value => setSearchInput(value)}
         placeholder="Search Contact..."
         placeholderTextColor={editRgbaAlpha({
-          rgbaColor: THEME_COLOR.primaryFontColor as TRgbaFormat,
+          rgbaColor: THEME_COLOR.primaryFontColor,
           alpha: '0.4',
         })}
         autoFocus

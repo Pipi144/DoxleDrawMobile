@@ -15,21 +15,21 @@ import {NotifierRoot} from 'react-native-notifier';
 import AssigneeList from './AssigneeList';
 
 import SelectedAssigneeDisplayer from '../QADetail/SelectedAssigneeDisplayer';
-import {QA, QAList} from '../../../../../../../Models/qa';
 import useEditAssigneeModal, {
   QASelectedAssignee,
-} from '../../Hooks/useEditAssigneeModal';
-import {Contact} from '../../../../../../../Models/contacts';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
-import DoxleAnimatedButton from '../../../../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
+} from './Hooks/useEditAssigneeModal';
 import Animated, {
   FadeInUp,
   FadeOutUp,
   ZoomIn,
   ZoomOut,
 } from 'react-native-reanimated';
-import {editRgbaAlpha} from '../../../../../../../Utilities/FunctionUtilities';
+import {QA, QAList} from '../../../../Models/qa';
+import {Contact} from '../../../../Models/contacts';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {useOrientation} from '../../../../Providers/OrientationContext';
+import DoxleAnimatedButton from '../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
+import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
 
 type Props = {
   showModal: boolean;
@@ -103,9 +103,9 @@ const EditAssigneeModal = ({
         <StyledEditAssigneeModalContainer
           $insetBottom={Platform.OS === 'ios' ? deviceSize.insetBottom : 8}
           $insetTop={Platform.OS === 'ios' ? deviceSize.insetTop : 8}>
-          <View style={styles().menuBtnContainer}>
+          <View style={styles.menuBtnContainer}>
             <DoxleAnimatedButton
-              style={[styles({insetTop: deviceSize.insetTop}).closeBtn]}
+              style={[styles.closeBtn]}
               backgroundColor={'rgba(0, 0, 0, 0)'}
               onPress={handlePressCloseBtn}
               hitSlop={14}>
@@ -137,7 +137,7 @@ const EditAssigneeModal = ({
               Select Assignee ...
             </StyledEditAssigneeHeadTitleText>
           )}
-          <View style={styles().contentWrapper}>
+          <View style={styles.contentWrapper}>
             <AssigneeSearchSection
               handleSearchTextChange={handleSearchAssigneeTextChange}
               showAddAssigneeForm={showAddAssigneeForm}
@@ -154,7 +154,7 @@ const EditAssigneeModal = ({
           </View>
           {!showAddAssigneeForm && (
             <DoxleAnimatedButton
-              style={styles().saveBtn}
+              style={styles.saveBtn}
               backgroundColor={THEME_COLOR.primaryFontColor}
               disabled={!isAssigneeChanged}
               onPress={handlePressSaveBtn}
@@ -182,34 +182,33 @@ export const useEditAssigneeModalContext = () =>
   useContext(EditAssigneeModalContext) as EditAssigneeModalContext;
 export default EditAssigneeModal;
 
-const styles = (props?: {insetTop: number}) =>
-  StyleSheet.create({
-    closeBtn: {
-      justifyContent: 'center',
-      alignItems: 'center',
+const styles = StyleSheet.create({
+  closeBtn: {
+    justifyContent: 'center',
+    alignItems: 'center',
 
-      padding: 4,
-    },
-    menuBtnContainer: {
-      width: '100%',
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-    },
-    saveBtn: {
-      width: '100%',
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 12,
-      borderRadius: 12,
-    },
-    contentWrapper: {
-      width: '100%',
-      maxWidth: 800,
-      display: 'flex',
-      minWidth: 300,
-      flex: 1,
-      paddingBottom: 10,
-    },
-  });
+    padding: 4,
+  },
+  menuBtnContainer: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  saveBtn: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 12,
+  },
+  contentWrapper: {
+    width: '100%',
+    maxWidth: 800,
+    display: 'flex',
+    minWidth: 300,
+    flex: 1,
+    paddingBottom: 10,
+  },
+});

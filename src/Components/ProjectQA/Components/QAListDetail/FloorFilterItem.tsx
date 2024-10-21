@@ -1,12 +1,9 @@
 import React from 'react';
-import {IProjectFloor} from '../../../../../../../Models/location';
 import {
   StyledFloorFilterItem,
   StyledFloorFilterItemText,
-  StyledFloorListSectionText,
 } from './StyledComponentsQAListDetail';
-import {useProjectQAStore} from '../../Store/useProjectQAStore';
-import {useShallow} from 'zustand/react/shallow';
+import {IProjectFloor} from '../../../../Models/location';
 
 type Props = {
   floor: 'none' | 'not-none' | IProjectFloor;

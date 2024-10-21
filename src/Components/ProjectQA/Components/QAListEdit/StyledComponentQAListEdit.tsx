@@ -2,15 +2,7 @@ import Animated from 'react-native-reanimated';
 import styled from 'styled-components/native';
 
 import {Pressable} from 'react-native';
-import {
-  IDoxleFont,
-  IDOXLEThemeColor,
-  TDOXLETheme,
-} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {
-  editRgbaAlpha,
-  TRgbaFormat,
-} from '../../../../../../../Utilities/FunctionUtilities';
+import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
 
 export const StyledQAListEditPage = styled(Animated.ScrollView)<{}>`
   flex: 1;
@@ -39,12 +31,9 @@ export const StyledTitleInputWrapper = styled(Animated.View)`
   flex-direction: row;
   align-items: center;
 `;
-export const StyledErrorTitleText = styled(Animated.Text)<{
-  $themeColor: IDOXLEThemeColor;
-  $doxleFont: IDoxleFont;
-}>`
-  color: ${p => p.$themeColor.errorColor};
-  font-family: ${p => p.$doxleFont.titleFont};
+export const StyledErrorTitleText = styled(Animated.Text)<{}>`
+  color: ${p => p.theme.THEME_COLOR.errorColor};
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-size: 12px;
   font-style: normal;
   font-weight: 500;
@@ -53,7 +42,7 @@ export const StyledErrorTitleText = styled(Animated.Text)<{
 `;
 export const StyledQAListTitleTextInput = styled.TextInput<{}>`
   color: ${p => p.theme.THEME_COLOR.primaryFontColor};
-  font-family: ${p => p.theme.DOXLE_FONT.titleFont};
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-size: ${p => p.theme.doxleFontSize.contentTextSize}px;
   font-style: normal;
   font-weight: 500;
@@ -85,11 +74,11 @@ export const StyledQAListDueDateText = styled.Text<{
   color: ${p =>
     p.$null
       ? editRgbaAlpha({
-          rgbaColor: p.theme.THEME_COLOR.primaryFontColor as TRgbaFormat,
+          rgbaColor: p.theme.THEME_COLOR.primaryFontColor,
           alpha: '0.4',
         })
       : p.theme.THEME_COLOR.primaryFontColor};
-  font-family: ${p => p.theme.DOXLE_FONT.titleFont};
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-size: ${p => p.theme.doxleFontSize.contentTextSize}px;
   font-style: normal;
   font-weight: 500;
@@ -118,11 +107,11 @@ export const StyledQAListAssigneeText = styled.Text<{
   color: ${p =>
     p.$null
       ? editRgbaAlpha({
-          rgbaColor: p.theme.THEME_COLOR.primaryFontColor as TRgbaFormat,
+          rgbaColor: p.theme.THEME_COLOR.primaryFontColor,
           alpha: '0.4',
         })
       : p.theme.THEME_COLOR.primaryFontColor};
-  font-family: ${p => p.theme.DOXLE_FONT.titleFont};
+  font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-size: ${p => p.theme.doxleFontSize.contentTextSize}px;
   font-style: normal;
   font-weight: 500;

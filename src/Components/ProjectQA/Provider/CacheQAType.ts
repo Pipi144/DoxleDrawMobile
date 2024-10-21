@@ -1,6 +1,6 @@
-import {TBgUploadStatus} from '../../../GeneralStore/useBgUploadStore';
 import {Project} from '../../../Models/project';
 import {QA, QAList, QAMedia} from '../../../Models/qa';
+import {TAPIServerFile} from '../../../Models/utilityType';
 
 export interface IStorageInfo {
   totalSpace: number;
@@ -46,6 +46,20 @@ export type LocalQAImageStatus = 'pending' | 'success';
 export interface LocalQAImage extends QAMedia {
   status: LocalQAImageStatus;
 }
+
+export type TQAVideoUploadStatus = 'success' | 'pending' | 'error';
+
 export interface LocalQAVideo extends QAMedia {
-  status: TBgUploadStatus;
+  status: TQAVideoUploadStatus;
 }
+
+export type IQAVideoUploadData<T = unknown> = {
+  videoFile: TAPIServerFile;
+  thumbnailPath?: string;
+  hostId: string; //! could be any id to extract a list of video belong to a certain hostID
+  videoId: string; //! to access a specific video
+  expired: number | null; //! null it means the video is deleted and nolonger cached
+  status: TQAVideoUploadStatus;
+  hostItem?: T;
+  errorMessage?: string;
+};

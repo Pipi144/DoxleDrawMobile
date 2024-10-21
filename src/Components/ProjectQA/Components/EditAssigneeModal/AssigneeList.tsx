@@ -1,12 +1,7 @@
 import {StyleSheet} from 'react-native';
 import React, {useCallback, useMemo} from 'react';
 
-import {
-  FadeInUp,
-  FadeOutUp,
-  Layout,
-  LinearTransition,
-} from 'react-native-reanimated';
+import {FadeInUp, FadeOutUp, LinearTransition} from 'react-native-reanimated';
 
 import AssigneeListSkeleton from './AssigneeListSkeleton';
 import {FlatList} from 'react-native-gesture-handler';
@@ -14,13 +9,13 @@ import AssigneeListItem from './AssigneeListItem';
 
 import AddNewContactForm from './AddNewContactForm';
 import {StyledAssigneeListContainer} from './StyledComponentEditAssigneeModal';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import useAssigneeList from '../../Hooks/useAssigneeList';
-import DoxleEmptyPlaceholder from '../../../../../../DesignPattern/DoxleEmptyPlaceholder/DoxleEmptyPlaceholder';
-import {Contact} from '../../../../../../../Models/contacts';
-import ListLoadingMoreBottom from '../../../../../../../Utilities/AnimationScreens/ListLoadingMoreBottom/ListLoadingMoreBottom';
-import {ErrorFetchingBanner} from '../../../../../../../RootAppIcons';
-import {EmptyContactBanner} from '../../../../../../DesignPattern/DoxleIcons';
+import useAssigneeList from './Hooks/useAssigneeList';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {Contact} from '../../../../Models/contacts';
+import DoxleEmptyPlaceholder from '../../../DesignPattern/DoxleEmptyPlaceholder/DoxleEmptyPlaceholder';
+import {ErrorFetchingBanner} from '../../../DesignPattern/DoxleBanners';
+import {EmptyContactBanner} from '../../../DesignPattern/DoxleIcons';
+import ListLoadingMoreBottom from '../../../../Utilities/AnimationScreens/ListLoadingMoreBottom/ListLoadingMoreBottom';
 
 type Props = {
   searchAssigneeText: string;
@@ -33,7 +28,7 @@ const AssigneeList = ({
 
   showAddAssigneeForm,
 }: Props) => {
-  const {THEME_COLOR, DOXLE_FONT} = useDOXLETheme();
+  const {THEME_COLOR} = useDOXLETheme();
   const {
     contactList,
     isFetchingContactList,
@@ -80,7 +75,6 @@ const AssigneeList = ({
   );
   return (
     <StyledAssigneeListContainer
-      $themeColor={THEME_COLOR}
       entering={FadeInUp}
       exiting={FadeOutUp}
       layout={LinearTransition.springify().damping(16)}>

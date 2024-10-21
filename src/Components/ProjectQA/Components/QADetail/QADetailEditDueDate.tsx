@@ -1,5 +1,5 @@
-import {Alert, StyleSheet, Text, View} from 'react-native';
-import React, {useState} from 'react';
+import {StyleSheet} from 'react-native';
+import React from 'react';
 import {
   StyledQADetailDueDateDisplay,
   StyledQADetailDueDateText,
@@ -7,17 +7,17 @@ import {
   StyledQADetailLabelText,
 } from './StyledComponentQADetail';
 
-import {Layout, LinearTransition} from 'react-native-reanimated';
+import {LinearTransition} from 'react-native-reanimated';
 import {DatePickerModal} from 'react-native-paper-dates';
-import useQADetailEditDueDate from '../../Hooks/useQADetailEditDueDate';
+import useQADetailEditDueDate from './Hooks/useQADetailEditDueDate';
 
 import {ActivityIndicator} from 'react-native-paper';
-import {QA} from '../../../../../../../Models/qa';
-import {TDateISODate} from '../../../../../../../Models/dateFormat';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {DatePickerButtonIcon} from '../../../../../../../RootAppIcons';
 import dayjs from 'dayjs';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
+import {QA} from '../../../../Models/qa';
+import {TDateISODate} from '../../../../Models/dateFormat';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {useOrientation} from '../../../../Providers/OrientationContext';
+import {QADatePickerIcon} from '../QAIcons';
 
 type Props = {
   qaItem: QA;
@@ -54,7 +54,7 @@ const QADetailEditDueDate = ({qaItem, handleDueDateChange}: Props) => {
             color={THEME_COLOR.primaryFontColor}
           />
         ) : (
-          <DatePickerButtonIcon {...THEME_COLOR} />
+          <QADatePickerIcon {...THEME_COLOR} />
         )}
       </StyledQADetailDueDateDisplay>
 

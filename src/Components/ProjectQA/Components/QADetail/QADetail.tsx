@@ -11,32 +11,27 @@ import React, {
 import Animated, {LinearTransition} from 'react-native-reanimated';
 
 import {useProjectQAStore} from '../../Store/useProjectQAStore';
-import {QA, QAVideo, TQAStatus} from '../../../../../../../Models/qa';
-import useQADetail from '../../Hooks/useQADetail';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
-import {LocalQAImage} from '../../../../../../../Providers/CacheQAProvider/CacheQAType';
-import QAImageItem from '../QAImage/QAImageItem';
+import useQADetail from './Hooks/useQADetail';
+
+import QAImageItem from './QAImageItem';
 import {StyledQADetailPageContainer} from './StyledComponentQADetail';
 import QADetailHeader from './QADetailHeader';
-import useQAImageList from '../../Hooks/useQAImageList';
+import useQAImageList from './Hooks/useQAImageList';
 import {useRoute} from '@react-navigation/native';
-import QATopNavSection from '../QATopNavSection';
 import EditAssigneeModal from '../EditAssigneeModal/EditAssigneeModal';
 import QADetailLandscapeMode from './QADetailLandscapeMode';
-import {TDateISODate} from '../../../../../../../Models/dateFormat';
-import {QASelectedAssignee} from '../../Hooks/useEditAssigneeModal';
-import {
-  IBgVideoUploadData,
-  useBgUploadVideoStore,
-} from '../../../../../../../GeneralStore/useBgUploadVideoStore';
-import QAPendingVideo from '../QAImage/QAPendingVideo';
-import useQAVideoList from '../../Hooks/useQAVideoList';
-import QAVideoItem from '../QAImage/QAVideoItem';
+import {QASelectedAssignee} from '../EditAssigneeModal/Hooks/useEditAssigneeModal';
+import QAPendingVideo from './QAPendingVideo';
+import useQAVideoList from './Hooks/useQAVideoList';
+import QAVideoItem from './QAVideoItem';
 import RetryUploadVideo from './RetryUploadVideo';
 import {TQATabStack} from '../../Routes/QARouteType';
 import {useShallow} from 'zustand/react/shallow';
-import CompressProgressModal from '../../../../../../DesignPattern/CompressProgressModal/CompressProgressModal';
+import {TDateISODate} from '../../../../Models/dateFormat';
+import {IQAVideoUploadData, LocalQAImage} from '../../Provider/CacheQAType';
+import {QA, QAVideo, TQAStatus} from '../../../../Models/qa';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {useOrientation} from '../../../../Providers/OrientationContext';
 
 type Props = {navigation: any};
 
@@ -80,7 +75,7 @@ const QADetail = ({navigation}: Props) => {
   } = useQAImageList({
     qaItem,
   });
-  const {localPendingVideoList, cachedVideoList} = useBgUploadVideoStore(
+  const {localPendingVideoList, cachedVideoList} = useProjectQAStore(
     useShallow(state => ({
       localPendingVideoList: state.localPendingVideoList,
       cachedVideoList: state.cachedVideoList,
@@ -101,17 +96,16 @@ const QADetail = ({navigation}: Props) => {
   const layout = LinearTransition.springify().damping(16);
   const {THEME_COLOR} = useDOXLETheme();
   const listRef = useRef<Animated.FlatList<QA>>(null);
-  const {qaImageList, showEditAssigneeQAModal, resetQAImgStore, compressState} =
+  const {qaImageList, showEditAssigneeQAModal, resetQAImgStore} =
     useProjectQAStore(
       useShallow(state => ({
         qaImageList: state.qaImageList,
         showEditAssigneeQAModal: state.showEditAssigneeQAModal,
         resetQAImgStore: state.resetQAImgStore,
-        compressState: state.compressState,
       })),
     );
 
-  const {deviceSize, deviceType, isPortraitMode} = useOrientation();
+  const {deviceSize, isPortraitMode} = useOrientation();
   const numOfListColumns: number = useMemo(
     () =>
       deviceSize.deviceWidth <= 350
@@ -131,7 +125,7 @@ const QADetail = ({navigation}: Props) => {
   //*render list
   const renderItem = useCallback(
     (props: {
-      item: LocalQAImage | IBgVideoUploadData | QAVideo;
+      item: LocalQAImage | IQAVideoUploadData | QAVideo;
       index: number;
     }) =>
       'imageId' in props.item ? (
@@ -153,7 +147,7 @@ const QADetail = ({navigation}: Props) => {
   );
 
   const keyExtractor = useCallback(
-    (item: LocalQAImage | IBgVideoUploadData | QAVideo, index: number) =>
+    (item: LocalQAImage | IQAVideoUploadData | QAVideo, index: number) =>
       'imageId' in item
         ? item.imageId
         : 'videoId' in item
@@ -260,13 +254,6 @@ const QADetail = ({navigation}: Props) => {
         />
 
         <RetryUploadVideo />
-
-        <CompressProgressModal
-          isVisble={Boolean(compressState)}
-          totalFilesNumber={compressState?.totalProgress ?? 1}
-          currentFileNumber={compressState?.currentProgress ?? 0}
-          type="inline"
-        />
       </StyledQADetailPageContainer>
     </QADetailContext.Provider>
   );

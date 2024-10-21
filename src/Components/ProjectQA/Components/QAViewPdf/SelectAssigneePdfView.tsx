@@ -1,5 +1,5 @@
 import {FlatList, StyleSheet, Text, View} from 'react-native';
-import React, {useRef} from 'react';
+import React from 'react';
 import {
   StyledContributorItemContainer,
   StyledQAContributorItemText,
@@ -8,10 +8,10 @@ import {
 
 import Animated from 'react-native-reanimated';
 import SearchAssigneeSection from './SearchAssigneeSection';
-import {Contact} from '../../../../../../../Models/contacts';
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import ListLoadingMoreBottom from '../../../../../../../Utilities/AnimationScreens/ListLoadingMoreBottom/ListLoadingMoreBottom';
-import useSelectAssigneePdfView from '../../Hooks/useSelectAssigneePdfView';
+import useSelectAssigneePdfView from './Hooks/useSelectAssigneePdfView';
+import {Contact} from '../../../../Models/contacts';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import ListLoadingMoreBottom from '../../../../Utilities/AnimationScreens/ListLoadingMoreBottom/ListLoadingMoreBottom';
 
 type Props = {
   handleGenerateQAReportForAssignee: (assignee?: Contact | undefined) => void;

@@ -4,31 +4,20 @@ import {
   StyledCommentInputSectionContainer,
   StyledCommentTextInput,
 } from './StyledComponentQADetail';
-import {
-  FadeIn,
-  FadeOut,
-  Layout,
-  LinearTransition,
-} from 'react-native-reanimated';
+import {FadeIn, FadeOut, LinearTransition} from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/AntDesign';
 import {ActivityIndicator} from 'react-native-paper';
-
-import {useDOXLETheme} from '../../../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
-import useCommentInputSection from '../../Hooks/useCommentInputSection';
+import useCommentInputSection from './Hooks/useCommentInputSection';
 import {useQADetailContext} from './QADetail';
-import {
-  editRgbaAlpha,
-  TRgbaFormat,
-} from '../../../../../../../Utilities/FunctionUtilities';
-import DoxleAnimatedButton from '../../../../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
-import {QA} from '../../../../../../../Models/qa';
-import {useOrientation} from '../../../../../../../Providers/OrientationContext';
+import {QA} from '../../../../Models/qa';
+import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {editRgbaAlpha} from '../../../../Utilities/FunctionUtilities';
+import DoxleAnimatedButton from '../../../DesignPattern/DoxleButton/DoxleAnimatedButton';
 
 type Props = {qaItem: QA; layoutQACommentSectionYPos: number};
 
 const CommentInputSection = ({qaItem, layoutQACommentSectionYPos}: Props) => {
   const {THEME_COLOR, doxleFontSize} = useDOXLETheme();
-  const {deviceType} = useOrientation();
   const {
     newCommentText,
     handleNewCommentTextChange,
@@ -49,7 +38,7 @@ const CommentInputSection = ({qaItem, layoutQACommentSectionYPos}: Props) => {
         $fontSize={doxleFontSize.contentTextSize + (isInputFocused ? 4 : 0)}
         placeholder="Add comment..."
         placeholderTextColor={editRgbaAlpha({
-          rgbaColor: THEME_COLOR.primaryFontColor as TRgbaFormat,
+          rgbaColor: THEME_COLOR.primaryFontColor,
           alpha: '0.2',
         })}
         multiline
