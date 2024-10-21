@@ -13,6 +13,8 @@ import {useCompany} from '../../../../../Providers/CompanyProvider';
 import {useCacheQAContext} from '../../../Provider/CacheQAProvider';
 import QAQueryAPI from '../../../../../API/qaQueryAPI';
 import {useDOXLETheme} from '../../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
+import {useAppModalHeaderStore} from '../../../../../GeneralStore/useAppModalHeaderStore';
+import {useShallow} from 'zustand/shallow';
 
 type Props = {
   signatureScreenRef: React.RefObject<SignatureViewRef>;
@@ -34,28 +36,15 @@ const useQAEditSignaturePage = ({
     string | undefined
   >(undefined);
   const {accessToken, user} = useAuth();
-  const {notifierRootAppRef} = useNotification();
-  //handle show notification
-  const showNotification = useCallback(
-    (
-      message: string,
-      messageType: 'success' | 'error',
-      extraMessage?: string,
-    ) => {
-      notifierRootAppRef.current?.showNotification({
-        title: message,
-        description: extraMessage,
-        Component: Notification,
-        queueMode: 'immediate',
-        duration: 800,
-        componentProps: {
-          type: messageType,
-        },
-        containerStyle: getContainerStyleWithTranslateY,
-      });
-    },
-    [],
-  );
+  const {showNotification} = useNotification();
+  const {setCustomisedPopupMenu, setOveridenRouteName, setBackBtn} =
+    useAppModalHeaderStore(
+      useShallow(state => ({
+        setCustomisedPopupMenu: state.setCustomisedPopupMenu,
+        setOveridenRouteName: state.setOveridenRouteName,
+        setBackBtn: state.setBackBtn,
+      })),
+    );
 
   const {company} = useCompany();
   const {
@@ -144,6 +133,17 @@ const useQAEditSignaturePage = ({
       console.log('ERROR handleSaveSignature:', error);
     }
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      setCustomisedPopupMenu(null);
+      setOveridenRouteName('Add Signature');
+      setBackBtn({
+        onPress: () => navigation.goBack(),
+      });
+      return () => {};
+    }, []),
+  );
   return {
     onEndDrawing,
     handleCaptureSignature,

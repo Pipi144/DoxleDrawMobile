@@ -95,7 +95,7 @@ const QAListMenuModal = ({editedQAList, setEditedQAList}: Props) => {
 
         <StyledQAListMenuBtn onPress={handlePressViewPdfMenu}>
           <DoxlePDFIcon containerStyle={{width: 25}} />
-          <StyledQAListMenuBtnText>Add Signature</StyledQAListMenuBtnText>
+          <StyledQAListMenuBtnText>Export PDF</StyledQAListMenuBtnText>
         </StyledQAListMenuBtn>
       </StyledQAListMenuModal>
     </Modal>

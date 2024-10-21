@@ -1,7 +1,7 @@
 import {Platform, StyleSheet} from 'react-native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
 import Pdf from 'react-native-pdf';
 import {useProjectQAStore} from '../../../Store/useProjectQAStore';
@@ -18,6 +18,7 @@ import QAQueryAPI, {
   CreatePdfForAssigneeParam,
   getPDFWithAssigneeMutationKey,
 } from '../../../../../API/qaQueryAPI';
+import {useAppModalHeaderStore} from '../../../../../GeneralStore/useAppModalHeaderStore';
 
 type Props = {
   qaListItem: QAList;
@@ -49,6 +50,15 @@ const useQAViewPDFPage = ({
   const {company} = useCompany();
 
   const {showNotification} = useNotification();
+  const {setCustomisedPopupMenu, setOveridenRouteName, setBackBtn} =
+    useAppModalHeaderStore(
+      useShallow(state => ({
+        setCustomisedPopupMenu: state.setCustomisedPopupMenu,
+        setOveridenRouteName: state.setOveridenRouteName,
+        setBackBtn: state.setBackBtn,
+      })),
+    );
+  const navigation = useNavigation();
 
   const {
     handleDownloadPdfFile,
@@ -180,7 +190,16 @@ const useQAViewPDFPage = ({
       return () => clearTimeout(timeout);
     }
   }, [showPromtPendingUpload]);
-
+  useFocusEffect(
+    useCallback(() => {
+      setCustomisedPopupMenu(null);
+      setOveridenRouteName('Export PDF');
+      setBackBtn({
+        onPress: () => navigation.goBack(),
+      });
+      return () => {};
+    }, []),
+  );
   return {
     displayedPdfPath,
     isGeneratingPdf:

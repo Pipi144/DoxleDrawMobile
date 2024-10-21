@@ -9,6 +9,8 @@ export const StyledQAListEditPage = styled(Animated.ScrollView)<{}>`
 
   background-color: ${p => p.theme.THEME_COLOR.primaryContainerColor};
   display: flex;
+  padding: 0 16px;
+  padding-top: 14px;
 `;
 export const StyledQAListEditTitleContainer = styled(Animated.View)`
   width: 100%;

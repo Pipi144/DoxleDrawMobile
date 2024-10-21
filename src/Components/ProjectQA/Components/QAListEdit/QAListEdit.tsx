@@ -30,40 +30,38 @@ const QAListEdit = ({navigation}: Props) => {
   } = useQAListEditPage({qaList});
 
   return (
-    <View style={styles(THEME_COLOR).rootContainer}>
-      <StyledQAListEditPage
-        layout={LinearTransition.springify().damping(16)}
-        automaticallyAdjustKeyboardInsets
-        automaticallyAdjustsScrollIndicatorInsets
-        automaticallyAdjustContentInsets
-        keyboardDismissMode="on-drag">
-        <QAListEditTitle
-          handleQAListTitleChange={handleQAListTitleChange}
-          edittedQAList={edittedQAList}
-        />
+    <StyledQAListEditPage
+      layout={LinearTransition.springify().damping(16)}
+      automaticallyAdjustKeyboardInsets
+      automaticallyAdjustsScrollIndicatorInsets
+      automaticallyAdjustContentInsets
+      keyboardDismissMode="on-drag">
+      <QAListEditTitle
+        handleQAListTitleChange={handleQAListTitleChange}
+        edittedQAList={edittedQAList}
+      />
 
-        <QAListEditDueDate
-          handleQAListDueDateChange={handleQAListDueDateChange}
-          edittedQAList={edittedQAList}
-        />
+      <QAListEditDueDate
+        handleQAListDueDateChange={handleQAListDueDateChange}
+        edittedQAList={edittedQAList}
+      />
 
-        <QAListEditAssignee
-          edittedQAList={edittedQAList}
-          handleQAListAssigneeChange={handleQAListAssigneeChange}
-        />
-        <QAEditListBanner
-          themeColor={THEME_COLOR}
-          containerStyle={{
-            maxWidth: 500,
-            maxHeight: 500,
-            width: '50%',
-            alignSelf: 'center',
-            marginTop: 30,
-            flex: 1,
-          }}
-        />
-      </StyledQAListEditPage>
-    </View>
+      <QAListEditAssignee
+        edittedQAList={edittedQAList}
+        handleQAListAssigneeChange={handleQAListAssigneeChange}
+      />
+      <QAEditListBanner
+        themeColor={THEME_COLOR}
+        containerStyle={{
+          maxWidth: 500,
+          maxHeight: 500,
+          width: '50%',
+          alignSelf: 'center',
+          marginTop: 30,
+          flex: 1,
+        }}
+      />
+    </StyledQAListEditPage>
   );
 };
 

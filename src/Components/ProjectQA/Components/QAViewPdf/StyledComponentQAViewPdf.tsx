@@ -41,7 +41,7 @@ export const StyledQAViewPDFPageContainer = styled(Animated.View)`
   display: flex;
   position: relative;
 
-  padding-bottom: 14px;
+  padding: 14px 0px;
   background-color: ${p => p.theme.THEME_COLOR.primaryContainerColor};
 `;
 export const StyledPdfThumbnailListContainer = styled(

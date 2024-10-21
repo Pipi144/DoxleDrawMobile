@@ -91,6 +91,7 @@ const QAEditSignature = () => {
       style={{
         paddingBottom: deviceSize.insetBottom,
         paddingHorizontal: 14,
+        paddingTop: 14,
       }}>
       <StyledDrawSignatureLabel>Draw Signature</StyledDrawSignatureLabel>
 

@@ -22,15 +22,16 @@ const useProjectQAList = (props: Props) => {
   const {handleCachingQAProject, handleCollectExpiredQAListFolder} =
     useCacheQAContext();
 
-  const {setCustomisedPopupMenu, setOveridenRouteName} = useAppModalHeaderStore(
-    useShallow(state => ({
-      setCustomisedPopupMenu: state.setCustomisedPopupMenu,
-      setOveridenRouteName: state.setOveridenRouteName,
-    })),
-  );
+  const {setCustomisedPopupMenu, setOveridenRouteName, setBackBtn} =
+    useAppModalHeaderStore(
+      useShallow(state => ({
+        setCustomisedPopupMenu: state.setCustomisedPopupMenu,
+        setOveridenRouteName: state.setOveridenRouteName,
+        setBackBtn: state.setBackBtn,
+      })),
+    );
   const {
     setFilterQAListQuery,
-    setQANavigationMenu,
 
     showAddQAListHeader,
     setShowAddQAListHeader,
@@ -38,7 +39,6 @@ const useProjectQAList = (props: Props) => {
   } = useProjectQAStore(
     useShallow(state => ({
       setFilterQAListQuery: state.setFilterQAListQuery,
-      setQANavigationMenu: state.setQANavigationMenu,
       showAddQAListHeader: state.showAddQAListHeader,
       setShowAddQAListHeader: state.setShowAddQAListHeader,
       setFilterGetQAItems: state.setFilterGetQAItems,
@@ -119,7 +119,7 @@ const useProjectQAList = (props: Props) => {
           floor: undefined,
         });
       }
-      setQANavigationMenu([]);
+      setBackBtn(null);
       setCustomisedPopupMenu(<QAProjectPopupMenu />);
       return () => {};
     }, [selectedProject]),
