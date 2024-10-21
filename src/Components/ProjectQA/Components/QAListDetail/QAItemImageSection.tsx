@@ -1,5 +1,5 @@
 import {StyleSheet, View} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 
 import {ActivityIndicator} from 'react-native-paper';
 
@@ -26,6 +26,9 @@ const QAItemImageSection = ({qaDetail, viewMode}: Props) => {
     isImageFailed,
     displayedImgUrl,
   } = useQAItemImageSection({qaDetail});
+  useEffect(() => {
+    console.log('displayedImgUrl:', displayedImgUrl);
+  }, [displayedImgUrl]);
 
   return (
     <StyledQAItemImageSectionContainer

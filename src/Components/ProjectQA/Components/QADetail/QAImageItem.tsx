@@ -75,9 +75,7 @@ const QAImageItem: React.FC<Props> = ({
   return (
     <StyledQAImageItemContainer
       $numOfCol={numOfListColumns}
-      layout={LinearTransition.springify().damping(14)}
-      entering={FadeIn}
-      exiting={FadeOut}
+      layout={LinearTransition.springify().damping(16).mass(0.5)}
       onPress={handlePressImg}>
       {qaImageDisplayedPath && (
         <StyledQAImageHolder

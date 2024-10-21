@@ -2,7 +2,6 @@ import {Alert, StyleSheet} from 'react-native';
 import {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
-
 import {TQATabStack} from '../../../Routes/QARouteType';
 import {QAVideo} from '../../../../../Models/qa';
 import {useCompany} from '../../../../../Providers/CompanyProvider';
@@ -72,6 +71,8 @@ const useQAVideoItem = ({item}: Props): IQAVideoItem => {
         {
           text: 'Delete',
           onPress: () => {
+            handleDeleteQAVideo(item);
+            handleDeleteCachedVideo(item.fileId);
             deleteImgQuery.mutate(item);
           },
         },

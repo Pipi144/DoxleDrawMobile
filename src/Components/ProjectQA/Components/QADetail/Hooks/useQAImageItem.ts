@@ -31,6 +31,7 @@ Props) => {
   const [qaImageDisplayedPath, setQaImageDisplayedPath] = useState(
     imageItem.thumbPath,
   );
+
   const {company} = useCompany();
   const {showNotification} = useNotification();
   const {edittedQA} = useQADetailContext();
@@ -92,6 +93,10 @@ Props) => {
       'All data belong to this image will be deleted permanently, are you sure to proceed?',
       [
         {
+          text: 'Cancel',
+          style: 'destructive',
+        },
+        {
           text: 'Delete',
           onPress: () => {
             if (imageItem.status === 'success') {
@@ -104,10 +109,6 @@ Props) => {
               setDeletedQAImageStack(prev => [...prev, imageItem]);
             }
           },
-        },
-        {
-          text: 'Cancel',
-          style: 'destructive',
         },
       ],
     );

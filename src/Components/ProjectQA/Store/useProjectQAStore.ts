@@ -22,9 +22,7 @@ import {
 } from '../Provider/CacheQAType';
 import {
   getQACacheVideoListFile,
-  getQAPendingVideoListFile,
   saveQACacheVideoListFile,
-  saveQAPendingVideoListDetail,
 } from '../Provider/CacheQAHelperFunctions';
 import {
   checkPathExist,
@@ -94,8 +92,6 @@ export interface ProjectQAImageStore {
   resetQAImgStore: () => void;
 }
 export interface IQAUploadVideoStore {
-  localPendingVideoList: IQAVideoUploadData[];
-  getInitialPendingVideoList: () => Promise<void>;
   addPendingVideoList: (item: IQAVideoUploadData) => void;
   clearPendingVideoList: () => void;
 
@@ -137,75 +133,60 @@ const createQAUploadVideoStore: StateCreator<
   [],
   IQAUploadVideoStore
 > = (set, get) => ({
-  localPendingVideoList: [],
-
-  getInitialPendingVideoList: async () => {
-    const result = await getQAPendingVideoListFile();
-    const notPendingFiles = result.filter(item => item.status === 'success');
-
-    set(state =>
-      produce(state, draft => {
-        draft.localPendingVideoList = result.filter(
-          item => item.status === 'pending',
-        );
-      }),
-    );
-
-    if (notPendingFiles.length > 0) {
-      for (const item of notPendingFiles) {
-        get().movePendingToCacheVideoList(item.videoId, item.status);
-      }
-    }
-  },
   addPendingVideoList: (item: IQAVideoUploadData) => {
     set(state =>
       produce(state, draft => {
-        draft.localPendingVideoList.push(item);
+        draft.cachedVideoList.push(item);
       }),
     );
 
-    saveQAPendingVideoListDetail(get().localPendingVideoList);
+    saveQACacheVideoListFile(get().cachedVideoList);
   },
   addMultiCachedVideoList: data => {
     set(state =>
       produce(state, draft => {
-        draft.localPendingVideoList.push(...data);
+        draft.cachedVideoList.push(...data);
       }),
     );
 
-    saveQAPendingVideoListDetail(get().localPendingVideoList);
+    saveQACacheVideoListFile(get().cachedVideoList);
   },
   clearPendingVideoList: () => {
     set(state =>
       produce(state, draft => {
-        draft.localPendingVideoList = [];
+        draft.cachedVideoList = draft.cachedVideoList.filter(
+          vid => vid.status !== 'pending',
+        );
       }),
     );
 
-    saveQAPendingVideoListDetail([]);
+    saveQACacheVideoListFile(get().cachedVideoList);
   },
 
   deletePendingVideo: (videoId: string) => {
     set(state =>
       produce(state, draft => {
-        const idx = draft.localPendingVideoList.findIndex(
+        const idx = draft.cachedVideoList.findIndex(
           item => item.videoId === videoId,
         );
-        if (idx !== -1) draft.localPendingVideoList.splice(idx, 1);
+        if (idx !== -1) draft.cachedVideoList.splice(idx, 1);
       }),
     );
 
-    saveQAPendingVideoListDetail(get().localPendingVideoList);
+    saveQACacheVideoListFile(get().cachedVideoList);
   },
 
   popPendingVideo: () => {
     set(state =>
       produce(state, draft => {
-        state.localPendingVideoList.splice(0, 1);
+        const lastItemIdx = draft.cachedVideoList.findLastIndex(
+          vid => vid.status === 'pending',
+        );
+        if (lastItemIdx !== -1) draft.cachedVideoList.splice(lastItemIdx, 1);
       }),
     );
 
-    saveQAPendingVideoListDetail(get().localPendingVideoList);
+    saveQACacheVideoListFile(get().cachedVideoList);
   },
 
   cachedVideoList: [],
@@ -213,18 +194,12 @@ const createQAUploadVideoStore: StateCreator<
   getInitialCachedVideoList: async () => {
     const result = await getQACacheVideoListFile();
 
-    set(state =>
-      produce(state, draft => {
-        draft.cachedVideoList = result;
-      }),
-    );
-
     //! clear the expired items to handle memory efficiency
     if (result.length > 0) {
-      // console.log('CACHE LIST BEFORE DELETE:', result);
+      let filteredVideoList: IQAVideoUploadData[] = [];
       const currentTime = Math.floor(new Date().getTime() / 1000); //in seconds
-      for (const video of result) {
-        //item expire
+      for (let i = 0; i < result.length; i++) {
+        const video = result[i];
         if (video.expired && currentTime > video.expired) {
           // if local video path exist =>delete but still leave the thumbnail
           if (await checkPathExist(video.videoFile.uri)) {
@@ -233,18 +208,14 @@ const createQAUploadVideoStore: StateCreator<
             // console.log('ITEM EXPIRED =>DELETE');
             //update the store value after delete
           }
-          set(state =>
-            produce(state, draft => {
-              const item = draft.cachedVideoList.find(
-                item => item.videoId === video.videoId,
-              );
-              if (item) item.expired = null;
-            }),
-          );
-        } else continue;
-        // console.log('CACHE LIST AFTER DELETE:', get().cachedVideoList);
-        saveQACacheVideoListFile(get().cachedVideoList); // save the most updated cached list
+        } else filteredVideoList.push(video);
       }
+      set(state =>
+        produce(state, draft => {
+          draft.cachedVideoList = filteredVideoList;
+        }),
+      );
+      saveQACacheVideoListFile(get().cachedVideoList);
     }
   },
 
@@ -254,8 +225,7 @@ const createQAUploadVideoStore: StateCreator<
         draft.cachedVideoList.push(item);
       }),
     );
-    // console.log('VIDEO LIST SAVE AFTER ADD:', get().cachedVideoList);
-    // console.log('VIDEO LIST LENGTH AFTER ADD:', get().cachedVideoList.length);
+
     saveQACacheVideoListFile(get().cachedVideoList);
   },
   deleteCachedVideo: (videoId: string) => {
@@ -277,15 +247,7 @@ const createQAUploadVideoStore: StateCreator<
         );
       }),
     );
-    // console.log(
-    //   'VIDEO LIST SAVE AFTER UPDATE DELELTE:',
-    //   get().cachedVideoList,
-    // );
-    // console.log(
-    //   'VIDEO LIST LENGTH AFTER UPDATE DELELTE:',
-    //   get().cachedVideoList.length,
-    // );
-    saveQAPendingVideoListDetail(get().cachedVideoList);
+    saveQACacheVideoListFile(get().cachedVideoList);
   },
 
   deleteMultiCachedVideoWithHostId: (hostId: string) => {
@@ -296,15 +258,8 @@ const createQAUploadVideoStore: StateCreator<
         );
       }),
     );
-    // console.log(
-    //   'VIDEO LIST SAVE AFTER UPDATE DELELTE:',
-    //   get().cachedVideoList,
-    // );
-    // console.log(
-    //   'VIDEO LIST LENGTH AFTER UPDATE DELELTE:',
-    //   get().cachedVideoList.length,
-    // );
-    saveQAPendingVideoListDetail(get().cachedVideoList);
+
+    saveQACacheVideoListFile(get().cachedVideoList);
   },
   updateStatusMultiCachedVideo: (
     videoIds: string[],
@@ -329,20 +284,15 @@ const createQAUploadVideoStore: StateCreator<
   ) => {
     set(state =>
       produce(state, draft => {
-        const item = draft.localPendingVideoList.find(
+        const item = draft.cachedVideoList.find(
           item => item.videoId === fileId,
         );
         if (item) {
           item.status = status;
           if (errorMessage) item.errorMessage = errorMessage;
-          draft.cachedVideoList.push(item);
-          draft.localPendingVideoList = draft.localPendingVideoList.filter(
-            item => item.videoId !== fileId,
-          );
         }
       }),
     );
-    saveQAPendingVideoListDetail(get().localPendingVideoList);
     saveQACacheVideoListFile(get().cachedVideoList);
   },
 

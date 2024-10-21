@@ -11,7 +11,7 @@ type Props = {handleSearchAssigneeTextChange: (value: string) => void};
 
 const SearchAssigneeSection = ({handleSearchAssigneeTextChange}: Props) => {
   const [searchInput, setSearchInput] = useState<string>('');
-  const {THEME_COLOR, DOXLE_FONT} = useDOXLETheme();
+  const {staticMenuColor} = useDOXLETheme();
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -34,7 +34,7 @@ const SearchAssigneeSection = ({handleSearchAssigneeTextChange}: Props) => {
         onChangeText={value => setSearchInput(value)}
         placeholder="Search Contact..."
         placeholderTextColor={editRgbaAlpha({
-          rgbaColor: THEME_COLOR.primaryFontColor,
+          rgbaColor: staticMenuColor.staticWhiteFontColor,
           alpha: '0.4',
         })}
         autoFocus

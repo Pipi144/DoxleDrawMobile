@@ -39,7 +39,10 @@ const useQAItemList = ({qaListItem}: Props) => {
     })),
   );
   const queryGetQAItems = useGetQAItemList({
-    filter: {...filterGetQAItems, defectListId: qaListItem.defectListId},
+    filter: {
+      ...filterGetQAItems,
+      defectListId: qaListItem.defectListId,
+    },
   });
   const {deviceType, isPortraitMode} = useOrientation();
   const numOfCol = useMemo(

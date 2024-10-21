@@ -140,19 +140,16 @@ export const StyledContributorItemContainer = styled(Pressable)<{}>`
   padding: 0px 8px;
   justify-content: center;
   border-bottom-width: 1px;
-  border-bottom-color: ${p => p.theme.THEME_COLOR.primaryDividerColor};
+  border-bottom-color: ${p => p.theme.staticMenuColor.staticDivider};
 `;
 export const StyledQAContributorItemText = styled.Text<{
   $selected: boolean;
 }>`
-  color: ${p =>
-    p.$selected
-      ? p.theme.THEME_COLOR.doxleColor
-      : p.theme.THEME_COLOR.primaryFontColor};
+  color: ${p => p.theme.staticMenuColor.staticWhiteFontColor};
   font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-size: ${p => p.theme.doxleFontSize.contentTextSize}px;
   font-style: normal;
-  font-weight: 500;
+  font-weight: ${p => (p.$selected ? 600 : 300)};
   margin-right: 8px;
 `;
 export const StyledSelectAssigneePdfView = styled.View`
@@ -172,15 +169,15 @@ export const StyledSearchAssigneeSection = styled.View`
   align-items: center;
 `;
 export const StyledSearchAssigneeTextInput = styled(TextInput)<{}>`
-  color: ${p => p.theme.THEME_COLOR.primaryFontColor};
+  color: ${p => p.theme.staticMenuColor.staticWhiteFontColor};
   font-family: ${p => p.theme.DOXLE_FONT.lexendRegular};
   font-size: ${p => p.theme.doxleFontSize.contentTextSize}px;
   font-style: normal;
   font-weight: 500;
   width: 100%;
-  padding: 7px;
+  padding: 10px;
   border-bottom-width: 1px;
-  border-bottom-color: ${p => p.theme.THEME_COLOR.primaryDividerColor};
+  border-bottom-color: ${p => p.theme.staticMenuColor.staticDivider};
 `;
 export const StyledUploadingPrompt = styled(Animated.View)<{}>`
   position: absolute;

@@ -107,7 +107,8 @@ const QADetailEditRoom = (props: Props) => {
           backgroundColor: 'transparent',
         }}
         animationConfig={{
-          duration: 50,
+          duration: 200,
+          delay: 0,
         }}
         from={
           <StyledQARoomFloorDisplayer

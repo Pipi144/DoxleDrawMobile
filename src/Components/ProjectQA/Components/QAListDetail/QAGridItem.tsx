@@ -23,6 +23,7 @@ import {
 import QAItemImageSection from './QAItemImageSection';
 import AssigneeDisplayer from './CommonComponents/AssigneeDisplayer';
 import {QA, QAWithFirstImg} from '../../../../Models/qa';
+import useQAItem from './Hooks/useQAItem';
 
 type Props = {
   qaItem: QAWithFirstImg;
@@ -37,9 +38,16 @@ const QAGridItem = ({
   numOfColumns,
   setSelectedQAForAssignee,
 }: Props) => {
+  const {
+    handlePressItem,
+
+    handleDeleteQAItem,
+    isDeletingQA,
+    handleUpdateStatusQA,
+  } = useQAItem({qaItem});
   return (
     <StyledQAGridItemWrapper $numOfCol={numOfColumns}>
-      <StyledQAGridItem>
+      <StyledQAGridItem onPress={handlePressItem}>
         <QAItemImageSection qaDetail={qaItem} viewMode="grid" />
 
         <StyledQAGridItemInfoSection>

@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import {useCallback, useMemo, useState} from 'react';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import QAListDetailPopupMenu from '../../QAPopupMenu/QAListDetailPopupMenu';
@@ -79,28 +79,28 @@ const useQAListDetailPage = ({qaListItem}: Props) => {
   };
   const completedCount = qaItemDetail.completedCount ?? 0;
   const unattendedCount = qaItemDetail.unattendedCount ?? 0;
+
+  const navigation = useNavigation();
+  const handleNavBack = () => {
+    navigation.goBack();
+    setBackBtn(null);
+  };
+
+  useEffect(() => {
+    setFilterGetQAItems({search: searchInput});
+  }, [searchInput]);
+
   useFocusEffect(
     useCallback(() => {
+      handleCachingQAList(qaListItem);
+      handleCollectExpiredQAFolder(qaListItem);
+      setQAImageList([]);
       setCustomisedPopupMenu(
         <QAListDetailPopupMenu
           qaList={qaListItem}
           setShowFilter={setShowFilter}
         />,
       );
-      return () => {};
-    }, [qaListItem]),
-  );
-  const navigation = useNavigation();
-  const handleNavBack = () => {
-    navigation.goBack();
-    setBackBtn(null);
-  };
-  useFocusEffect(
-    useCallback(() => {
-      handleCachingQAList(qaListItem);
-      handleCollectExpiredQAFolder(qaListItem);
-      setQAImageList([]);
-
       setOveridenRouteName(qaListItem.defectListTitle);
       setBackBtn({
         onPress: handleNavBack,

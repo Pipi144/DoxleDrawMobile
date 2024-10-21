@@ -1,23 +1,18 @@
 import {Alert, Animated, StyleSheet, View} from 'react-native';
 import React, {useCallback, useRef} from 'react';
 
-import {FadeInLeft} from 'react-native-reanimated';
 import QAItemImageSection from './QAItemImageSection';
 
 import {Swipeable} from 'react-native-gesture-handler';
 
 import FTIcon from 'react-native-vector-icons/Feather';
-import FontisIcon from 'react-native-vector-icons/Fontisto';
 import AntIcons from 'react-native-vector-icons/AntDesign';
 import {ActivityIndicator} from 'react-native-paper';
 import useQAItem from './Hooks/useQAItem';
 import {
-  StyledQAItemAuthorNameText,
   StyledQAItemContainer,
   StyledQAItemContentSection,
-  StyledQAItemCreatedDateText,
   StyledQAItemDeleteIconContainer,
-  StyledQAItemFloorText,
   StyledQAItemHeadTitleText,
   StyledQAItemLeftSwipeView,
   StyledQAItemSwipeView,

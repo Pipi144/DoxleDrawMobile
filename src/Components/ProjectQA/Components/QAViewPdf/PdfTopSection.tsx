@@ -1,5 +1,5 @@
-import {Easing, StyleSheet, View} from 'react-native';
-import React, {useEffect, useRef} from 'react';
+import {StyleSheet, View} from 'react-native';
+import React from 'react';
 import {
   StyledConstributorDisplay,
   StyledModalPdfAssignee,
@@ -8,16 +8,10 @@ import {
   StyledQAContributorText,
 } from './StyledComponentQAViewPdf';
 import Animated, {
-  Extrapolation,
   FadeIn,
   FadeInDown,
   FadeOutDown,
   LinearTransition,
-  SharedValue,
-  interpolate,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
 } from 'react-native-reanimated';
 
 import FTIcon from 'react-native-vector-icons/Feather';
@@ -26,7 +20,6 @@ import {ActivityIndicator} from 'react-native-paper';
 import SelectAssigneePdfView from './SelectAssigneePdfView';
 import {AnimatedCircularProgress} from 'react-native-circular-progress';
 import usePdfTopSection from './Hooks/usePdfTopSection';
-import {useQAViewPDFContext} from './QAViewPDF';
 import {QAList, TQAStatus} from '../../../../Models/qa';
 import {Contact} from '../../../../Models/contacts';
 import {useDOXLETheme} from '../../../../Providers/DoxleThemeProvider/DoxleThemeProvider';
@@ -138,7 +131,7 @@ const PdfTopSection = ({
             backgroundColor={THEME_COLOR.primaryContainerColor}>
             <FTIcon
               name="share"
-              size={doxleFontSize.contentTextSize}
+              size={doxleFontSize.headTitleTextSize}
               color={THEME_COLOR.primaryFontColor}
             />
           </DoxleAnimatedButton>
@@ -213,7 +206,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 500,
-    padding: 4,
+    padding: 5,
   },
   sendBtn: {
     width: 20,

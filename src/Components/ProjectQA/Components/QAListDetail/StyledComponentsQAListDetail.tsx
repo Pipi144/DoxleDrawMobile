@@ -166,14 +166,15 @@ export const StyledQAItemImageSectionContainer = styled.View<{
   display: flex;
   justify-content: center;
   align-items: center;
-  border-raidus: 2px;
+  border-radius: 2px;
 
   position: relative;
   overflow: hidden;
     `
       : `
      width: 100%;
-     height:50%;
+     height: 50%;
+     overflow: hidden;
     `}
 `;
 
@@ -424,7 +425,7 @@ export const StyledQAGridItemWrapper = styled(Animated.View)<{
   aspect-ratio: 0.9;
 `;
 
-export const StyledQAGridItem = styled.View`
+export const StyledQAGridItem = styled.Pressable`
   width: 100%;
   height: 100%;
   display: flex;

@@ -12,7 +12,7 @@ import {
   deleteFileSystemWithPath,
 } from '../../../../../Utilities/FunctionUtilities';
 import {
-  ROOT_QA_ALL_VIDEO_FOLDER,
+  ROOT_QA_ALL_VIDEO_INFO_FILES,
   ROOT_QA_CACHE_VIDEO_FOLDER_PATH,
   ROOT_QA_PENDING_VIDEO_THUMBNAILS_FOLDER,
 } from '../../../Provider/QAFileDirPath';
@@ -26,28 +26,12 @@ type IGeneratePendingLocalVideoProps<T = unknown> = {
 
   hostItem?: T;
 };
-interface ISaveLocalVideo {
-  isGenerating: boolean;
-  handleGeneratePendingLocalVideo: (
-    data: IGeneratePendingLocalVideoProps,
-  ) => Promise<IQAVideoUploadData | undefined>;
-  isDeletingVideo: boolean;
-  handleDeletePendingVideo: (data: IQAVideoUploadData) => Promise<void>;
-  findLocalVideoURL: (videoId: string) => Promise<string | undefined>;
-  handleDeleteCachedVideo: (videoId: string) => Promise<void>;
-  handleDeleteMultipleCachedVideo: (
-    deletedItems: IQAVideoUploadData[],
-  ) => Promise<void>;
-  findLocalThumbURL: (videoId: string) => Promise<string | undefined>;
-  handleClearPendingVideo: () => Promise<void>;
-  handleDeleteMultipleCachedVideoWithHostId: (hostId: string) => Promise<void>;
-}
-const useLocalQAVideo = (props?: Props): ISaveLocalVideo => {
+
+const useLocalQAVideo = (props?: Props) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDeletingVideo, setIsDeletingVideo] = useState(false);
   const {
     deletePendingVideo,
-    localPendingVideoList,
     cachedVideoList,
     deleteCachedVideo,
     deleteMultiCachedVideo,
@@ -55,7 +39,6 @@ const useLocalQAVideo = (props?: Props): ISaveLocalVideo => {
   } = useProjectQAStore(
     useShallow(state => ({
       deletePendingVideo: state.deletePendingVideo,
-      localPendingVideoList: state.localPendingVideoList,
       cachedVideoList: state.cachedVideoList,
       deleteCachedVideo: state.deleteCachedVideo,
       deleteMultiCachedVideo: state.deleteMultiCachedVideo,
@@ -88,6 +71,11 @@ const useLocalQAVideo = (props?: Props): ISaveLocalVideo => {
       const targetLocalVideoPath =
         ROOT_QA_CACHE_VIDEO_FOLDER_PATH +
         `/${videoId}-${new Date().getTime()}.mp4`;
+      await moveFile(videoFile.uri, targetLocalVideoPath)
+        .then(() => {
+          returnedItem.videoFile.uri = targetLocalVideoPath;
+        })
+        .catch(err => console.log('error in moving local video', err));
 
       // create thumb
       await createVideoThumbnail(videoFile.uri)
@@ -98,9 +86,6 @@ const useLocalQAVideo = (props?: Props): ISaveLocalVideo => {
         .catch(err => console.log('FAILED TO CREATE VIDEO THUMB:', err));
 
       // move the video
-
-      await moveFile(videoFile.uri, targetLocalVideoPath);
-      returnedItem.videoFile.uri = targetLocalVideoPath;
 
       return returnedItem;
     } catch (error) {
@@ -130,33 +115,13 @@ const useLocalQAVideo = (props?: Props): ISaveLocalVideo => {
     }
   };
 
-  const handleClearPendingVideo = async () => {
-    try {
-      for (const video of localPendingVideoList) {
-        if (await checkPathExist(video.videoFile.uri))
-          await deleteFileSystemWithPath(video.videoFile.uri);
-
-        if (video.thumbnailPath && (await checkPathExist(video.thumbnailPath)))
-          await deleteFileSystemWithPath(video.thumbnailPath);
-      }
-
-      clearPendingVideoList();
-    } catch (error) {
-      console.log('FAILED handleGeneratePendingVideo:', error);
-      return;
-    }
-  };
-
   const handleDeleteCachedVideo = async (videoId: string) => {
     try {
-      if (
-        !(await checkPathExist(ROOT_QA_CACHE_VIDEO_FOLDER_PATH)) ||
-        !(await checkPathExist(ROOT_QA_ALL_VIDEO_FOLDER))
-      ) {
-        await createLocalFolder(ROOT_QA_ALL_VIDEO_FOLDER);
+      if (!(await checkPathExist(ROOT_QA_CACHE_VIDEO_FOLDER_PATH))) {
+        await createLocalFolder(ROOT_QA_CACHE_VIDEO_FOLDER_PATH);
         return;
       }
-
+      if (!(await checkPathExist(ROOT_QA_ALL_VIDEO_INFO_FILES))) return;
       const cachedItem = cachedVideoList.find(item => item.videoId === videoId);
 
       if (cachedItem) {
@@ -184,7 +149,7 @@ const useLocalQAVideo = (props?: Props): ISaveLocalVideo => {
     try {
       if (
         !(await checkPathExist(ROOT_QA_CACHE_VIDEO_FOLDER_PATH)) ||
-        !(await checkPathExist(ROOT_QA_ALL_VIDEO_FOLDER))
+        !(await checkPathExist(ROOT_QA_ALL_VIDEO_INFO_FILES))
       )
         return;
 
@@ -209,7 +174,7 @@ const useLocalQAVideo = (props?: Props): ISaveLocalVideo => {
     try {
       if (
         !(await checkPathExist(ROOT_QA_CACHE_VIDEO_FOLDER_PATH)) ||
-        !(await checkPathExist(ROOT_QA_ALL_VIDEO_FOLDER))
+        !(await checkPathExist(ROOT_QA_ALL_VIDEO_INFO_FILES))
       )
         return;
 
@@ -238,7 +203,7 @@ const useLocalQAVideo = (props?: Props): ISaveLocalVideo => {
     try {
       if (
         !(await checkPathExist(ROOT_QA_CACHE_VIDEO_FOLDER_PATH)) ||
-        !(await checkPathExist(ROOT_QA_ALL_VIDEO_FOLDER))
+        !(await checkPathExist(ROOT_QA_ALL_VIDEO_INFO_FILES))
       )
         return;
       const deletedItems = cachedVideoList.filter(
@@ -268,7 +233,7 @@ const useLocalQAVideo = (props?: Props): ISaveLocalVideo => {
     try {
       if (
         !(await checkPathExist(ROOT_QA_CACHE_VIDEO_FOLDER_PATH)) ||
-        !(await checkPathExist(ROOT_QA_ALL_VIDEO_FOLDER))
+        !(await checkPathExist(ROOT_QA_ALL_VIDEO_INFO_FILES))
       )
         return;
 
@@ -297,7 +262,7 @@ const useLocalQAVideo = (props?: Props): ISaveLocalVideo => {
     handleDeleteCachedVideo,
     handleDeleteMultipleCachedVideo,
     findLocalThumbURL,
-    handleClearPendingVideo,
+
     handleDeleteMultipleCachedVideoWithHostId,
   };
 };

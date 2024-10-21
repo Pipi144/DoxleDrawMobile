@@ -458,7 +458,7 @@ export const StyledRoomListPopoverWrapper = styled(Animated.View)<{
   $height?: number;
 }>`
   height: ${p => (p.$height ? `${p.$height}px` : '300px')};
-  width: ${p => (p.theme.deviceType === 'Smartphone' ? 300 : 350)}px;
+  width: ${p => (p.theme.deviceType === 'Smartphone' ? 250 : 300)}px;
   background-color: ${p => p.theme.THEME_COLOR.primaryContainerColor};
   border-radius: 14px;
   display: flex;

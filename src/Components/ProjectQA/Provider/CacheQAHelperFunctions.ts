@@ -42,9 +42,8 @@ import {
   PATH_TO_PENDING_UPLOAD_QA,
   ROOT_LOCAL_QA_FOLDER_PATH,
   ROOT_LOCAL_QA_IMAGE_FOLDER_PATH,
-  ROOT_QA_ALL_VIDEO_FOLDER,
+  ROOT_QA_ALL_VIDEO_INFO_FILES,
   ROOT_QA_CACHE_VIDEO_FOLDER_PATH,
-  ROOT_QA_PENDING_VIDEO_INFO_FILE,
 } from './QAFileDirPath';
 
 //* create root summary folder, get called when first initialize the provider
@@ -857,42 +856,6 @@ export const handleSaveDeletePendingQAImageFile = async (
   }
 };
 
-export const getQAPendingVideoListFile = async (
-  status?: TQAVideoUploadStatus[],
-): Promise<IQAVideoUploadData[]> => {
-  try {
-    if (!(await checkPathExist(ROOT_QA_CACHE_VIDEO_FOLDER_PATH))) {
-      await createLocalFolder(ROOT_QA_CACHE_VIDEO_FOLDER_PATH);
-      return [];
-    }
-    if (!(await checkPathExist(ROOT_QA_PENDING_VIDEO_INFO_FILE))) return [];
-    const videoListFile = JSON.parse(
-      await readFile(ROOT_QA_PENDING_VIDEO_INFO_FILE),
-    ) as IQAVideoUploadData[];
-
-    return videoListFile.filter(item =>
-      status ? status.includes(item.status) : item,
-    );
-  } catch (error) {
-    console.log('ERROR getQAPendingVideoListFile:', error);
-
-    return [];
-  }
-};
-
-export const saveQAPendingVideoListDetail = async (
-  list: IQAVideoUploadData[],
-) => {
-  try {
-    if (!(await checkPathExist(ROOT_QA_CACHE_VIDEO_FOLDER_PATH)))
-      await createLocalFolder(ROOT_QA_CACHE_VIDEO_FOLDER_PATH);
-    await writeFile(ROOT_QA_PENDING_VIDEO_INFO_FILE, JSON.stringify(list));
-  } catch (error) {
-    console.log('FAILED saveQAPendingVideoListDetail:', error);
-    return false;
-  }
-};
-
 export const getQACacheVideoListFile = async (): Promise<
   IQAVideoUploadData[]
 > => {
@@ -901,9 +864,9 @@ export const getQACacheVideoListFile = async (): Promise<
       await createLocalFolder(ROOT_QA_CACHE_VIDEO_FOLDER_PATH);
       return [];
     }
-    if (!(await checkPathExist(ROOT_QA_ALL_VIDEO_FOLDER))) return [];
+    if (!(await checkPathExist(ROOT_QA_ALL_VIDEO_INFO_FILES))) return [];
     const videoListFile = JSON.parse(
-      await readFile(ROOT_QA_ALL_VIDEO_FOLDER),
+      await readFile(ROOT_QA_ALL_VIDEO_INFO_FILES),
     ) as IQAVideoUploadData[];
     // console.log('EXPIRED PROJECT FILE:', expiredProjectFile);
 
@@ -919,7 +882,7 @@ export const saveQACacheVideoListFile = async (list: IQAVideoUploadData[]) => {
   try {
     if (!(await checkPathExist(ROOT_QA_CACHE_VIDEO_FOLDER_PATH)))
       await createLocalFolder(ROOT_QA_CACHE_VIDEO_FOLDER_PATH);
-    await writeFile(ROOT_QA_ALL_VIDEO_FOLDER, JSON.stringify(list));
+    await writeFile(ROOT_QA_ALL_VIDEO_INFO_FILES, JSON.stringify(list));
   } catch (error) {
     console.log('FAILED saveQACacheVideoListFile:', error);
     return false;

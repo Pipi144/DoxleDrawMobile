@@ -24,7 +24,7 @@ const SelectAssigneePdfView = ({
   onClose,
   selectedAssignee,
 }: Props) => {
-  const {THEME_COLOR} = useDOXLETheme();
+  const {THEME_COLOR, staticMenuColor} = useDOXLETheme();
   const {
     contactList,
     handleSearchAssigneeTextChange,
@@ -63,8 +63,8 @@ const SelectAssigneePdfView = ({
           onEndReachedThreshold={0.1}
           automaticallyAdjustContentInsets
           automaticallyAdjustsScrollIndicatorInsets
-          keyboardShouldPersistTaps="always"
-          keyboardDismissMode="interactive"
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
           keyExtractor={(item, index) => (item as Contact).contactId}
         />
       </Animated.View>
@@ -75,12 +75,12 @@ const SelectAssigneePdfView = ({
         }}
         style={{
           borderBottomWidth: 0,
-          borderTopColor: THEME_COLOR.primaryDividerColor,
+          borderTopColor: staticMenuColor.staticDivider,
           borderTopWidth: 1,
         }}>
         <StyledQAContributorItemText
           $selected={false}
-          style={{color: THEME_COLOR.errorColor}}>
+          style={{color: THEME_COLOR.errorColor, fontWeight: 600}}>
           Clear Assignee
         </StyledQAContributorItemText>
       </StyledContributorItemContainer>

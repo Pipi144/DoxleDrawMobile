@@ -36,8 +36,6 @@ const CacheQAVideoProviderContext =
 const CacheQAVideoProvider = ({children, ...rest}: Props) => {
   const [isHandlingPostUpdate, setisHandlingPostUpdate] = useState(false);
   const {
-    getInitialPendingVideoList,
-    localPendingVideoList,
     getInitialCachedVideoList,
     movePendingToCacheVideoList,
 
@@ -45,10 +43,9 @@ const CacheQAVideoProvider = ({children, ...rest}: Props) => {
     setIsConnectionPromptShow,
     shouldUploadInWeakConnection,
     setShouldUploadInWeakConnection,
+    cachedVideoList,
   } = useProjectQAStore(
     useShallow(state => ({
-      getInitialPendingVideoList: state.getInitialPendingVideoList,
-      localPendingVideoList: state.localPendingVideoList,
       getInitialCachedVideoList: state.getInitialCachedVideoList,
 
       movePendingToCacheVideoList: state.movePendingToCacheVideoList,
@@ -67,46 +64,40 @@ const CacheQAVideoProvider = ({children, ...rest}: Props) => {
     networkType === NetInfoStateType.cellular ||
     isConnectionWeak ||
     !isConnected;
-
-  useEffect(() => {
-    if (loggedIn && company) {
-      getInitialPendingVideoList();
-      getInitialCachedVideoList();
-    }
-  }, [loggedIn, company]);
-  //!----> QA UPLOAD HANDLER <-----
   const {handleAddQAVideo} = useSetQAVideoQueryData({});
   const addQAVideoQuery = QAQueryAPI.useBgUploadQAVideoQuery({
     company,
     accessToken,
   });
 
-  //! ----> COMMENT UPLOAD HANDLER <----
-
   const uploadVideo = useCallback(() => {
-    const rest = localPendingVideoList[0];
-    addQAVideoQuery.mutate({
-      uploadData: rest,
-      postSuccessHandler: data => {
-        setisHandlingPostUpdate(true);
-        movePendingToCacheVideoList(data.fileId, 'success');
+    const rest = cachedVideoList.find(vid => vid.status === 'pending');
+    if (rest)
+      addQAVideoQuery.mutate({
+        uploadData: rest,
+        postSuccessHandler: data => {
+          setisHandlingPostUpdate(true);
+          movePendingToCacheVideoList(data.fileId, 'success');
 
-        handleAddQAVideo(data);
-        setisHandlingPostUpdate(false);
-      },
-      postErrorHandler: (data, error) => {
-        setisHandlingPostUpdate(true);
-        movePendingToCacheVideoList(data.videoId, 'error', error);
-        setisHandlingPostUpdate(false);
-      },
-    });
-  }, [localPendingVideoList]);
+          handleAddQAVideo(data);
+          setisHandlingPostUpdate(false);
+        },
+        postErrorHandler: (data, error) => {
+          setisHandlingPostUpdate(true);
+          movePendingToCacheVideoList(data.videoId, 'error', error);
+          setisHandlingPostUpdate(false);
+        },
+      });
+  }, [cachedVideoList]);
+
   useEffect(() => {
-    if (
-      localPendingVideoList.length > 0 &&
-      !isHandlingPostUpdate &&
-      !addQAVideoQuery.isPending
-    ) {
+    if (loggedIn && company) {
+      getInitialCachedVideoList();
+    }
+  }, [loggedIn, company]);
+  useEffect(() => {
+    const pendingVid = cachedVideoList.find(vid => vid.status === 'pending');
+    if (pendingVid && !isHandlingPostUpdate && !addQAVideoQuery.isPending) {
       if (isConnectionNotSatisfy) {
         //case: user have not accepted to upload in weak connection
         if (!shouldUploadInWeakConnection) {
@@ -141,8 +132,7 @@ const CacheQAVideoProvider = ({children, ...rest}: Props) => {
       }
     }
   }, [
-    localPendingVideoList,
-
+    cachedVideoList,
     uploadVideo,
     isConnectionNotSatisfy,
     shouldUploadInWeakConnection,

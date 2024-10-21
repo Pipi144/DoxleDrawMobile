@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 import {StyleSheet, Text, View} from 'react-native';
-import React, {useCallback, useMemo} from 'react';
+import React, {useCallback, useEffect, useMemo} from 'react';
 import Modal from 'react-native-modal/dist/modal';
 import {
   StyledFilterQAFieldWrapper,
@@ -158,6 +158,10 @@ const FilterQAModal = ({showModal, closeModal, qaList}: Props) => {
         : item.floorId,
     [],
   );
+  useEffect(() => {
+    console.log('showModal:', showModal);
+  }, [showModal]);
+
   return (
     <Modal
       isVisible={showModal}
@@ -168,8 +172,8 @@ const FilterQAModal = ({showModal, closeModal, qaList}: Props) => {
       onBackdropPress={closeModal}
       animationIn="slideInUp"
       animationOut="fadeOutDownBig"
-      deviceHeight={deviceSize.deviceHeight}
-      deviceWidth={deviceSize.deviceWidth}
+      // deviceHeight={deviceSize.deviceHeight}
+      // deviceWidth={deviceSize.deviceWidth}
       animationInTiming={200}
       animationOutTiming={300}
       style={{
@@ -181,7 +185,7 @@ const FilterQAModal = ({showModal, closeModal, qaList}: Props) => {
       }}>
       <StyledFilterQAModal layout={layout}>
         <StyledFilterQATopSection>
-          <StyledFilterQATitleText>Filter</StyledFilterQATitleText>
+          <StyledFilterQATitleText>Filter Checklist</StyledFilterQATitleText>
         </StyledFilterQATopSection>
 
         <FlatList
@@ -269,7 +273,7 @@ const FilterQAModal = ({showModal, closeModal, qaList}: Props) => {
                         })}
                         selectTextOnFocus={true}
                         selectionColor={editRgbaAlpha({
-                          rgbaColor: staticMenuColor.staticDoxleColor,
+                          rgbaColor: staticMenuColor.staticWhiteFontColor,
                           alpha: '0.4',
                         })}
                       />

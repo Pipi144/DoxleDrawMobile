@@ -75,35 +75,31 @@ const QADetail = ({navigation}: Props) => {
   } = useQAImageList({
     qaItem,
   });
-  const {localPendingVideoList, cachedVideoList} = useProjectQAStore(
+  const {
+    qaImageList,
+    showEditAssigneeQAModal,
+    resetQAImgStore,
+    cachedVideoList,
+  } = useProjectQAStore(
     useShallow(state => ({
-      localPendingVideoList: state.localPendingVideoList,
+      qaImageList: state.qaImageList,
+      showEditAssigneeQAModal: state.showEditAssigneeQAModal,
+      resetQAImgStore: state.resetQAImgStore,
       cachedVideoList: state.cachedVideoList,
     })),
   );
+
   const pendingUploadItems = useMemo(
     () =>
-      localPendingVideoList
-        .filter(item => item.hostId === qaItem.defectId)
-        .concat(
-          cachedVideoList.filter(
-            item => item.hostId === qaItem.defectId && item.status === 'error',
-          ),
-        ),
-    [localPendingVideoList, cachedVideoList, qaItem.defectId],
+      cachedVideoList.filter(
+        item => item.hostId === qaItem.defectId && item.status !== 'success',
+      ),
+    [cachedVideoList, qaItem.defectId],
   );
 
   const layout = LinearTransition.springify().damping(16);
   const {THEME_COLOR} = useDOXLETheme();
   const listRef = useRef<Animated.FlatList<QA>>(null);
-  const {qaImageList, showEditAssigneeQAModal, resetQAImgStore} =
-    useProjectQAStore(
-      useShallow(state => ({
-        qaImageList: state.qaImageList,
-        showEditAssigneeQAModal: state.showEditAssigneeQAModal,
-        resetQAImgStore: state.resetQAImgStore,
-      })),
-    );
 
   const {deviceSize, isPortraitMode} = useOrientation();
   const numOfListColumns: number = useMemo(

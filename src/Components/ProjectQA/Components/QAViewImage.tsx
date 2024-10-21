@@ -1,4 +1,4 @@
-import {Pressable, StyleSheet, Text, View} from 'react-native';
+import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect} from 'react';
 import {StyledQAViewImage} from './StyledComponentProjectQA';
 import {useNavigation, useRoute} from '@react-navigation/native';
@@ -41,9 +41,10 @@ const QAViewImage = (props: Props) => {
           onPress={() => {
             if (navigation.canGoBack()) navigation.goBack();
           }}>
-          <FasterImageView
+          <Image
             style={{height: '100%', width: '100%'}}
-            source={{url: imageURL, resizeMode: 'contain'}}
+            source={{uri: imageURL}}
+            resizeMode="contain"
           />
         </Pressable>
       </ReactNativeZoomableView>

@@ -101,7 +101,10 @@ const QAListDetailPopupMenu = ({qaList, setShowFilter}: Props) => {
         ]}
         onPress={() => {
           setOpenPopupMenu(false);
-          setShowFilter(true);
+
+          setTimeout(() => {
+            setShowFilter(true);
+          }, 300);
         }}>
         <OctIcon
           name="filter"

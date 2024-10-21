@@ -26,11 +26,7 @@ const useQAItemImageSection = ({qaDetail}: Props) => {
     try {
       const localResult = await handleGetThumbnailLocalQA(qaDetail);
       if (localResult) {
-        setdisplayedImgUrl(undefined);
-
-        setdisplayedImgUrl(
-          Platform.OS === 'ios' ? localResult : 'file://' + localResult,
-        );
+        setdisplayedImgUrl('file://' + localResult);
       } else {
         if (qaDetail.firstImage) handleDownloadQAThumb(qaDetail);
         setdisplayedImgUrl(qaDetail.firstImage ?? undefined);

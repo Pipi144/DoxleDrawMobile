@@ -227,24 +227,39 @@ const useQAImageMenuSection = ({qaItem, handleSetIsProcessingImage}: Props) => {
               };
               tempQAImageList.push(tempQAImage);
             } else if (asset.type.startsWith('video/')) {
-              if (asset.fileSize && asset.fileSize / (1024 * 1024) > 50) {
-                oversizeVideoList.push(asset);
-              } else {
-                const data = await handleGeneratePendingLocalVideo({
-                  videoFile: {
-                    uri: asset.uri,
-                    name: `DefectVideo-${new Date().getTime()}.mp4`,
-                    type: 'video/mp4',
-                    size: asset.fileSize,
-                    fileId: uuid.v4().toString(),
-                  },
-                  videoId: uuid.v4().toString(),
-                  // uniqueId(qaItem.defectId)
-                  hostId: qaItem.defectId,
-                });
+              // if (asset.fileSize && asset.fileSize / (1024 * 1024) > 50) {
+              //   console.log('OVERSIZE VIDEO:', asset.fileSize / (1024 * 1024));
+              //   oversizeVideoList.push(asset);
+              // } else {
+              //   const data = await handleGeneratePendingLocalVideo({
+              //     videoFile: {
+              //       uri: asset.uri,
+              //       name: `DefectVideo-${new Date().getTime()}.mp4`,
+              //       type: 'video/mp4',
+              //       size: asset.fileSize,
+              //       fileId: uuid.v4().toString(),
+              //     },
+              //     videoId: uuid.v4().toString(),
+              //     // uniqueId(qaItem.defectId)
+              //     hostId: qaItem.defectId,
+              //   });
 
-                if (data) tempQAVideoList.push(data);
-              }
+              //   if (data) tempQAVideoList.push(data);
+              // }
+              const data = await handleGeneratePendingLocalVideo({
+                videoFile: {
+                  uri: asset.uri,
+                  name: `DefectVideo-${new Date().getTime()}.mp4`,
+                  type: 'video/mp4',
+                  size: asset.fileSize,
+                  fileId: uuid.v4().toString(),
+                },
+                videoId: uuid.v4().toString(),
+                // uniqueId(qaItem.defectId)
+                hostId: qaItem.defectId,
+              });
+
+              if (data) tempQAVideoList.push(data);
             }
           }
         }
